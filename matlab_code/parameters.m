@@ -1,2 +1,2 @@
-delay =1e-1;
-freq=10e3;
+delay =1000e-6;
+freq=1e6;
