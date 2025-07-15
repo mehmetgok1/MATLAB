@@ -1,10 +1,11 @@
 %% Frequency and Sampling Specs
 buck_freq=1e5;
 sampling=1e6;
-delay =100/sampling;
+delay =1000/sampling;
+duty_change_delay=600*delay;
 %% MPPT Points
 Vin=30.6;
-%% Expeted Output
+%% Expected Output
 Vout=15;
 D=Vout/Vin;
 %% Inductor Sizing
