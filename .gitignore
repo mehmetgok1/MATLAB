@@ -1,0 +1,6 @@
+# Ignore MATLAB/Simulink cache
+slprj/
+*.slxc
+*.mat
+# Ignore autosave files
+*.asv
