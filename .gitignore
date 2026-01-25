@@ -1,6 +1,8 @@
 # Ignore MATLAB/Simulink cache
-slprj/
-*.slxc
-*.mat
+**/slprj/
+**/*.slxc
+**/.mat
 # Ignore autosave files
-*.asv
+**/*.asv
+FIS_RULES/fiscodegen/**
+
