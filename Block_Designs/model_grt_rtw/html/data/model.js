@@ -1,0 +1,1 @@
+var modelInfo = {model:"model"};var modelHierarchy=[{model:"model",relativePath:"_internal.html",parent:"null"},];var AddCode = true;var ProtectedModel = false;

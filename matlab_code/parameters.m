@@ -13,3 +13,5 @@ Ripple_Iout=0.2;
 Lout=Vout*(1-D)/(buck_freq*Ripple_Iout);
 %% Capacitor Sizing
 Cin=10e-3;
+
+delay=10e-6;
