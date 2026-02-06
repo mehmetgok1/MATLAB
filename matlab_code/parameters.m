@@ -14,4 +14,6 @@ Lout=Vout*(1-D)/(buck_freq*Ripple_Iout);
 %% Capacitor Sizing
 Cin=10e-3;
 
-delay=10e-6;
+%%delay=10e-6;
+
+

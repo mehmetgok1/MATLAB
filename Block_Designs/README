@@ -1,0 +1,4 @@
+model 			-> general model of PV
+buck			-> only extract buck values
+max_i_duty_cycle 	-> which duty max current is achieved
+mpppt			-> system_top	

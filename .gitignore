@@ -5,4 +5,16 @@
 # Ignore autosave files
 **/*.asv
 FIS_RULES/fiscodegen/**
+# MATLAB/Simulink auto-generated folders
+slprj/
+*_ert_rtw/
+catapult/
 
+# Simulation outputs and temporary files
+*.asv
+*.mex*
+*.mat
+!matlab_code/essential_data.mat  # Example: Use '!' to exclude specific data files you WANT to keep
+
+# Logic for your specific structure
+Block_Designs/slprj/
