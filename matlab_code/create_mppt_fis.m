@@ -1,115 +1,84 @@
-%% ====================================================
-%  Normalized Fuzzy MPPT with Voltage Supervision
-%  Target: Buck Converter (PV->12–14V Battery)
-%  FIS Type: 3-Input Sugeno
-%
-%  Inputs:
-%   1) dV_pu   = (Vpv(k)-Vpv(k-1))/Vpv(k)
-%   2) dI_pu   = (Ipv(k)-Ipv(k-1))/Ipv(k)
-%   3) Vpv_pu  = Vpv / Voc
-%
-%  Output:
-%   dDuty (raw integer, scaled by /1024 in PWM)
-%  ====================================================
-
 clear; clc;
 
+% 1. Create New FIS
 fis = sugfis;
-fis.Name = 'MPPT_Buck_Normalized';
+fis.Name = 'MPPT_Thesis_Stable';
 
-%% ====================================================
-%% 1. Input: Normalized Delta PV Voltage (per-unit)
-% Typical ripple is within ±5%
-fis = addInput(fis, [-0.1 0.1], 'Name', 'dV_pu');
+%% 2. Inputs: dV and dI
+% dV Input (Raw ADC difference)
+fis = addInput(fis, [-10 10], 'Name', 'dV_raw');
+fis = addMF(fis,'dV_raw','linzmf',[-5 0],'Name','Negative');
+fis = addMF(fis,'dV_raw','trimf',[-4 0 4],'Name','Zero'); 
+fis = addMF(fis,'dV_raw','linsmf',[0 5],'Name','Positive');
 
-fis = addMF(fis,'dV_pu','linzmf',[-0.05 0],'Name','Negative');
-fis = addMF(fis,'dV_pu','trimf',[-0.01 0 0.01],'Name','Zero');
-fis = addMF(fis,'dV_pu','linsmf',[0 0.05],'Name','Positive');
+% dI Input (Raw ADC difference)
+fis = addInput(fis, [-10 10], 'Name', 'dI_raw');
+fis = addMF(fis,'dI_raw','linzmf',[-5 0],'Name','Negative');
+fis = addMF(fis,'dI_raw','trimf',[-4 0 4],'Name','Zero');
+fis = addMF(fis,'dI_raw','linsmf',[0 5],'Name','Positive');
 
-%% ====================================================
-%% 2. Input: Normalized Delta PV Current (per-unit)
-fis = addInput(fis, [-0.1 0.1], 'Name', 'dI_pu');
+%% 3. Input: V_pv (The "Map")
+% 0-1024 ADC count. Target ~783 (30.6V).
+fis = addInput(fis, [0 1024], 'Name', 'V_pv');
+% 1. Low Voltage: Ramp down earlier (720 to 760)
+% 1. Low Voltage: Ends at 730 (Was 770)
+% If V < 730, use Big Steps. If V > 730, relax.
+fis = addMF(fis,'V_pv','zmf',[680 730],'Name','Low_Voltage');
 
-fis = addMF(fis,'dI_pu','linzmf',[-0.05 0],'Name','Negative');
-fis = addMF(fis,'dI_pu','trimf',[-0.01 0 0.01],'Name','Zero');
-fis = addMF(fis,'dI_pu','linsmf',[0 0.05],'Name','Positive');
+% 2. Optimal Range: Wide Base [720 ... 850]
+% This guarantees that between 730 and 840, ONLY the "Fine Tuning" rules (+/- 1) apply.
+fis = addMF(fis,'V_pv','trimf',[720 783 850],'Name','Optimal_Range');
 
-%% ====================================================
-%% 3. Input: Absolute PV Voltage (Normalized to Voc)
-% Voc ≈ 40 V → Vpv_pu = Vpv / 40
-fis = addInput(fis, [0 1], 'Name', 'Vpv_pu');
+% 3. High Voltage: Starts at 840 (Was 790)
+% Only panic if V > 840.
+fis = addMF(fis,'V_pv','smf',[840 890],'Name','High_Voltage');
+%% 4. OUTPUT: Adaptive Step Size
+fis = addOutput(fis, [-20 20], 'Name', 'dDuty');
 
-% Low: near short-circuit (overloading panel)
-fis = addMF(fis,'Vpv_pu','trapmf',[-0.1 0 0.25 0.35],'Name','Low');
+% MF Index 1: Safety Brake (-15)
+fis = addMF(fis,'dDuty','constant',-15,'Name','Big_Decrease');
 
-% Normal MPPT region
-fis = addMF(fis,'Vpv_pu','trapmf',[0.25 0.35 0.85 0.9],'Name','Normal');
+% MF Index 2: Fine Tune Down (-1)
+fis = addMF(fis,'dDuty','constant',-1, 'Name','Decrease');
 
-% High: near open-circuit
-fis = addMF(fis,'Vpv_pu','trapmf',[0.85 0.9 1.1 1.2],'Name','High');
-
-%% ====================================================
-%% 4. Output: Duty Cycle Increment (integer)
-% PWM resolution assumed: 1024
-% Small steps for MPPT, big steps only for protection
-fis = addOutput(fis, [-30 30], 'Name', 'dDuty');
-
-fis = addMF(fis,'dDuty','constant',-25,'Name','Big_Decrease'); % ~-2.5%
-fis = addMF(fis,'dDuty','constant',-6, 'Name','Decrease');     % ~-0.6%
+% MF Index 3: Steady State (0)
 fis = addMF(fis,'dDuty','constant', 0, 'Name','Hold');
-fis = addMF(fis,'dDuty','constant', 6, 'Name','Increase');     % ~+0.6%
-fis = addMF(fis,'dDuty','constant', 25,'Name','Big_Increase'); % ~+2.5%
 
-%% ====================================================
+% MF Index 4: Fine Tune Up (+1)
+fis = addMF(fis,'dDuty','constant', 1, 'Name','Increase');
+
+% MF Index 5: Safety Throttle (+15)
+fis = addMF(fis,'dDuty','constant', 15,'Name','Big_Increase');
+
 %% 5. Rule Base
-% Format:
-% [dV  dI  Vpv  dDuty  weight]
-%
-% dV,dI: 1=Neg 2=Zero 3=Pos
-% Vpv:   1=Low 2=Normal 3=High
-% dDuty: 1=BigDec 2=Dec 3=Hold 4=Inc 5=BigInc
+% [dV, dI, V_pv, Output, Weight, AND/OR]
+ruleList = [];
 
-ruleList = [
+% --- GROUP A: SAFETY (Speed) ---
+ruleList = [ruleList; 
+    0 0 1 1 1 1]; % V=Low  -> Big_Decrease (Index 1)
+ruleList = [ruleList; 
+    0 0 3 5 1 1]; % V=High -> Big_Increase (Index 5)
 
-    % ===== VOLTAGE SUPERVISOR (OVERRIDES MPPT) =====
-    % Near Voc → pull current (increase duty)
-    0 0 3 5 1;
+% --- GROUP B: FINE TUNING (Precision) ---
+ruleList = [ruleList;
+    3 3 2 2 1 1; % Pos/Pos -> Decrease (-1)
+    3 1 2 4 1 1; % Pos/Neg -> Increase (+1)
+    1 3 2 4 1 1; % Neg/Pos -> Increase (+1)
+    1 1 2 2 1 1; % Neg/Neg -> Decrease (-1)
+    
+    % *** THE CRITICAL CHANGE IS HERE ***
+    % OLD: 2 2 2 2 1 1 (Stuck -> Perturb/Decrease)
+    % NEW: 2 2 2 3 1 1 (Stuck -> HOLD)
+    % If dV=0 and dI=0, do NOTHING. Stay there.
+    2 2 2 3 1 1; 
 
-    % Near Isc → relax load (decrease duty)
-    0 0 1 1 1;
-
-    % ===== STANDARD P&O (ONLY IN NORMAL REGION) =====
-
-    % dV↑ dI↑ → left of MPP → need higher Vpv → DECREASE duty
-    3 3 2 2 1;
-
-    % dV↑ dI↓ → passed MPP → need lower Vpv → INCREASE duty
-    3 1 2 4 1;
-
-    % dV↓ dI↑ → climbing right side → INCREASE duty
-    1 3 2 4 1;
-
-    % dV↓ dI↓ → passed MPP (left) → DECREASE duty
-    1 1 2 2 1;
-
-    % ===== DEAD ZONE / STABILITY =====
-    2 2 2 3 1;
-    2 1 2 3 1;
-    2 3 2 3 1;
-    1 2 2 3 1;
-    3 2 2 3 1;
+    2 1 2 3 1 1; % Stable  -> Hold (0)
+    2 3 2 3 1 1; % Stable  -> Hold (0)
 ];
 
 fis = addRule(fis, ruleList);
 
-%% ====================================================
-%% 6. Save FIS
-writefis(fis,'../FIS_RULES/mppt_sugeno_normalized.fis');
-fprintf('Normalized MPPT FIS created successfully.\n');
-
-%% ====================================================
-%% 7. Visualization (Normal Voltage Region)
-figure;
-gensurf(fis,[1 2],1,[0.35 0.85]);
-title('Normalized MPPT Control Surface (Vpv Normal)');
-xlabel('dV_pu'); ylabel('dI_pu'); zlabel('dDuty');
+%% 6. Write to File
+writefis(fis, '../FIS_RULES/mppt_sugeno.fis');
+fprintf('Success: Perturb rule disabled. Controller will now HOLD at the peak.\n');
