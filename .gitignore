@@ -21,3 +21,4 @@ Block_Designs/slprj/
 # Add this to your .gitignore file
 *.slxc
 slprj/
+Block_Designs/mppt.slx.autosave
