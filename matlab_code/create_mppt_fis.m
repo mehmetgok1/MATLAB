@@ -73,8 +73,8 @@ ruleList = [ruleList;
     % If dV=0 and dI=0, do NOTHING. Stay there.
     2 2 2 3 1 1; 
 
-    2 1 2 3 1 1; % Stable  -> Hold (0)
-    2 3 2 3 1 1; % Stable  -> Hold (0)
+    2 1 2 3 1 1; % Stable  -> Hold (0)  //The "Shock Absorber" (The Filter Effect) ; The "Ocean" Analogy (The Battery Effect)
+    2 3 2 3 1 1; % Stable  -> Hold (0)  //same effect as above, battery huge cap voltage can be constant and current can wiggle
 ];
 
 fis = addRule(fis, ruleList);

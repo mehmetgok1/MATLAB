@@ -46,7 +46,7 @@ sampling = 20e3;     % 20 kHz
 
 
 %% Sim time
-Sim_Time = 0.1; % Seconds
+Sim_Time = 0.6; % Seconds
 %% Frequency and Sampling Specs
 %buck_freq=1e5;
 %sampling=1e6;
