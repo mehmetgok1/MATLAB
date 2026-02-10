@@ -1,0 +1,78 @@
+`include "disciplines.vams"
+`include "constants.vams"
+
+module pv_model (irradiance, temperatur, p, n);
+    // --- Interface ---
+    inout p, n;
+    input irradiance, temperatur;
+    electrical p, n, irradiance, temperatur;
+
+    // --- Parameters (From your A10Green Screenshot) ---
+    parameter real Ns_mod   = 1;            // Number of modules in series
+    parameter real Np_mod   = 1;            // Number of parallel strings
+    parameter real N_cell   = 60;           // Cells per module
+    
+    // The "Gray Box" parameters from Simulink
+    parameter real IL_ref   = 8.2383;       // Light-generated current (A)
+    parameter real I0_ref   = 2.8335e-10;   // Diode saturation current (A)
+    parameter real n_id     = 0.98962;      // Diode ideality factor
+    parameter real Rs_ref   = 0.25811;      // Series resistance (Ohms)
+    parameter real Rsh_ref  = 196.9278;     // Shunt resistance (Ohms)
+    
+    // Temperature Coefficients
+    parameter real alpha_Isc = 0.00096999;  // Temp coeff for Isc (A/degC)
+                                            // Note: usually this is %/C in datasheet 
+                                            // but A/C in this equation form.
+                                            // 0.096% of 8.23A is ~0.0079 A/C. 
+                                            // Your code used 0.00097, checking unit is wise.
+    
+    // Constants
+    parameter real Tref     = 25.0;         // Reference Temp (C)
+    parameter real q        = `P_Q;
+    parameter real k        = `P_K;
+    parameter real Eg       = 1.12;         // Bandgap energy (eV) for Silicon
+
+    // Internal variables
+    real Tc_degC, Tc_K, Tref_K;
+    real G_suns;
+    real IL, I0, Vt, Rs, Rsh;
+    real V_diode;
+
+    analog begin
+        // --- 1. Read Inputs ---
+        // Assumption: Irradiance input is 0V to 1V (representing 0 to 1000 W/m2)
+        // If your input is actually 1000V for 1000W/m2, remove the "* 1000" below.
+        G_suns  = V(irradiance);  // "1.0" means 1 Sun (1000 W/m2)
+        Tc_degC = V(temperatur);  // Input is directly in Celsius
+        Tc_K    = Tc_degC + 273.15;
+        Tref_K  = Tref + 273.15;
+
+        // --- 2. Temperature & Irradiance Scaling ---
+        // Calculate Thermal Voltage for the whole array
+        Vt = (N_cell * Ns_mod * k * Tc_K / q) * n_id;
+
+        // Adjust Photocurrent (IL) for Irradiance and Temp
+        IL = (IL_ref + alpha_Isc * (Tc_degC - Tref)) * G_suns;
+
+        // Adjust Saturation Current (I0) for Temp
+        // This is the standard equation for I0 temp dependence
+        I0 = I0_ref * pow((Tc_K / Tref_K), 3.0) * limexp((q * Eg / (n_id * k)) * (1/Tref_K - 1/Tc_K));
+        
+        // Scale Resistances
+        Rs  = Rs_ref * Ns_mod / Np_mod;
+        Rsh = Rsh_ref * Ns_mod / Np_mod;
+
+        // --- 3. The Implicit Solver (The "Fix") ---
+        // Instead of calculating "Vd = ...", we define the voltage across the diode 
+        // using the node voltages and the current flowing through the branch.
+        // V_diode = V(p,n) + I(p,n) * Rs
+        V_diode = V(p, n) - I(p, n) * Rs;
+
+        // OLD (Consumes Power / Load):
+		// I(p, n) <+ (IL * Np_mod) - (I0 * Np_mod * (limexp(V_diode / Vt) - 1)) - (V_diode / Rsh);
+
+		// NEW (Generates Power / Source):
+		// We flip the signs: Diode and Shunt are positive (losses), IL is negative (source).
+		I(p, n) <+ (I0 * Np_mod * (limexp(V_diode / Vt) - 1)) + (V_diode / Rsh) - (IL * Np_mod);;
+    	end
+endmodule
