@@ -1,0 +1,15 @@
+# LaTeX build folder
+build/
+
+# Common LaTeX temporary files
+*.aux
+*.log
+*.out
+*.toc
+*.pdf
+*.gz
+*.fdb_latexmk
+*.fls
+
+# MATLAB temporary files
+*.asv
