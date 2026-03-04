@@ -25,7 +25,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 
-% SystemVerilog Definition (Keep your existing one)
+% SystemVerilog Definition
 \lstdefinelanguage{SystemVerilog}[]{Verilog}{
   morekeywords={logic, always_ff, always_comb, always_latch, byte, shortint, int, longint, integer, time, bit, reg, enum, struct, union, interface, modport, package, import, export, program, property, sequence, assert, config, design, clocking, default, disable, endclocking, endconfig, endgroup, endinterface, endmodule, endpackage, endprimitive, endprogram, endproperty, endsequence, endtable, expect, generate, join_any, join_none, local, matches, pure, solve, super, this, virtual, wait_order, within, signed},
 }
@@ -35,18 +35,28 @@
   morekeywords={analog, discipline, electrical, voltage, current, ground, transition, laplace_nd, idt, ddt, white_noise, flicker_noise, analysis, cross, above, timer, initial_step, final_step},
 }
 
+% MATLAB Definition
+\lstdefinelanguage{MATLAB}{
+  morekeywords={break,case,catch,classdef,continue,else,elseif,end,for,function,global,if,otherwise,parfor,persistent,return,spmd,switch,try,while},
+  sensitive=true,
+  morecomment=[l]{\%},
+  morecomment=[s]{\%\{}{\%\}},
+  morestring=[m]',
+}
+
 \lstset{
     extendedchars=true,
     literate={Σ}{{$\Sigma$}}1 {Δ}{{$\Delta$}}1 {μ}{{$\mu$}}1 {°}{{$^\circ$}}1,
     basicstyle=\small\ttfamily,
     keywordstyle=\color{black}\bfseries, 
     commentstyle=\color{gray}\itshape,
+    stringstyle=\color{black}, % Added to ensure MATLAB strings look clean
     numbers=none,
     frame=none,
     breaklines=true,
     xleftmargin=1.5em,
+    showstringspaces=false, % Keeps MATLAB strings from having visible space symbols
 }
-%%mehmet added
 
 \interdisplaylinepenalty=2500
 \hyphenation{lists} \makeatletter
@@ -498,7 +508,7 @@ The SystemVerilog implementation, provided below, includes saturation logic to c
 
 \lstinputlisting[caption={Duty Integrator SystemVerilog Implementation}, label={code:duty_int}]{systemverilogcode/duty_integrator.sv}
 
-It is important to note that the SystemVerilog code snippets provided in this section primarily serve to demonstrate the functional behavior and the algorithmic logic of the controller within the Cadence simulation environment. Direct implementation of arithmetic operations such as division---used here for the center-of-gravity defuzzification---can consume excessive logic resources and timing budget during synthesis. In a practical hardware implementation, these operations are often optimized or approximated using shifts, look-up tables, or specific architectural constraints to minimize area and power. Further details on the optimized digital implementation and synthesis considerations are discussed in Chapter \ref{chapter:implementation}.
+It is important to note that the SystemVerilog code snippets provided in this section primarily serve to demonstrate the functional behavior and the algorithmic logic of the controller within the Cadence simulation environment. Direct implementation of arithmetic operations such as division---used here for the center-of-gravity defuzzification---can consume excessive logic resources and timing budget during synthesis. In a practical hardware implementation, these operations are often optimized or approximated using shifts, look-up tables, or specific architectural constraints to minimize area and power. Further details on the optimized digital implementation and synthesis considerations are discussed in Chapter \ref{chapter:digital_impl}.
 
 \section{Simulation Results}
 \label{sec:sv_simulation_results}
@@ -563,13 +573,10 @@ To ensure precise tracking and stable operation, the system is decomposed into t
     \end{itemize}
 \end{itemize}
 
-\chapter{BLOCK IMPLEMENTATIONS}
-\label{chapter:implementation}
+\chapter{ANALOG IMPLEMENTATION}
+\label{chapter:analog_impl}
 
-\section{Analog Implementation}
-\label{sec:impl_analog}
-
-\subsection{ADC}
+\section{ADC}
 The analog-to-digital converter (ADC) is a critical component in the mixed-signal feedback loop, responsible for digitizing the PV voltage and current for the digital controller. For this system, a fully differential 12-bit Successive Approximation Register (SAR) ADC was chosen due to its excellent power efficiency and suitability for medium-speed, high-resolution applications. The fully differential architecture offers superior noise immunity, rejecting common-mode noise which is prevalent in switching power converter environments.
 
 The ADC operates asynchronously, meaning the internal bit-cycling is triggered by the completion of the previous bit decision rather than a high-speed external clock. This simplifies the clocking requirements of the system.
@@ -578,43 +585,312 @@ Figure \ref{fig:adc_arch} illustrates the top-level architecture of the implemen
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/SARADC.drawio.png}
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/SARADC.drawio.png}
     \caption{Fully Differential 12-bit Asynchronous SAR ADC Architecture.}
     \label{fig:adc_arch}
 \end{figure}
 
 To achieve the required linearity and speed, the ADC is composed of several critical sub-blocks, which are analyzed in detail in the following sections:
 
-\subsubsection{CapDAC}
+\subsection{Sample and Hold Switch}
+The Sample and Hold (S/H) switch is the front-end of the ADC, responsible for acquiring the analog input signal onto the CapDAC array. To achieve high linearity over a wide input common-mode range, a bootstrapped switch topology is employed. The design is based on the well-known bootstrapped switch architecture proposed by Razavi \cite{Razavi2015}, which ensures a constant gate-to-source voltage ($V_{gs}$) for the main sampling transistor. This minimizes signal-dependent charge injection and maintains a low, constant on-resistance, which is critical for achieving 12-bit linearity.
 
-\subsubsection{Sample and Hold Switch}
+To further enhance robustness, the bulk connections of the transistors are critical. The final implementation of the switch is shown in Figure \ref{fig:sh_switch}. The design of such high-performance switches is a well-studied area in CMOS analog design \cite{Abo1999, Razavi2015}.
 
-\subsubsection{Preamplifier}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/cadence_implement/ADC/sh/shswitch.png}
+    \caption{Bootstrapped Sample and Hold Switch Implementation.}
+    \label{fig:sh_switch}
+\end{figure}
 
-\subsubsection{Comparator}
+The parasitic capacitance on the switching node was calculated as 60 fF in the typical process corner. Consequently, a 500 fF bootstrap capacitor was selected. Although this results in a gate-source voltage ($V_{gs}$) drop of approximately 10\% due to charge sharing, the resulting on-resistance of the MOSFET is still sufficiently low to charge the $\sim$25 pF sampling capacitor within the 20 kHz sampling period.
 
-\subsubsection{SAR Logic}
+Linearity is the main metric for this device, as any distortion introduced at the sampling stage directly limits the overall accuracy of the ADC. Figure \ref{fig:sh_dft} shows the 4096-point Discrete Fourier Transform (DFT) of the signal passed through the switch. The spectrum demonstrates the high linearity of the design, with harmonic components significantly suppressed relative to the fundamental tone.
 
-\subsection{DAC}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/sh/shswitchsim.png}
+    \caption{DFT of the Signal Passed Through the Sample and Hold Switch.}
+    \label{fig:sh_dft}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{Sample and Hold Switch Performance Metrics (Input: 0-5 V FS)}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Metric} & \textbf{Value} \\
+        \hline
+        THDB3 & -89.12 dB \\
+        \hline
+        SFDR & 82.2 dB \\
+        \hline
+    \end{tabular}
+    \label{tab:sh_performance}
+\end{table}
+
+\subsection{CapDAC}
+The Capacitor-DAC (CapDAC) utilizes a split-capacitor architecture to reduce the total capacitance and silicon area. Instead of a conventional $2^{12}$ unit capacitor array, the design employs a 6-bit MSB and 6-bit LSB split. Although the minimum Metal-Insulator-Metal (MIM) capacitor allowed by the PDK is 6 fF, a unit capacitor of 60 fF is used in this architecture. Following the equivalent value method described in \cite{Fan2023}, a bridge capacitor of 2C (twice the unit capacitance) was chosen, reducing the total number of unit capacitors to 128. To ensure proper binary weighting, an additional dummy capacitor is required. The calculation for this dummy capacitor was performed using the MATLAB script in Listing \ref{code:adc_split_cap}, which implements the method from \cite{Fan2023}, and resulted in a value of 62C. This configuration significantly improves the settling time and bandwidth of the ADC.
+
+\lstinputlisting[language=MATLAB, caption={Split Capacitor Array Calculation Script}, label={code:adc_split_cap}]{matlab_code/adc_split_cap.m}
+
+The linearity of the CapDAC is paramount for the overall ADC performance. The two key metrics are Differential Non-Linearity (DNL), which measures the deviation in step width from the ideal 1 LSB, and Integral Non-Linearity (INL), which is the cumulative sum of DNL errors. Figure \ref{fig:capdac_linearity} shows the simulated DNL and INL of the designed CapDAC.
+
+\begin{figure}[H]
+    \centering
+    \subfigure[DNL]{\includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/capdac/dnlsim.png}\label{fig:capdac_dnl}}
+    \vfill
+    \subfigure[INL and its derivative]{\includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/capdac/inlandderivinl.png}\label{fig:capdac_inl}}
+    \caption{CapDAC Linearity Simulation Results.}
+    \label{fig:capdac_linearity}
+\end{figure}
+
+The results shown in Figure \ref{fig:capdac_linearity} are obtained from a Monte Carlo simulation of 200 runs. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors consisting of 6 fF unit cells. Additionally, a calibration capacitance of $0.1 \times C_{unit}$ is added.
+
+\subsection{Preamplifier}
+In a high-resolution SAR ADC, the dynamic comparator can inject significant kickback noise back onto the sensitive CapDAC nodes when it fires. This charge injection can corrupt the voltage stored on the capacitor array, leading to erroneous bit decisions. To mitigate this effect and improve the overall linearity, a preamplifier is placed between the CapDAC and the comparator.
+
+The preamplifier serves two primary functions:
+\begin{enumerate}
+    \item \textbf{Isolation:} It acts as a buffer, shielding the delicate analog nodes of the CapDAC from the comparator's kickback noise.
+    \item \textbf{Gain:} It provides a moderate amount of voltage gain, amplifying the small differential voltage from the CapDAC. This relaxes the sensitivity requirements for the subsequent comparator, reducing its effective input-referred offset and noise.
+\end{enumerate}
+
+The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a fully differential amplifier that utilizes top-plate sampling. A fully differential topology is used to maintain high common-mode noise rejection throughout the signal path. To stabilize the output common-mode voltage, which is otherwise undefined in a differential amplifier, a dedicated Common-Mode Feedback (CMFB) circuit is employed. The reference voltage for the CMFB is set to VDD/2, which is generated by a simple resistive divider filtered by a capacitor to reduce noise; this VDD/2 reference will also be used by the top-plate biasing LDO. The CMFB circuit senses the average output voltage, compares it to this reference, and adjusts the gate voltage of the PMOS load transistors to maintain a stable DC operating point.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/cadence_implement/ADC/preamp/preamp.png}
+    \caption{Fully Differential Preamplifier with CMFB Circuit.}
+    \label{fig:preamp_schematic}
+\end{figure}
+
+\subsubsection{Simulation Results}
+The performance of the preamplifier was verified through extensive simulations. The key metrics evaluated include differential and common-mode stability, input-referred offset, and noise performance.
+
+\paragraph{CMFB Stability Analysis}
+Ensuring stability is crucial for the preamplifier. The primary concern is the stability of the Common-Mode Feedback (CMFB) loop, which must be analyzed to prevent oscillations and ensure a stable output common-mode level.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/preamp/cmfb_stb.png}
+    \caption{CMFB Loop Stability Simulation.}
+    \label{fig:preamp_cmfb_stb}
+\end{figure}
+
+\paragraph{Common Mode Voltage}
+The output common-mode voltage is maintained by the CMFB loop. Figure \ref{fig:preamp_cm_hist} shows the Monte Carlo simulation results for the output common-mode voltage, demonstrating the effectiveness of the CMFB circuit across variations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/preamp/cm_v_hist.png}
+    \caption{Output Common Mode Voltage Monte Carlo Simulation.}
+    \label{fig:preamp_cm_hist}
+\end{figure}
+
+\paragraph{DIFF OPEN LOOP Analysis}
+The open-loop differential path is also analyzed, mainly to observe its phase delay and ensure it settles quickly without excessive ringing.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/preamp/diff_open_loop.png}
+    \caption{Differential Open Loop AC Response.}
+    \label{fig:preamp_diff_open}
+\end{figure}
+
+\paragraph{Offset}
+The input-referred offset directly impacts the effective resolution of the ADC.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/preamp/offset_hist.png}
+    \caption{Input Referred Offset Monte Carlo Simulation.}
+    \label{fig:preamp_offset}
+\end{figure}
+
+\paragraph{Noise}
+The input-referred noise is another critical factor limiting the ADC's lsb resolution. The noise is integrated up to 37 MHz and calculated as 76.97 $\mu V_{rms}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/preamp/noise_sim.png}
+    \caption{Input Referred Noise Simulation.}
+    \label{fig:preamp_noise}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{Preamplifier Performance Summary}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Value} \\
+        \hline
+        Differential Gain & 38.7-41.8 dB \\
+        \hline
+        Differential Bandwidth (BW) & 1.85-3.1 MHz \\
+        \hline
+        Differential GBW & 228.8-269 MHz \\
+        \hline
+        CMFB Phase Margin & 71.7-75.43$^{\circ}$ \\
+        \hline
+        CMFB GBW & 20.1-27.6 MHz \\
+        \hline
+        Input Referred Offset ($\sigma$) & -+10 mV \\
+        \hline
+        Input Referred Noise (RMS) & 76.97 $\mu$V \\
+        \hline
+        Output Common Mode Voltage ($V_{ocm}$) & 2.45-2.55 V \\
+        \hline
+    \end{tabular}
+    \label{tab:preamp_perf}
+\end{table}
+
+\subsection{Comparator}
+The comparator is the decision-making block of the SAR ADC. To achieve high speed with zero static power consumption, a dynamic latch topology is employed. The design utilizes the StrongARM latch architecture, a widely adopted topology in low-power ADCs. The implementation incorporates the insights and modifications presented by Razavi \cite{Razavi2013} to optimize the regeneration speed and input-referred offset.
+
+\subsubsection{Offset and Noise}
+Measuring the input-referred offset is straightforward using Monte Carlo simulations to find the trip point distribution. However, for noise performance, the dynamic nature of the latch requires a specific simulation strategy. The input-referred noise was analyzed using the transient noise simulation methodology described in \cite{CadenceNoise2016}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/comparator/offset_hist.png}
+    \caption{Comparator Input Referred Offset Monte Carlo Simulation.}
+    \label{fig:comp_offset}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/comparator/noise_sim.png}
+    \caption{Comparator Input Referred Noise Simulation.}
+    \label{fig:comp_noise}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{Comparator Performance Summary}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Value} \\
+        \hline
+        Input Referred Offset ($\sigma$) & -15-12 mV \\
+        \hline
+        Input Referred Integrated Noise (RMS) & 216 $\mu$V \\
+        \hline
+    \end{tabular}
+    \label{tab:comp_perf}
+\end{table}
+
+It is important to note that these values are referred to the input of the comparator. Since they are divided by the gain of the preamplifier when referred to the ADC input, their impact on the overall system performance is significantly reduced and considered negligible.
+
+\subsection{SAR Logic}
+The Successive Approximation Register (SAR) logic is the digital core that orchestrates the binary search algorithm. To maximize operation speed and avoid the need for a high-frequency oversampling clock, the logic is implemented using an asynchronous topology. The internal state transitions are self-timed, triggered by the ready signal from the comparator rather than a global clock edge.
+
+The system operates across two voltage domains. The analog front-end, including the switches and capacitor array, operates at the 5V I/O voltage to maximize the signal-to-noise ratio. However, the complex digital logic is implemented using 1V core transistors to reduce dynamic power consumption and silicon area. Consequently, the comparator output is level-shifted down to 1V before being processed by the SAR engine. The resulting control signals are then level-shifted back up to 5V to drive the CapDAC switches.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/sar_logic/sar_logic_overview.png}
+    \caption{Asynchronous SAR Logic Overview with Level Shifters.}
+    \label{fig:sar_logic_overview}
+\end{figure}
+
+\subsubsection{Window Generator}
+The window generator is responsible for orchestrating the timing of the bit trials. It generates 12 distinct window outputs, corresponding to the 12 bits of resolution. These signals are mutually exclusive; only one window bit is high at any given instance, indicating the specific bit currently being processed. This ensures the sequential operation of the SAR algorithm.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/sar_logic/window_gen.png}
+    \caption{Window Generator Logic Implementation.}
+    \label{fig:window_gen}
+\end{figure}
+
+\subsubsection{Comparator Clock Generator}
+The comparator clock is generated asynchronously to maximize speed and eliminate the need for a high-frequency external clock. The process initiates with the sampling signal, which triggers the first clock pulse. Subsequent clock pulses are self-timed; they are generated upon the receipt of a 'valid' signal from the comparator, indicating that a decision has been made. This loop continues, generating a new clock edge for each bit trial, until the End of Conversion (EOC) signal is asserted, which inhibits further clock generation. Ideally, the EOC signal should directly reset the flip-flops to minimize power consumption, but this optimization was not implemented.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/sar_logic/comp_clk_gen.png}
+    \caption{Asynchronous Comparator Clock Generation Logic.}
+    \label{fig:comp_clk_gen}
+\end{figure}
+
+A potential enhancement for this architecture is the implementation of adaptive clock timing. Generally, the MSB capacitors in the DAC require a longer settling time compared to the LSB capacitors due to the larger voltage steps and stricter accuracy requirements. Conversely, the LSBs settle much faster. By leveraging the window bits, which track the current conversion step, the system can dynamically select different delay paths within the clock generation loop. This approach allocates more time for MSB decisions and speeds up LSB decisions, thereby optimizing the total conversion time. The bottom half of the circuit can be easily modified to implement this, but it is not necessary. To better illustrate the timing of the asynchronous operation, a simplified timing diagram is provided in Figure \ref{fig:sar_timing}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/sar_logic/timing_diagram.png}
+    \caption{Timing Diagram of the Asynchronous Operation.}
+    \label{fig:sar_timing}
+\end{figure}
+
+\subsubsection{Bit Generator}
+The bit generator controls the sequential switching of the capacitor array, moving from the MSB to the LSB. There are no special design intricacies for this block; a direct set-and-down logic is implemented.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/sar_logic/bit_gen.png}
+    \caption{Bit Generator Logic Implementation.}
+    \label{fig:bit_gen}
+\end{figure}
+
+\subsection{ADC Top-Level Performance}
+The overall performance of the 12-bit SAR ADC was evaluated, considering the impact of noise, linearity, and process variations.
+
+Given the 5V input range, the LSB size is approximately 1.22 mV. The combined input-referred noise from the preamplifier and comparator is significantly lower than the quantization noise level. Consequently, the system is not noise-limited, and the 12-bit resolution is not compromised by thermal noise.
+
+The primary source of error is the Differential Non-Linearity (DNL) arising from the split-capacitor DAC array. As previously discussed, the DNL can approach $\pm 1$ LSB. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this linearity performance is considered acceptable. Nevertheless, as a precautionary measure to further minimize DNL errors, calibration capacitances were incorporated around the bridge capacitor.
+
+Regarding the offset voltage introduced by the preamplifier and comparator, its impact on the MPPT algorithm is minimal. The system operates in a relatively slow-changing environment (solar irradiance and temperature), and the control logic relies primarily on the differential changes in voltage ($dV$) and current ($dI$) rather than absolute precision. Since the offset appears as a constant DC error across consecutive samples, it cancels out during the differential calculation, ensuring that the tracking direction remains accurate.
+
+Figure \ref{fig:adc_fft} presents the 4096-point FFT of the ADC output, illustrating the dynamic performance. The analysis was performed using a Blackman-Harris window with a sampling frequency of 20 kSPS. The input frequency was chosen as $f_{in} = \frac{2039}{4096} f_s$, placing it close to the Nyquist frequency. The input signal was a differential sinusoid with a differential peak-to-peak swing of $\pm 8$ V. For the dynamic performance calculations, the peak saturation level was set to 5 V, and the first 10 harmonics were considered.
+
+For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was utilized. The primary purpose of this analysis was to verify the functional robustness of the asynchronous logic and to confirm that process variations do not cause timing issues, rather than to obtain high-precision dynamic performance metrics. Table \ref{tab:adc_corners} summarizes the key performance metrics across different process corners.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/adc_fft.png}
+    \caption{4096-Point FFT of the ADC Output.}
+    \label{fig:adc_fft}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{ADC Performance Across Process Corners}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Corner} & \textbf{SFDR (dB)} & \textbf{SNR (dB)} & \textbf{SINAD (dB)} & \textbf{ENOB (bits)} \\
+        \hline
+        Typical (tt) & 98.12 & 72.03 & 72 & 11.99 \\
+        \hline
+        Slow-Slow (ss) & 88.18 & 68.91 & 70.53 & 11.96  \\
+        \hline
+        Fast-Fast (ff) & 87.6 & 69.36 & 70.89 & 12.02 \\
+        \hline
+    \end{tabular}
+    \label{tab:adc_corners}
+\end{table}
+
+\section{DAC}
 The digital-to-analog converter used in the system.
 % Add more details here.
 
-\subsection{LDO}
+\section{LDO}
 The Low-Dropout regulator design and implementation.
 % Add more details here.
 
-\subsection{Duty Cycle Generator}
+\section{Duty Cycle Generator}
 The circuit for generating the duty cycle for the buck converter.
 % Add more details here.
 
-\section{Digital Implementation}
-\label{sec:impl_digital}
+\chapter{DIGITAL IMPLEMENTATION}
+\label{chapter:digital_impl}
 
-\subsection{Fuzzy Logic}
+\section{Fuzzy Logic}
 A detailed description of the digital implementation of the fuzzy logic controller.
 % Add more details here.
 
-\subsection{SPI Interface}
+\section{SPI Interface}
 The implementation of the Serial Peripheral Interface (SPI) for communication will be detailed here.
 % Add more details here.
 
