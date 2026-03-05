@@ -335,14 +335,14 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy Logic Rules for Optimal Range}
+    \caption{Fuzzy Logic Rules for Optimal Range (Updated to Match FIS)}
     \begin{tabular}{|c|c|c|c|}
         \hline
         \diagbox{$dI$}{$dV$} & \textbf{Negative} & \textbf{Zero} & \textbf{Positive} \\
         \hline
         \textbf{Negative} & \texttt{Decrease} & \texttt{Hold} & \texttt{Increase} \\
         \hline
-        \textbf{Zero} & Not Defined & \texttt{Hold} & Not Defined \\
+        \textbf{Zero} & \texttt{Hold} & \texttt{Hold} & \texttt{Hold} \\
         \hline
         \textbf{Positive} & \texttt{Increase} & \texttt{Hold} & \texttt{Decrease} \\
         \hline
