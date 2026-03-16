@@ -1,0 +1,138 @@
+We regret to inform you that your paper number 7379, entitled
+
+Fuzzy Logic-Based MPPT with Advanced Buck Converter Modeling for PV Battery Chargers,
+
+has not been accepted for presentation at the 2025 edition of the International Conference on Synthesis, Modeling, Analysis and Simulation Methods and Applications to Circuit Design (SMACD 2025), nor for inclusion in the conference proceedings.
+
+We appreciate the time and effort you invested in preparing and submitting your work to SMACD 2025. The review process was highly competitive, and unfortunately, we could not accommodate all submissions.
+
+The reviews of your paper are attached to this notification. We hope you find the feedback valuable for improving your work and for future submissions.
+
+We thank you again for considering SMACD 2025 and encourage you to submit to future editions of the conference.
+
+With best regards,
+SMACD 2025 Program Committee
+
+
+SUBMISSION: 7379
+TITLE: Fuzzy Logic-Based MPPT with Advanced Buck Converter Modeling for PV Battery Chargers
+
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 7379
+TITLE: Fuzzy Logic-Based MPPT with Advanced Buck Converter Modeling for PV Battery Chargers
+AUTHORS: Mehmet Gök, Kemal Ozanoglu and Gunhan Dundar
+
+----------- Overall evaluation -----------
+SCORE: 1 (weak accept)
+----- TEXT:
+The paper proposes a fuzzy logic controller-based MPPT algorithm integrated with an advanced synchronous buck converter model, also addressing addresses the key nonlinearities and uncertainties typical in real-world PV systems.
+The modeling and simulation are verified in MATLAB/Simulink. However, the paper doesn't provide experimental validation or hardware implementation.. Efficiency and power losses analysis are missing.
+Some references in the text to figures or tables (e.g., Table ?? on page 3) appear incomplete.
+Crucial considerations:
+- have the AUthors tried to implement quantitative comparison with other MPPT methods?
+- how do the Authros plan to integrate the prospective IC implementation in a real commercial PV battery system?
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 7379
+TITLE: Fuzzy Logic-Based MPPT with Advanced Buck Converter Modeling for PV Battery Chargers
+AUTHORS: Mehmet Gök, Kemal Ozanoglu and Gunhan Dundar
+
+----------- Overall evaluation -----------
+SCORE: 0 (borderline paper)
+----- TEXT:
+The paper discusses a topic of great interest, regarding the Maximum Power Point Tracking in PV systems. Unfortunately, there are several points that make the paper quite weak for the presentation as is in the conference. In the following, the comments.
+
+Minor comments
+
+1) what is the battery voltage? 12V?
+
+2) page 2, left column, section II, sub-section A.2): how is the efficiency of the PV system defined?
+
+3) page 3, left column, section II, sub-section B.1): “Table ??” should be “Table I”.
+
+Major comments
+
+1) which are the characteristics of the buck converter? which are power MOSFETs, gate driver settings, power inductor, power capacitors, and switching frequency? how have these components been selected?…the efficiency of the buck converter strongly depends on power components and operating conditions. The components must be selected to fit the voltage and current characterizing the operating cycle of the PV system in order to achieve the best efficieny performance.
+
+Please add information and discussion
+
+2) the statement on page 2, left column, section II, sub-section A.1) “… Beyond this point, further increases in the duty cycle lead to a decrease in output current due to non-ideal effects such as switching losses and inductor saturation, as given in Figure 3.” looks not convincing. If the plot of Fig.3 provides the output current of the buck converter fed by the PV panel 6MN6A280 and loaded by a 12V battery, then the increase of the buck duty-cycle involves a decrease of the PV panel voltage. Therefore, the output current peak observed in Fig.3 around D=0.55 seems to correspond to the maximum power point of the PV panel. The output current decrease observed while the duty increases after that peak looks more realistically and mainly due to the decrease of the PV panel output power, rather than to "non-ideal effects such as switching losses and inductor saturation".
+
+Please verify and clarify
+
+3) page 2, left column, section II, sub-section A.2): the statement “Beyond this point, efficiency decreases due to increased losses in the converter.” looks not convincing for the same reason given above in comment 2).
+
+Please verify and clarify
+
+4) page 2, right column, section II, subsection A.3): the following statements “At low duty cycles, the converter efficiency is low due to high conduction losses. As the duty cycle increases, the efficiency improves, reaching a maximum at the optimal duty cycle, as given in Figure 5. Beyond this point, switching losses and inductor core losses dominate, leading to a decrease in efficiency.” look not convincing. Indeed, ad low duty-cycle, the PV panel works at high-voltage/low-current behind the MPP, so that conduction losses are lower compared to high duty-cycle operation, corresponding to low voltage/high-current PV operation beyond MPP.
+
+Please verify and clarify
+
+5) page 4, left column, section III: the plots of Fig.9 is not consistent with the following introducing statements of section III “The performance of the proposed Fuzzy Logic-based Maximum Power Point Tracking (MPPT) system is rigorously evaluated through comprehensive simulations under dynamically changing solar irradiation conditions. The system is specifically designed to maintain stable operation and accurately track the maximum power point (MPP) even in the presence of significant variations in irradiation levels. This section presents detailed transient simulation results, highlighting the system’s robustness and adaptability to fluctuating environmental conditions.”. The plots pf PV efficiency and converter efficiency of Fig.9 do not allow reading the local values of the efficiency, which looks flattened to 100%. The plot of the output current shows a transition time between the different levels corresponding to different irradiance. During this time, what the P V panel power is? No information is given on the PV panel model and power converter loss model used, nor the simulation results show the most important information: the trajectory of the operating point of the panel, proving how it tracks the MPP during irradiation changes (by the waym, these look step-wise in Fig.9, never happening in reality).
+
+Please provide more useful results and discussion
+
+6) page 4, left column, section III: these statements “The simulation result given by Figure 9 underscores the effectiveness and robustness of the proposed Fuzzy Logic based MPPT system. The system not only tracks the MPP with high accuracy but also adapts seamlessly to sudden changes in solar irradiation. This adaptability is critical for real-world applications, where environmental conditions can vary rapidly and unpredictably. The ability to maintain stable operation under such conditions highlights the practical viability of the proposed system for use in photovoltaic battery charging applications.” are not proved at all. The most important question to answer is: which are the improvements of the proposed fuzzy-logic approach compared to the traditional MPPT methods, such as Perturb and Observe (P&O), which are claimed to “suffer from inefficiencies due to their sensitivity to rapid fluctuations in solar irradiation.” in the section I? The literature of power elec tronics if full of studies proving that a P&O control can be very high efficient if the control parameters are correctly set. To claim a new method is better that P&O it is very opportune to prove that this is true by means of fair and very well documented technical comparisons.
+
+Please provide more useful results and discussion
+
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 7379
+TITLE: Fuzzy Logic-Based MPPT with Advanced Buck Converter Modeling for PV Battery Chargers
+AUTHORS: Mehmet Gök, Kemal Ozanoglu and Gunhan Dundar
+
+----------- Overall evaluation -----------
+SCORE: -1 (weak reject)
+----- TEXT:
+General:
+It appears that different paragraphs have been written by different people, I would recommend a review to bring a bit of consistency in the style
+
+
+Abstract
+“…photovoltaic (PV) battery charging systems…”  PhotoVoltaic?
+
+Introduction
+“To address these limitations, this work presents an enhanced buck converter model in Simulink that incorporates a more realistic switching representation incorporating synchronous switching, resulting in improved efficiency and more accurate MPPT performance.” Incorporate is used twice in the same sentence
+
+“Fig. 1. Simplified schematic of the advanced buck converter used in PV battery charging systems.” More than a schematic this is a block diagram
+
+Usually at the end of the first paragraph you give a short summary on how the paper is further organized, although not essential.
+
+Paragraph II
+
+“The solar panel is chosen for our work is model 6MN6A280 from Ablytek…”  The solar panel that is chosen for our work is the 6MN6A280  model from Ablytek….
+Is the solar panel what is called PV module in Fig.1?
+
+“The solar panel is chosen for our work is model 6MN6A280 from Ablytek with non-ideal characteristics, such as varying input conditions.” What varying input conditions mean? Solar intensity? Temperature? Else?
+
+“…level required by the battery while maintaining high efficiency” what sort of battery are being considered? Li-Ion? Pb? Else?
+
+“The design of the buck converter is optimized to operate at its maximum efficiency point, ensuring minimal power loss during the conversion process.” This sentence is already repeated in the following paragraph.
+
+
+“Beyond this point, further increases in the duty cycle lead to a decrease in output current due to non-ideal effects such as switching losses and inductor saturation, as given in Figure 3”
+Are we sure that the saturation (at very high duty cycle Vout ~Vin and the ripple current reduces, in my opinion) and switching losses are to blame? To me if VIN drops, then the resistive losses are higher hence the Iout is lower. If there is any other reason, please state.
+
+
+Figure 3. why the Duty Cycle range is 45% to 80% only? Is this the only range of operation of the buck when in synchronous mode?
+
+Figure 4:  the way I interpret the increase of duty cycle between 45% and 55% is because at fix Vout the Vin is high hence the conductions losses are higher. If the reason is different, please state it.
+
+“, as given in Figure 5. Beyond this point, switching losses and inductor core losses dominate, leading to a decrease in efficiency” it would be good to add in this paper some equation of losses dependent on frequency or resistance to demonstrate the statements made.
+
+“…5x5 fuzzy rule table, given by Table ??, that …” the table reference number is missing, I assume is TABLE I
+
+
+“If ∆P is Positive Small (PS) and ∆V is Zero (Z), then the output is Positive Small (PS).” The table I for this combination shows actually that is a “Z”
+
+
+Paragraph III
+
+Figure 9. you should report the duty cycle as well and it is nearly impossible that your efficiency is 100% for the converter.  Also, what are the conditions here considered? I assume VIN does not remain constant over different solar irradiation levels
+
+
