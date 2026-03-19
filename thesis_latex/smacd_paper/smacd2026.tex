@@ -31,15 +31,21 @@
 
 \begin{document}
 
-\title{Fuzzy Logic-Based MPPT for PV Battery Charger using 3 Input Parameters}
+\title{Hardware-Efficient Three-Input Fuzzy MPPT for PV Battery Charger ICs}
 
 \author{\IEEEauthorblockN{Mehmet Gök, Kemal Ozanoglu, and Günhan Dündar}
-\IEEEauthorblockA{\small{Department of Electrical and Electronics Engineering, Bogazici University}}
+\IEEEauthorblockA{\small{Department of Electrical and Electronics Engineering, Bogazici University, Istanbul, Türkiye}}
 }
 \maketitle
 
 \begin{abstract}
-This paper presents a fuzzy logic controller for a PV battery charger buck converter with modeling considered in an ASIC-oriented way using three input parameters: change in PV voltage ($\Delta V_{pv}$), change in output current ($\Delta I_{out}$), and PV voltage itself ($V_{pv}$). The approach avoids complex multiplication operations inherent in traditional MPPT algorithms. Simulation results validate the effectiveness of the proposed method under dynamic environmental conditions.
+Maximizing power extraction from photovoltaic (PV) arrays under dynamically changing environmental conditions is a critical challenge in renewable energy systems. Specifically for PV battery charging applications, conventional Maximum Power Point Tracking (MPPT) algorithms often struggle with slow transient responses and steady-state oscillations. To address these limitations, this paper presents an ASIC-oriented fuzzy logic controller modeled in MATLAB/Simulink that utilizes three input parameters: change in PV voltage ($\Delta V_{pv}$), change in output current ($\Delta I_{out}$), and absolute PV voltage ($V_{pv}$). The proposed architecture is designed to eliminate complex hardware multipliers and dividers by proposing the use of simple look-up tables and bitwise shift operations, making it highly suitable for low-cost integrated circuit implementations. 
+Simulation results demonstrate the robustness of the proposed method, achieving a steady-state PV tracking efficiency exceeding 99\% and a buck converter power conversion efficiency of approximately 95\%. 
+Furthermore, the system exhibits rapid transient recovery within milliseconds during sudden irradiance drops, ensuring stable and highly efficient energy transfer.
+
+Simulation results confirm the effectiveness of the proposed method, achieving over 99\% steady-state PV tracking efficiency and around 95\% buck converter efficiency. The system exhibits rapid transient recovery within milliseconds under sudden irradiance changes, ensuring stable and efficient operation. The results demonstrate that the proposed hardware-efficient fuzzy MPPT achieves near-optimal performance with significantly reduced implementation complexity, making it highly suitable for fully integrated PV power management ICs.
+
+
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -48,9 +54,15 @@ Fuzzy Logic Control, Maximum Power Point Tracking (MPPT), Photovoltaic (PV) Syst
 
 \section{Introduction}
 \label{sec:intro}
-The integration of renewable energy sources, particularly photovoltaic (PV) systems, has become increasingly critical for sustainable power generation worldwide. 
-Maximizing power extraction from PV arrays under varying environmental conditions remains a fundamental challenge.
-The overall system overview is presented below.
+The integration of renewable energy sources, particularly photovoltaic (PV) systems, has become increasingly critical for sustainable power generation worldwide. However, the power output of PV arrays is inherently non-linear and heavily dependent on dynamic environmental conditions such as solar irradiance and temperature. 
+
+To maximize energy extraction under these varying conditions, Maximum Power Point Tracking (MPPT) algorithms are employed. The primary benefit of an effective MPPT system in PV battery chargers is the assurance of optimal power transfer, which significantly reduces energy waste, accelerates charging times, and improves the overall system efficiency. 
+
+In this work, we present an ASIC-oriented, three-input fuzzy logic MPPT controller, validated at the system level in MATLAB/Simulink. The proposed architecture achieves accurate and fast tracking by evaluating the change in PV voltage, change in output current, and absolute PV voltage. To pave the way for future low-cost integrated circuit design, we propose a hardware-friendly algorithmic mapping designed to avoid complex arithmetic operations. In the proposed hardware implementation, standard multipliers and dividers will be replaced with simple look-up tables and bitwise shift approximations. The overall system overview is illustrated in Figure \ref{fig:system_overview}.
+
+In the broader context of MPPT, conventional algorithms such as Perturb and Observe (P\&O) and Incremental Conductance (IC) are widely utilized \cite{po_ic}. The IC algorithm, for example, locates the MPP by evaluating the instantaneous and incremental conductance based on the slope of the power-voltage curve, effectively balancing tracking speed with steady-state accuracy. To address rapidly changing atmospheric conditions, these traditional methods are frequently augmented with variable step-sizes or intelligent control techniques, including neural networks and fuzzy logic \cite{fuzzy_review}. While this paper does not present a direct quantitative comparison against these baseline techniques, it builds upon the inherent strengths of fuzzy logic by introducing an algorithmic mapping specifically optimized to reduce computational complexity for future hardware integration.
+
+The paper is organized as follows: Section \ref{sec:pv} describes the PV model, Section \ref{sec:architecture} details the system architecture, Section \ref{sec:results} presents the results, and Section \ref{sec:conclusion} concludes.
 
 \begin{figure}[ht]
 \centering
@@ -64,25 +76,24 @@ The overall system overview is presented below.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.8\columnwidth]{./images/matlab/pv_IV&powercurves.jpg}
-\caption{I-V and power characteristics of the photovoltaic panel under various irradiation and temperature conditions.}
+\includegraphics[width=0.95\columnwidth]{./images/matlab/pv_IV&powercurves.jpg}
+\caption{I-V and power characteristics of the photovoltaic panel under various irradiance conditions.}
 \label{fig:pv_curves}
 \end{figure}
 
-The I-V and power characteristics of the PV panel under various environmental conditions are shown in Figure \ref{fig:pv_curves}. As can be observed from the curves, despite significant variations in solar irradiance and temperature, the voltage corresponding to the Maximum Power Point (MPP) is generally confined to a relatively specific and narrow range. However, the exact MPP constantly shifts, requiring an active tracking mechanism. To effectively track this optimal point, the controller dynamically adjusts the duty cycle of the converter, thereby modulating the equivalent impedance seen by the PV panel. For instance, when the controller detects that both the PV voltage and current are increasing, the duty cycle needs to be reduced to pull the operating point closer to the new MPP. Conversely, if the PV voltage is increasing while the current is decreasing, it indicates a shift away from the optimal point on the P-V curve, and the duty cycle should be increased to steer the system continuously toward the MPP. A detailed explanation of the inference mechanism will be shared in Section \ref{subsec:fuzzy_controller}.
+The I-V and power characteristics of the PV panel under various environmental conditions, modeled using the methodology described by De Soto et al. \cite{DeSoto2006}, are shown in Figure \ref{fig:pv_curves}. As can be observed from the curves, despite significant variations in solar irradiance, the voltage corresponding to the Maximum Power Point (MPP) is generally confined to a relatively specific and narrow range. However, the exact MPP constantly shifts, requiring an active tracking mechanism. To effectively track this optimal point, the controller dynamically adjusts the duty cycle of the converter, thereby modulating the equivalent impedance seen by the PV panel. For instance, when the controller detects that both the PV voltage and current are increasing, the duty cycle needs to be reduced to pull the operating point closer to the new MPP. Conversely, if the PV voltage is increasing while the current is decreasing, it indicates a shift away from the optimal point on the P-V curve, and the duty cycle should be increased to steer the system continuously toward the MPP. A detailed explanation of the inference mechanism will be shared in Section \ref{subsec:fuzzy_controller}.
 
 \section{System Architecture}
 \label{sec:architecture}
 
-MATLAB Simulink is chosen as the simulation environment for implementing and validating the proposed fuzzy logic-based MPPT controller.
-The simulation environment can be seen in Figure \ref{fig:matlab_overview}.
+MATLAB/Simulink is chosen as the simulation environment for implementing and validating the proposed system (Figure \ref{fig:matlab_overview}).
 
-\begin{figure*}[t]
+\begin{figure}[ht]
 \centering
-\includegraphics[width=0.9\textwidth]{./images/matlab/matlab_model_overview.png}
+\includegraphics[width=\columnwidth]{./images/matlab/matlab_model_overview.png}
 \caption{Simulink model overview of the proposed fuzzy logic-based MPPT system for PV battery charger.}
 \label{fig:matlab_overview}
-\end{figure*}
+\end{figure}
 
 \subsection{Buck Converter}
 \label{subsec:buck_converter}
@@ -90,7 +101,7 @@ The simulation environment can be seen in Figure \ref{fig:matlab_overview}.
 \subsubsection{Buck Converter Specifications}
 \label{subsec:buck_specs}
 
-The specifications of the buck converter used in the PV battery charging system are obtained using references \cite{EricksonBook,RashidBook,TIReport} and are presented in Table \ref{tab:buck_converter_specs}. These parameters are optimized for efficient power conversion from the PV panel to the battery.
+The buck converter specifications, derived from \cite{EricksonBook,RashidBook,TIReport} and optimized for efficient power conversion, are presented in Table \ref{tab:buck_converter_specs}. Parasitics of passive components are excluded in this system-level model.
 
 \begin{table}[ht]
 \centering
@@ -119,8 +130,6 @@ Diode Forward Voltage & $V_f$ & 0.5 V \\
 \end{tabular}
 \end{table}
 
-Note: The parasitics of passive components such as inductor and capacitor are not included in the model.
-
 \subsection{Fuzzy Logic Controller}
 \label{subsec:fuzzy_controller}
 
@@ -138,14 +147,7 @@ The diagram is shown in Figure \ref{fig:fuzzy_diagram}.
 \subsubsection{Sampling \& Fuzzification}
 In this phase, the three input parameters are sampled at the defined sampling frequency ($f_{sample} = 20$ kHz) using a 10-bit ADC for analog-to-digital converter. The first two parameters ($\Delta V_{pv}$ and $\Delta I_{out}$) are converted to digital form and their differences with previous sampled values are computed. The third parameter ($V_{pv}$) is taken directly without computing differences. These digital codes are then given to the inference part.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.8\columnwidth]{./images/matlab/line.png}
-\caption{Linear segment used for membership degree calculation.}
-\label{fig:membership_line}
-\end{figure}
-
-As illustrated in Figure \ref{fig:membership_line}, the degree of membership is determined by mapping the crisp digital input onto the corresponding linear segment of the membership function. The membership value, which ranges from 0 to 255, is extracted using linear interpolation between the defined vertices of the fuzzy set. To avoid complex division operations and maintain an ASIC-friendly architecture, the interpolation fraction is approximated by rounding the denominator from 2046 to 2048 ($2^{11}$). This simplifies the calculation into a highly efficient bitwise right-shift ($\gg$) and addition:
+The degree of membership is determined by mapping the crisp digital input onto the corresponding linear segment of the membership function. The membership value, which ranges from 0 to 255, is extracted using linear interpolation between the defined vertices of the fuzzy set. To avoid complex division operations and maintain an ASIC-friendly architecture, it is proposed to approximate the interpolation fraction by rounding the denominator from 2046 to 2048 ($2^{11}$). For future hardware implementation, this enables the calculation to be simplified into a highly efficient bitwise right-shift ($\gg$) and addition:
 
 \begin{equation}
     b = \frac{(a + 1023) \times 256}{2046} \approx (a \gg 3) + 128
@@ -154,9 +156,9 @@ As illustrated in Figure \ref{fig:membership_line}, the degree of membership is 
 where $a$ represents the crisp digital input and $b$ represents the resulting 8-bit membership value.
 
 \subsubsection{Inference}
-The inference phase continuously evaluates a set of IF-THEN rules based on the three linguistic input variables: $\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$, using the \texttt{min} operator for the logical AND operation to determine the firing strength of each rule. The absolute PV voltage ($V_{pv}$) acts as a primary safety and reference parameter, aggressively steering the system with large steps when operating far from the MPP voltage range (Table \ref{tab:fuzzy_rules_safety}). When the voltage is within the optimal range, the controller uses the variations in voltage and current to precisely adjust the duty cycle, as defined in Table \ref{tab:fuzzy_rules_optimal}.
+The inference phase continuously evaluates a set of IF-THEN rules based on the three linguistic input variables: $\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$, using the \texttt{min} operator for the logical AND operation to determine the firing strength of each rule. In a standard three-input fuzzy system with three linguistic states each, a full combinatorial rule base would require 27 distinct rules ($3 \times 3 \times 3$). To significantly reduce computational complexity and silicon area, our proposed architecture streamlines this rule base. The absolute PV voltage ($V_{pv}$) acts as a primary safety and reference parameter. When $V_{pv}$ is operating far from the MPP voltage range, it overrides the other inputs to aggressively steer the system using only two boundary rules (Table \ref{tab:fuzzy_rules_safety}). When the voltage is within the optimal range, the controller evaluates only 9 rules based on the variations in voltage and current to precisely adjust the duty cycle, as defined in Table \ref{tab:fuzzy_rules_optimal}. This structural reduction from 27 to 11 total rules further optimizes the design for compact hardware implementation.
 
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \caption{Fuzzy Logic Safety Rules}
     \begin{tabular}{|c|c|}
@@ -171,9 +173,9 @@ The inference phase continuously evaluates a set of IF-THEN rules based on the t
     \label{tab:fuzzy_rules_safety}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
-    \caption{Fuzzy Logic Rules for Optimal Range (Updated to Match FIS)}
+    \caption{Fuzzy Logic Rules for Optimal Range}
     \begin{tabular}{|c|c|c|c|}
         \hline
         \diagbox{$dI$}{$dV$} & \textbf{Negative} & \textbf{Zero} & \textbf{Positive} \\
@@ -194,17 +196,28 @@ In this final phase, a Sugeno-type weighted average is used to defuzzify the out
     \Delta D = \frac{\sum_{i=1}^{n} w_i \cdot c_i}{\sum_{i=1}^{n} w_i}
     \label{eq:defuzzification}
 \end{equation}
-where $n$ is the total number of active rules, $w_i$ represents the firing strength of the $i$-th rule obtained using the \texttt{min} operator, and $c_i$ is the constant crisp output coefficient defined for that rule. To further enhance the ASIC-oriented architecture and avoid computationally expensive operations, hardware simplifications are applied. Since the weight values ($w_i$) range between 0 and 1, the multiplication ($w_i \cdot c_i$) can be approximated using a simple look-up table that dictates either a conditional 1-bit right shift or no shift. For the denominator, given there is a maximum of 7 active rules, the summation of weights is evaluated using another simple look-up table that converts the complex division into a highly efficient bitwise right-shift operation by 0, 1, 2, or 3 bits. The precision loss (roughing) introduced by these approximations in both the fuzzification and defuzzification stages is effectively compensated for by subsequently dividing the final fuzzy output by a large factor. While this division intentionally slows the transient response, it is a deliberate and acceptable trade-off for preventing oscillations around the MPP and achieving better steady-state stability. A bumpless transfer mechanism is chosen while integrating this duty cycle change to ensure smooth transitions and prevent abrupt adjustments in the converter's operation.
+where $n$ is the total number of active rules, $w_i$ represents the firing strength of the $i$-th rule obtained using the \texttt{min} operator, and $c_i$ is the constant crisp output coefficient defined for that rule. To further enhance the ASIC-oriented architecture and avoid computationally expensive operations, hardware simplifications are proposed. Since the weight values ($w_i$) range between 0 and 1, the multiplication ($w_i \cdot c_i$) can be approximated in hardware using a simple look-up table that dictates either a conditional 1-bit right shift or no shift. For the denominator, given there is a maximum of 7 active rules, the summation of weights is proposed to be evaluated using another simple look-up table that converts the complex division into a highly efficient bitwise right-shift operation by 0, 1, 2, or 3 bits. The precision loss (roughing) introduced by these proposed approximations in both the fuzzification and defuzzification stages can be effectively compensated for by subsequently dividing the final fuzzy output by a large factor. A bumpless transfer mechanism is chosen while integrating this duty cycle change to ensure smooth transitions and prevent abrupt adjustments in the converter's operation.
 
 \section{Simulation and Results}
 \label{sec:results}
 
-The performance of the proposed fuzzy logic-based MPPT controller was validated through a comprehensive simulation conducted in MATLAB/Simulink, with the overall results depicted in Figure \ref{fig:matlab_sim_result}. The total simulation time was 0.6 seconds, designed to demonstrate the controller's performance during both steady-state and transient conditions. The converter efficiency, calculated as $P_{out}/P_{in}$, was maintained at approximately 95\% throughout the simulation. The PV efficiency, defined as $P_{in}/P_{vmax}$, is the primary metric for evaluating the MPPT algorithm's effectiveness.
+\begin{figure*}[t]
+    \centering
+    \subfigure[Overall simulation results showing the three performance phases.]{\includegraphics[width=0.32\textwidth]{./images/matlab/matlabsimresult.jpg}\label{fig:matlab_sim_overall}}
+    \hfill
+    \subfigure[Zoomed-in view of FLC activation at 0.2s.]{\includegraphics[width=0.32\textwidth]{./images/matlab/matlab_sim_result_around0_2.jpg}\label{fig:sim_zoom_02}}
+    \hfill
+    \subfigure[Zoomed-in view of transient response at 0.4s.]{\includegraphics[width=0.32\textwidth]{./images/matlab/matlab_sim_result_around0_4.jpg}\label{fig:sim_zoom_04}}
+    \caption{MATLAB simulation results. (a) Overall performance across three phases. (b) Controller activation detail. (c) Transient response detail.}
+    \label{fig:matlab_sim_zooms}
+\end{figure*}
 
-The simulation is divided into three distinct phases, with the critical transient moments highlighted in detail in Figure \ref{fig:matlab_sim_zooms}.
+The performance of the proposed fuzzy logic-based MPPT controller was validated through a comprehensive simulation conducted in MATLAB/Simulink, with the overall results depicted in Figure \ref{fig:matlab_sim_overall}. The total simulation time was 0.6 seconds, designed to demonstrate the controller's performance during both steady-state and transient conditions. The converter efficiency, calculated as $P_{out}/P_{in}$, was maintained at approximately 95\% throughout the simulation. The PV efficiency, defined as $P_{in}/P_{vmax}$, is the primary metric for evaluating the MPPT algorithm's effectiveness.
+
+The simulation is divided into three distinct phases, with the critical transient moments highlighted in detail in Figure \ref{fig:matlab_sim_zooms}(b) and (c).
 
 \begin{enumerate}
-    \item \textbf{Initial Stabilization (0s - 0.2s):} For the first 0.2 seconds, the system operates with a fixed duty cycle. The fuzzy logic controller is inactive, allowing the converter to stabilize without active MPPT control, as seen in the first section of Figure \ref{fig:matlab_sim_result}.
+    \item \textbf{Initial Stabilization (0s - 0.2s):} For the first 0.2 seconds, the system operates with a fixed duty cycle. The fuzzy logic controller is inactive, allowing the converter to stabilize without active MPPT control, as seen in the first section of Figure \ref{fig:matlab_sim_overall}.
 
     \item \textbf{Fuzzy Controller Activation (0.2s):} At 0.2 seconds, the fuzzy logic MPPT controller is enabled. Figure \ref{fig:sim_zoom_02} shows a zoomed-in view of this event. The controller rapidly adjusts the duty cycle to find the maximum power point, achieving over 99\% PV efficiency in just 13.4 milliseconds, which highlights its fast convergence speed.
 
@@ -213,25 +226,9 @@ The simulation is divided into three distinct phases, with the critical transien
 
 These results confirm the robustness and high performance of the fuzzy logic controller, showcasing its ability to quickly track the MPP and maintain high efficiency, even under rapidly changing conditions.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\columnwidth]{./images/matlab/matlabsimresult.jpg}
-    \caption{Overall MATLAB simulation results showing the three performance phases.}
-    \label{fig:matlab_sim_result}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \subfigure[Zoomed-in view of FLC activation at 0.2s.]{\includegraphics[width=\columnwidth]{./images/matlab/matlab_sim_result_around0_2.jpg}\label{fig:sim_zoom_02}}
-    \vfill
-    \subfigure[Zoomed-in view of transient response at 0.4s.]{\includegraphics[width=\columnwidth]{./images/matlab/matlab_sim_result_around0_4.jpg}\label{fig:sim_zoom_04}}
-    \caption{Zoomed-in views of transient events.}
-    \label{fig:matlab_sim_zooms}
-\end{figure}
-
 Table \ref{tab:steady_state_results} summarizes the steady-state performance of the proposed system under the evaluated varying irradiance conditions. The results demonstrate that the fuzzy logic controller maintains exceptional PV tracking efficiency while the buck converter sustains high power conversion efficiency across varying environmental states. Notably, the PV efficiency and buck converter efficiency remain around 99\% and 95\%, respectively, up until the converter enters Discontinuous Conduction Mode (DCM) at very low irradiance levels, which explains the efficiency drop observed at 200 $W/m^2$.
 
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \caption{Steady-State Performance Metrics}
     \label{tab:steady_state_results}
@@ -248,12 +245,30 @@ Table \ref{tab:steady_state_results} summarizes the steady-state performance of 
 
 \section{Conclusions}
 \label{sec:conclusion}
-This paper presents an advanced, ASIC-oriented Maximum Power Point Tracking (MPPT) approach for PV battery chargers utilizing a three-input fuzzy logic system. By evaluating the simultaneous changes in PV voltage ($\Delta V_{pv}$), output current ($\Delta I_{out}$), and the absolute PV voltage reference ($V_{pv}$), the proposed controller achieves highly responsive and accurate tracking. A major contribution of this work is the complete elimination of complex hardware multipliers and dividers within the fuzzy inference and defuzzification stages. By strategically constraining scaling factors and utilizing simple look-up tables coupled with bitwise shift operations, the computational complexity is significantly reduced, making the design highly suitable for efficient, low-cost integrated circuit implementations. 
+This paper presents an advanced, ASIC-oriented Maximum Power Point Tracking (MPPT) approach for PV battery chargers utilizing a three-input fuzzy logic system. By evaluating the simultaneous changes in PV voltage ($\Delta V_{pv}$), output current ($\Delta I_{out}$), and the absolute PV voltage reference ($V_{pv}$), the proposed controller achieves highly responsive and accurate tracking. A major contribution of this work is the proposed architectural framework designed to eliminate complex hardware multipliers and dividers within the fuzzy inference and defuzzification stages. By formulating the algorithm to facilitate the future use of simple look-up tables coupled with bitwise shift operations, the intended computational complexity is significantly reduced, making the design highly suitable for efficient, low-cost integrated circuit implementations. 
 
-Simulation results validate the effectiveness of this hardware-optimized approach, demonstrating exceptional steady-state PV tracking efficiency (exceeding 99\%) and high buck converter power conversion efficiency (around 95\% in continuous conduction mode), alongside a rapid transient recovery in the millisecond range during dynamic irradiance changes. Future work will focus on the complete physical integrated circuit (IC) implementation and experimental hardware validation of the proposed system.
+Simulation results validate the effectiveness of this hardware-optimized approach, demonstrating exceptional performance metrics compared to previous iterations, as summarized in Table \ref{tab:comparison}. 
 
+The transition from a 2-input Mamdani system to a 3-input Sugeno architecture addresses several key limitations. Specifically, while traditional 2-input controllers are prone to becoming trapped in local minima—especially during non-uniform or rapid irradiance changes—the inclusion of the third input parameter significantly mitigates this risk, ensuring a more robust global maximum power point search. Furthermore, the implementation of a large division factor within the Sugeno inference engine effectively minimizes oscillations around the Maximum Power Point (MPP), maintaining high steady-state stability even at the increased switching frequency of 500 kHz.
+
+\begin{table}[h]
+\centering
+\caption{Comparison Between Previous 2-Input FLC and Proposed 3-Input FLC}
+\label{tab:comparison}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Previous Work} & \textbf{Proposed Work} \\ \hline
+FLC Type & Mamdani & Sugeno \\ \hline
+PV Tracking Efficiency & $\approx$ 97\% & $> 99\%$ \\ \hline
+Buck Conv. Efficiency & $\approx$ 96\% & $\approx$ 95\% \\ \hline
+Switching Frequency & 10 kHz & 500 kHz \\ \hline
+Settling Time & $>50ms$ &  $<15ms$ \\ \hline
+IC Area Optimization & Multiplier-based & LUT \& Bitwise Shifts \\ \hline
+\end{tabular}
+\end{table}
+
+The proposed approach provides a favorable trade-off between tracking accuracy, transient response, and hardware complexity, highlighting its suitability for low-cost ASIC implementations. Future work will focus on the complete physical integrated circuit (IC) implementation and experimental hardware validation of the proposed system.
 To promote reproducibility and encourage further research, the complete MATLAB/Simulink models and associated code developed for this study are publicly available at \url{https://github.com/mehmetgok1/MATLAB}.
-
 \begin{thebibliography}{99}
 
 \bibitem{DeSoto2006} W. De Soto, S.A. Klein, and W.A. Beckman, "Improvement and validation of a model for photovoltaic array performance," Solar Energy, vol. 80, no. 1, pp. 78--88, 2006.
