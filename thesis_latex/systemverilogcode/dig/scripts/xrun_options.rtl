@@ -1,0 +1,11 @@
+-sv
+-v93
+-debug
+-assert
+-delay_trigger
+-timescale 1ns/1ps
+-define RTL
+-f ../rtl/dut_src_list.txt 
+../tb/tb_fuzzy_core.sv
++cover=all
++cover_report_dir=./cov_report

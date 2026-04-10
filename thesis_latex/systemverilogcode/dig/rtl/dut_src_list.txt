@@ -1,0 +1,10 @@
+$HOME/Thesis_PV/dig/rtl/mf_triangle.sv
+$HOME/Thesis_PV/dig/rtl/mf_z.sv
+$HOME/Thesis_PV/dig/rtl/mf_s.sv
+$HOME/Thesis_PV/dig/rtl/fuzzifier.sv
+$HOME/Thesis_PV/dig/rtl/inference.sv
+$HOME/Thesis_PV/dig/rtl/defuzzifier.sv
+$HOME/Thesis_PV/dig/rtl/fuzzy_core.sv
+$HOME/Thesis_PV/dig/rtl/diff_generator.sv
+$HOME/Thesis_PV/dig/rtl/duty_integrator.sv
+$HOME/Thesis_PV/dig/rtl/fuzzy_top.sv

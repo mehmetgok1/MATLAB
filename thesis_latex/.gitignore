@@ -13,3 +13,5 @@ build/
 
 # MATLAB temporary files
 *.asv
+systemverilogcode/dig/sim
+systemverilogcode/dig/tb

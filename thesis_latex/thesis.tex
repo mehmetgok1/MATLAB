@@ -174,7 +174,6 @@ Bu tez, bir fotovoltaik hücre batarya şarj sisteminin modellenmesi ve uygulanm
 \sym{PWM}{Pulse Width Modulation}
 \sym{S/H}{Sample and Hold}
 \sym{SoC}{State of Charge}
-\sym{SPI}{Serial Peripheral Interface}
 \end{abbreviations}
 
 % MAIN CHAPTERS
@@ -646,7 +645,7 @@ The linearity of the CapDAC is paramount for the overall ADC performance. The tw
     \label{fig:capdac_linearity}
 \end{figure}
 
-The results shown in Figure \ref{fig:capdac_linearity} are obtained from a Monte Carlo simulation of 200 runs. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors consisting of 6 fF unit cells. Additionally, a calibration capacitance of $0.1 \times C_{unit}$ is added.
+The results shown in Figure \ref{fig:capdac_linearity} are obtained from a Monte Carlo simulation of 200 runs using a low-discrepancy sequence. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors consisting of 6 fF unit cells. Additionally, a calibration capacitance of $0.1 \times C_{unit}$ is added.
 
 \subsection{Preamplifier}
 In a high-resolution SAR ADC, the dynamic comparator can inject significant kickback noise back onto the sensitive CapDAC nodes when it fires. This charge injection can corrupt the voltage stored on the capacitor array, leading to erroneous bit decisions. To mitigate this effect and improve the overall linearity, a preamplifier is placed between the CapDAC and the comparator.
@@ -834,6 +833,63 @@ The bit generator controls the sequential switching of the capacitor array, movi
     \label{fig:bit_gen}
 \end{figure}
 
+\subsection{ADC Buffer}
+To drive the switched-capacitor input of the SAR ADC and provide isolation from the preceding analog sensor stages, a dedicated ADC buffer is employed. The buffer structure is designed based on an instrumentation amplifier topology to ensure high input impedance and precise differential signal driving.
+
+The architecture consists of three amplifiers. The first stage utilizes two standard operational amplifiers configured as unity-gain buffers. These pre-amplifiers provide the necessary high input impedance so that the preceding sensor circuitry is not loaded. The outputs of these unity-gain buffers are then fed into the second stage, which employs a Fully Differential Amplifier (FDA). This third amplifier acts as a differential stage, converting the buffered signals into a robust, fully differential output specifically tailored to drive the CapDAC array of the SAR ADC while rejecting common-mode noise.
+
+Figure \ref{fig:buffer_opamp} illustrates the schematic of the normal op-amp used in the unity-gain stage, and Figure \ref{fig:buffer_fda} presents the schematic for the Fully Differential Amplifier. Additionally, Figure \ref{fig:buffer_inst_amp} shows the schematic for the overall instrumentation amplifier structure to demonstrate the differential topology.
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'opamp_plot.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/opamp.png} 
+    \caption{Schematic of the normal operational amplifier used in the unity-gain stage.}
+    \label{fig:buffer_opamp}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'fda_plot.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/fda.png} 
+    \caption{Schematic of the Fully Differential Amplifier (FDA) stage.}
+    \label{fig:buffer_fda}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'inst_amp_plot.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/inst_amp.png} 
+    \caption{Schematic of the overall instrumentation amplifier structure.}
+    \label{fig:buffer_inst_amp}
+\end{figure}
+
+To evaluate the dynamic performance of the ADC buffer, a testbench was created where the buffer is loaded by the Sample and Hold (S/H) switch described previously. The Signal-to-Noise and Distortion Ratio (SINAD) and Effective Number of Bits (ENOB) were measured. Due to the nature of the NMOS input stage used in the operational amplifiers, the input common-mode range is restricted, and the amplifiers do not operate linearly near the ground potential (typically under 1 V). As a result, the buffer maintains a SINAD corresponding to above 11.5 bits for approximately 70\% of the input range, centered around a 2.5 V common-mode voltage. Consequently, the effective dynamic range of the buffer is limited to 70\% of the Full Scale (FS) input.
+
+\subsection{LDO}
+To provide a clean, regulated reference voltage and isolate the sensitive analog blocks of the ADC from switching noise, a Low-Dropout (LDO) regulator is implemented. 
+Figure \ref{fig:ldo_schematic} presents the schematic design of the LDO.
+
+The primary design challenge for this LDO is maintaining stability across vastly different load conditions. During the ADC's operation, the load presented to the LDO changes dynamically. When the common-mode voltage (VCM) switch is disabled, the LDO is virtually unloaded, seeing only parasitic capacitances in the femtofarad (fF) range. However, when the VCM switch is enabled, the LDO connects to the top plates of the CapDAC array, which introduces a sudden capacitive load of approximately 10 pF. 
+
+Stability under these extreme load steps is achieved primarily by increasing the quiescent current in the output stage. Since the regulated output voltage is fixed at 2.5 V, there is sufficient voltage headroom to support this approach without degrading performance. While more advanced topologies, such as a Flipped Voltage Follower (FVF) architecture, could be employed to further enhance transient response and stability margins, the current design was deemed sufficient to meet the primary objectives and requirements of this thesis.
+
+To ensure that the LDO remains stable and does not oscillate under these conditions, frequency response analyses were performed. Figure \ref{fig:ldo_stability} illustrates the stability plot of the LDO, demonstrating adequate phase margin across the varying load conditions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/ldo/ldo_schematic.png} 
+    \caption{Schematic design of the Low-Dropout (LDO) regulator.}
+    \label{fig:ldo_schematic}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/ldo/ldo_stability.png} 
+    \caption{Stability plot of the LDO showing loop gain and phase margin.}
+    \label{fig:ldo_stability}
+\end{figure}
+
 \subsection{ADC Top-Level Performance}
 The overall performance of the 12-bit SAR ADC was evaluated, considering the impact of noise, linearity, and process variations.
 
@@ -843,7 +899,7 @@ The primary source of error is the Differential Non-Linearity (DNL) arising from
 
 Regarding the offset voltage introduced by the preamplifier and comparator, its impact on the MPPT algorithm is minimal. The system operates in a relatively slow-changing environment (solar irradiance and temperature), and the control logic relies primarily on the differential changes in voltage ($dV$) and current ($dI$) rather than absolute precision. Since the offset appears as a constant DC error across consecutive samples, it cancels out during the differential calculation, ensuring that the tracking direction remains accurate.
 
-Figure \ref{fig:adc_fft} presents the 4096-point FFT of the ADC output, illustrating the dynamic performance. The analysis was performed using a Blackman-Harris window with a sampling frequency of 20 kSPS. The input frequency was chosen as $f_{in} = \frac{2039}{4096} f_s$, placing it close to the Nyquist frequency. The input signal was a differential sinusoid with a differential peak-to-peak swing of $\pm 8$ V. For the dynamic performance calculations, the peak saturation level was set to 5 V, and the first 10 harmonics were considered.
+Figure \ref{fig:adc_fft} presents the 4096-point FFT of the ADC output, illustrating the dynamic performance. The analysis was performed using a Blackman-Harris window with a sampling frequency of 20 kSPS. The input frequency was chosen as $f_{in} = \frac{2039}{4096} f_s$, placing it close to the Nyquist frequency. The input signal was a differential sinusoid with a differential swing of $\pm 3.5$ V (7 V peak-to-peak), as the maximum dynamic range is limited to 70\% of the theoretical $\pm 5$ V full scale by the ADC buffer. For the dynamic performance calculations, the peak saturation level was set to 5 V, and the first 10 harmonics were considered.
 
 For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was utilized. The primary purpose of this analysis was to verify the functional robustness of the asynchronous logic and to confirm that process variations do not cause timing issues, rather than to obtain high-precision dynamic performance metrics. Table \ref{tab:adc_corners} summarizes the key performance metrics across different process corners.
 
@@ -857,6 +913,7 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
 \begin{table}[H]
     \centering
     \caption{ADC Performance Across Process Corners}
+    \vspace{2mm}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
         \textbf{Corner} & \textbf{SFDR (dB)} & \textbf{SNR (dB)} & \textbf{SINAD (dB)} & \textbf{ENOB (bits)} \\
@@ -871,28 +928,112 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
     \label{tab:adc_corners}
 \end{table}
 
-\section{DAC}
-The digital-to-analog converter used in the system.
-% Add more details here.
-
-\section{LDO}
-The Low-Dropout regulator design and implementation.
-% Add more details here.
-
 \section{Duty Cycle Generator}
-The circuit for generating the duty cycle for the buck converter.
-% Add more details here.
+The duty cycle generator is responsible for converting the digital control signal from the Fuzzy Logic Controller into a high-frequency Pulse Width Modulation (PWM) signal to drive the buck converter. This is achieved by comparing a stable analog reference voltage with a periodic triangular ramp signal using a high-speed comparator. As the analog reference voltage varies, the duty cycle of the resulting PWM signal changes proportionally. Figure \ref{fig:duty_gen_schematic} illustrates the top-level schematic of the duty cycle generator circuit.
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'duty_gen_schematic.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/duty_gen_schematic.png} 
+    \caption{Schematic of the Duty Cycle Generator circuit.}
+    \label{fig:duty_gen_schematic}
+\end{figure}
+
+\subsection{DAC}
+To generate the precise analog reference voltage required by the duty cycle generator, an R-2R resistor ladder Digital-to-Analog Converter (DAC) is employed. The R-2R topology is chosen for its simplicity and relatively small silicon area footprint. The 10-bit digital output from the FLC controls the switches in the R-2R ladder, producing a proportional analog voltage.
+
+The primary performance limitations in an R-2R DAC are Integral Non-Linearity (INL) and Differential Non-Linearity (DNL). These non-linearities arise predominantly from random and systematic mismatches in the resistors comprising the ladder. Since the accuracy of the analog output relies heavily on the precise $2:1$ ratio of the resistance values, any process variations directly degrade the step sizes (DNL) and the overall transfer curve linearity (INL). Figure \ref{fig:dac_inl_dnl} presents the performance plot of the implemented 10-bit R-2R DAC, demonstrating its INL and DNL characteristics evaluated over a Monte Carlo simulation of 200 runs using a low-discrepancy sequence.
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'dac_plot.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac/dac_plot.png} 
+    \caption{Performance plot showing the Integral Non-Linearity (INL) and Differential Non-Linearity (DNL) of the 10-bit R-2R DAC.}
+    \label{fig:dac_inl_dnl}
+\end{figure}
+
+\subsection{DAC Buffer}
+To prevent the subsequent high-speed comparator stage from loading the resistor network and distorting the reference voltage, a dedicated unity-gain operational amplifier buffer is placed at the output of the DAC. This buffer ensures that the reference voltage remains stable and accurate. 
+
+Unlike the amplifiers in the ADC buffer, the operational amplifier used for the DAC buffer employs a PMOS input stage. In a buck converter stepping down from a high PV panel voltage to a lower battery voltage, the Maximum Power Point (MPP) generally dictates a duty cycle lower than 0.5. Consequently, the analog reference voltage produced by the DAC predominantly remains in the lower half of the supply range. A PMOS input stage is specifically chosen for this application because it operates linearly and accurately even when the input common-mode voltage approaches the ground potential. Figure \ref{fig:dac_buffer_schematic} illustrates the schematic of the DAC buffer.
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'dac_buffer_schematic.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac_buffer/dac_buffer_schematic.png} 
+    \caption{Schematic of the unity-gain operational amplifier with a PMOS input stage used for the DAC buffer.}
+    \label{fig:dac_buffer_schematic}
+\end{figure}
+
+Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the designed operational amplifier used in the DAC buffer.
+
+\begin{table}[H]
+    \centering
+    \caption{DAC Buffer Amplifier Performance Summary}
+    \vspace{2mm}
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Parameter} & \textbf{Value} \\
+        \hline
+        DC Gain & 85.1 dB \\
+        \hline
+        Unity Gain Bandwidth (UGBW) & 26.1 MHz \\
+        \hline
+        Phase Margin & 81$^{\circ}$ \\
+        \hline
+        Input Referred Offset ($\sigma$) & +-36 mV \\
+        \hline
+        Input Referred Noise (RMS) & 850 $\mu$V \\
+        \hline
+    \end{tabular}
+    \label{tab:dac_buffer_perf}
+\end{table}
+
+\subsection{Ramp Generator}
+A ramp generator circuit is utilized to produce a highly linear, periodic triangular waveform at the target switching frequency (500 kHz). This ramp signal serves as the time-base reference for the pulse width modulation process. 
+
+The core operating principle relies on charging a capacitor with a constant current source. By pushing a fixed current into the capacitor, the voltage across it increases linearly over time. To create the periodic waveform, a switch is used to rapidly discharge (reset) the capacitor at every rising edge of the system clock, initiating a new ramp cycle.
+
+To account for process variations and ensure the precise slope and amplitude of the ramp signal, both the charging current and the capacitor are adjustable. The capacitor array features a 6-bit binary-weighted trim network with a Least Significant Bit (LSB) capacitance of 125 fF. Similarly, the constant current source employs a 6-bit binary-weighted trim network with an LSB current of 1 $\mu$A. Figure \ref{fig:ramp_gen_schematic} illustrates the schematic of the ramp generator.
+
+\begin{figure}[H]
+    \centering
+    % Placeholder: Update 'ramp_gen_schematic.png' with your actual filename
+    \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/ramp_gen/ramp_gen_schematic.png} 
+    \caption{Schematic of the Ramp Generator circuit.}
+    \label{fig:ramp_gen_schematic}
+\end{figure}
+
+\subsection{Continuous Comparator}
+The continuous-time high-speed comparator is the final stage of the duty cycle generator. It continuously compares the stable analog reference voltage from the DAC buffer against the high-frequency triangular wave from the ramp generator. For its implementation, an open-loop version of the operational amplifier used in the buffer stage is employed, with specific optimizations tailored for high-speed comparator operation. The output is a PWM signal whose duty cycle is directly proportional to the control voltage generated by the Fuzzy Logic Controller.
+
+\section{Bias and Bandgap Reference}
+To ensure stable operation across varying temperatures and supply voltages, the analog components of the system (including the ADC, DAC, and LDO) require robust bias currents and a stable reference voltage. A Bandgap Reference (BGR) circuit is utilized to fulfill these requirements. The detailed design and layout of the bandgap reference block were carried out by an undergraduate researcher, Yasin Öztürk, as part of a parallel project. Since the internal design of this block is outside the direct scope of this thesis, its specific implementation details are not discussed here. The author gratefully acknowledges his contribution to the overall system integration.
 
 \chapter{DIGITAL IMPLEMENTATION}
 \label{chapter:digital_impl}
 
-\section{Fuzzy Logic}
-A detailed description of the digital implementation of the fuzzy logic controller.
-% Add more details here.
+\section{Hardware-Friendly Fuzzy Logic Architecture}
+While the theoretical model of the Fuzzy Logic Controller (FLC) was successfully validated in MATLAB and SystemVerilog, a direct translation of these high-level algorithms into physical digital logic is highly inefficient. Standard fuzzy logic operations—specifically the linear interpolation required during fuzzification and the weighted average calculation used in Sugeno defuzzification—rely heavily on complex arithmetic operations such as division and multiplication. 
 
-\section{SPI Interface}
-The implementation of the Serial Peripheral Interface (SPI) for communication will be detailed here.
-% Add more details here.
+In digital hardware design, true multipliers and dividers are "logic-hungry" components; they consume a significant amount of silicon area, increase dynamic power consumption, and introduce long critical path delays. This makes a direct mathematical implementation unsuitable for a low-cost, highly integrated Application-Specific Integrated Circuit (ASIC).
+
+To bridge the gap between theoretical performance and practical physical implementation, this chapter presents a highly optimized, hardware-friendly architecture. The core principle of this optimization is the elimination of complex arithmetic blocks. Instead, the fuzzy logic algorithms are reformulated to utilize highly efficient bitwise shift operations, simple adders, and compact Look-Up Tables (LUTs). The following subsections detail how these architectural simplifications are applied to each stage of the fuzzy inference process without significantly degrading the overall Maximum Power Point Tracking (MPPT) performance.
+
+\subsection{Difference Calculation}
+% Details on calculating dV and dI efficiently using digital registers.
+
+\subsection{Fuzzification Simplifications}
+% Details on avoiding division during membership degree calculation.
+
+\subsection{Inference Engine Optimization}
+% Details on LUTs or rule reduction.
+
+\subsection{Defuzzification Simplifications}
+% Details on replacing the weighted average multiplier/divider with shifts.
+
+\subsection{Duty Integration}
+% Details on the accumulator logic and digital damping.
 
 
 \chapter{CONCLUSION}
