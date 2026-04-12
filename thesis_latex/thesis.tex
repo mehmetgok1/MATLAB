@@ -108,9 +108,9 @@
 \supervisor{Prof. Günhan Dündar}
 %\cosuperi{Title and Name of Cosupervisor I}
 %\cosuperii{Title and Name of Cosupervisor II}
-\examineri{Assoc. Prof. Name Surname}
-\examinerii{Assist. Prof. Name Surname}
-\examineriii{Name Surname, Ph.D.}
+%\examineri{Assoc. Prof. Name Surname}
+%\examinerii{Assist. Prof. Name Surname}
+%\examineriii{Name Surname, Ph.D.}
 %\examineriv{}
 %\examinerv{}
 \dateofapproval{DD.MM.YYYY}
@@ -123,17 +123,23 @@
 
 % ACK PAGE
 \begin{acknowledgements}
-I would like to express my deepest gratitude to my supervisor, Prof. Günhan Dündar, for his invaluable guidance and support throughout this research. I am also thankful to my family and friends for their unwavering encouragement and patience during this journey.
+The culmination of this thesis would not have been possible without the support, guidance, and encouragement of numerous individuals who have contributed to my academic journey.
+
+First and foremost, I would like to express my deepest gratitude to my supervisor, Prof. Günhan Dündar, for his visionary guidance, continuous encouragement, and invaluable mentorship throughout this research. I am also profoundly grateful to Assoc. Prof. Dr. Kemal Ozanoğlu for his extensive help, constructive feedback, and the expertise he so graciously shared.
+
+My sincere thanks go to the undergraduate researchers, Yasin Demir and Yasin Öztürk, whose dedication and meticulous efforts were instrumental in the successful realization of this project. Furthermore, I would like to extend my heartfelt appreciation to my laboratory mates---Uygar Yıldız, Utku Arda Akıncı, Doğa Mert Aydoğan, Mert Ceylan, and Erol Gedik---for their camaraderie, collaborative spirit, and for fostering such a stimulating research environment.
+
+Last but certainly most importantly, my deepest gratitude belongs to my family and my beloved. Their endless patience, unconditional support, and unwavering belief in me have been the true foundation of my perseverance and success.
 \end{acknowledgements}
 
 % ABS PAGE
 \begin{abstract}
-This thesis presents the modeling and implementation of a photovoltaic cell battery charger system. The study focuses on the design of a fuzzy logic controller to optimize the charging process while ensuring maximum power point tracking (MPPT). Simulation and experimental results demonstrate the effectiveness of the proposed system in achieving high efficiency and reliability under varying conditions.
+This thesis presents the modeling, design, and implementation of a hardware-efficient three-input Fuzzy Logic Controller (FLC) for Maximum Power Point Tracking (MPPT) in photovoltaic (PV) battery charging systems. The proposed architecture evaluates the change in PV voltage, change in output current, and absolute PV voltage to achieve highly responsive and accurate tracking under dynamically changing environmental conditions. A primary objective of this research is to optimize the digital control block by replacing resource-intensive arithmetic operations, such as hardware multipliers and dividers, with simple look-up tables and bitwise shift approximations. This architectural optimization significantly reduces the silicon footprint and computational complexity, making the design highly suitable for low-cost Application-Specific Integrated Circuit (ASIC) implementations and enabling the integration of multiple controllers on a single chip. The complete system, including a custom mixed-signal analog front-end and the synthesized digital controller, is validated through comprehensive Analog Mixed-Signal (AMS) simulations in the Cadence Virtuoso environment. The results demonstrate the robustness of the proposed method, achieving a steady-state PV tracking efficiency exceeding 99\% and a power conversion efficiency of approximately 96\%, alongside rapid transient recovery during sudden irradiance changes.
 \end{abstract}
 
 % OZET PAGE
 \begin{ozet}
-Bu tez, bir fotovoltaik hücre batarya şarj sisteminin modellenmesi ve uygulanmasını sunmaktadır. Çalışma, şarj işlemini optimize etmek ve maksimum güç noktası takibini (MPPT) sağlamak için bir bulanık mantık denetleyicisinin tasarımına odaklanmaktadır. Simülasyon ve deneysel sonuçlar, önerilen sistemin değişen koşullar altında yüksek verimlilik ve güvenilirlik sağlama konusundaki etkinliğini göstermektedir.
+Bu tez, fotovoltaik (PV) batarya şarj sistemlerinde Maksimum Güç Noktası Takibi (MPPT) için donanım açısından verimli, üç girişli bir Bulanık Mantık Denetleyicisinin (FLC) modellenmesini, tasarımını ve uygulanmasını sunmaktadır. Önerilen mimari, dinamik olarak değişen çevresel koşullar altında son derece duyarlı ve doğru bir takip sağlamak için PV voltajındaki değişimi, çıkış akımındaki değişimi ve mutlak PV voltajını değerlendirir. Bu araştırmanın temel amacı, donanım çarpıcıları ve bölücüleri gibi kaynak yoğun aritmetik işlemleri basit arama tabloları (LUT) ve bit düzeyinde kaydırma yaklaşımlarıyla değiştirerek dijital kontrol bloğunu optimize etmektir. Bu mimari optimizasyon, silikon alanını ve hesaplama karmaşıklığını önemli ölçüde azaltarak tasarımı düşük maliyetli Uygulamaya Özel Entegre Devre (ASIC) uygulamaları için son derece uygun hale getirir ve tek bir çip üzerinde birden fazla denetleyicinin entegrasyonuna olanak tanır. Özel bir karma sinyal analog ön uç ve sentezlenmiş dijital denetleyici içeren tüm sistem, Cadence Virtuoso ortamında kapsamlı Analog Karma Sinyal (AMS) simülasyonları ile doğrulanmıştır. Sonuçlar, önerilen yöntemin sağlamlığını göstermekte olup, ani ışınım değişiklikleri sırasında hızlı geçici toparlanmanın yanı sıra \%99'u aşan sürekli hal PV takip verimliliği ve yaklaşık \%96 güç dönüşüm verimliliği elde edildiğini kanıtlamaktadır.
 \end{ozet}
 
 % CONTENTS AND LIST OF FIG AND TABLE PAGES
@@ -1146,10 +1152,5 @@ In conclusion, this thesis successfully bridges the gap between advanced intelli
 \nocite{*}
 \bibliographystyle{styles/fbe_tez_v11}
 \bibliography{references}
-
-\appendix
-\chapter{APPENDIX A}
-\label{appendix:a}
-This is the first appendix.
 
 \end{document}
