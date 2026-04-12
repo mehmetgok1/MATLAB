@@ -58,6 +58,9 @@
     showstringspaces=false, % Keeps MATLAB strings from having visible space symbols
 }
 
+\renewcommand{\lstlistingname}{Code Snippet}
+\renewcommand{\lstlistlistingname}{LIST OF CODE SNIPPETS}
+
 \interdisplaylinepenalty=2500
 \hyphenation{lists} \makeatletter
 
@@ -98,7 +101,7 @@
 % COVER PAGE
 \title{Modeling and Implementation of a Photovoltaic cell battery charger system}
 \turkcebaslik{Fotovoltaik Hücre Batarya Şarj Sistemi Modelleme ve Uygulaması}
-\degree{B.S., Electrical and Electronics Engineering, Boğaziçi University, 2020\\
+\degree{B.S., Electrical and Electronics Engineering, Boğaziçi University, 2023\\
 	M.S., Electrical and Electronics Engineering, Boğaziçi University, 2026}
 \author{Mehmet Gök}
 \program{Electrical and Electronics Engineering}
@@ -146,22 +149,48 @@ Bu tez, fotovoltaik (PV) batarya şarj sistemlerinde Maksimum Güç Noktası Tak
 \tableofcontents
 \listoffigures
 \listoftables
+\lstlistoflistings
 
 % LIST OF SYMBOLS PAGE
 \begin{symbols}
 % The title will be typeset as "LIST OF SYMBOLS".
 % Use a separate \sym command for each symbols definition.
 % First, Latin symbols in alphabetical order
-\sym{$V_{pv}$}{Photovoltaic panel output voltage}
+\sym{$C_i$}{Constant crisp output value of the $i$-th rule}
+\sym{$C_{in}$}{Input capacitance}
+\sym{$D$}{Duty cycle}
+\sym{$dI$}{Change in photovoltaic current}
+\sym{$dV$}{Change in photovoltaic voltage}
+\sym{$f_{in}$}{Input frequency}
+\sym{$f_s$}{Sampling frequency}
+\sym{$f_{sw}$}{Switching frequency}
+\sym{$I_0$}{Diode saturation current}
+\sym{$I_L$}{Light-generated current}
 \sym{$I_{pv}$}{Photovoltaic panel output current}
+\sym{$I_{sc}$}{Short circuit current}
+\sym{$L$}{Inductance}
+\sym{$n$}{Ideality factor / Discrete time index}
+\sym{$N$}{Total number of rules}
+\sym{$P_{in}$}{Extracted input power}
+\sym{$P_{mpp}$}{Maximum power at MPP}
+\sym{$P_{out}$}{Output power}
 \sym{$P_{pv}$}{Photovoltaic panel output power}
-\sym{$V_{b}$}{Battery voltage}
+\sym{$R_s$}{Series resistance}
+\sym{$R_{sh}$}{Shunt resistance}
+\sym{$V_b$}{Battery voltage}
+\sym{$V_{in}$}{Input voltage}
+\sym{$V_{mpp}$}{Voltage at Maximum Power Point}
+\sym{$V_{oc}$}{Open circuit voltage}
+\sym{$V_{out}$}{Output voltage}
+\sym{$V_{pv}$}{Photovoltaic panel output voltage}
+\sym{$w_i$}{Firing strength of the $i$-th rule}
 % 1 EMPTY LINE BETWEEN LATIN AND GREEK SYMBOLS GROUP!!!
 \sym{}{}
 % Then Greek symbols in alphabetical order
-\sym{$\eta$}{Efficiency}
-\sym{$\tau$}{Time constant}
 \sym{$\Delta$}{Change or differential}
+\sym{$\Delta D$}{Change in duty cycle}
+\sym{$\eta$}{Efficiency}
+\sym{$\mu$}{Degree of membership}
 \sym{ }{}
 \end{symbols}
 
@@ -169,17 +198,57 @@ Bu tez, fotovoltaik (PV) batarya şarj sistemlerinde Maksimum Güç Noktası Tak
 \begin{abbreviations}
  % Abbreviations in alphabetical order
 \sym{ADC}{Analog-to-Digital Converter}
+\sym{AMS}{Analog Mixed-Signal}
+\sym{ASIC}{Application-Specific Integrated Circuit}
+\sym{BGR}{Bandgap Reference}
+\sym{CapDAC}{Capacitive Digital-to-Analog Converter}
 \sym{CC}{Constant Current}
+\sym{CMFB}{Common-Mode Feedback}
+\sym{CMOS}{Complementary Metal-Oxide-Semiconductor}
+\sym{CoG}{Center of Gravity}
 \sym{DAC}{Digital-to-Analog Converter}
+\sym{DFT}{Discrete Fourier Transform}
+\sym{DNL}{Differential Non-Linearity}
+\sym{ENOB}{Effective Number of Bits}
+\sym{EOC}{End of Conversion}
+\sym{FDA}{Fully Differential Amplifier}
+\sym{FFT}{Fast Fourier Transform}
+\sym{FIS}{Fuzzy Inference System}
 \sym{FLC}{Fuzzy Logic Controller}
+\sym{FS}{Full Scale}
+\sym{FVF}{Flipped Voltage Follower}
+\sym{GBW}{Gain-Bandwidth Product}
+\sym{HDL}{Hardware Description Language}
 \sym{I-V}{Current-Voltage}
-\sym{LDO}{Low Drop Out Regulator}
+\sym{IC}{Integrated Circuit}
+\sym{IncCond}{Incremental Conductance}
+\sym{INL}{Integral Non-Linearity}
+\sym{LDO}{Low Dropout Regulator}
+\sym{LSB}{Least Significant Bit}
+\sym{LUT}{Look-Up Table}
+\sym{MIM}{Metal-Insulator-Metal}
+\sym{MOSFET}{Metal-Oxide-Semiconductor Field-Effect Transistor}
+\sym{MPP}{Maximum Power Point}
 \sym{MPPT}{Maximum Power Point Tracking}
+\sym{MSB}{Most Significant Bit}
+\sym{NMOS}{N-Channel Metal-Oxide-Semiconductor}
+\sym{P\&O}{Perturb and Observe}
 \sym{P-V}{Power-Voltage}
+\sym{PDK}{Process Design Kit}
+\sym{PMOS}{P-Channel Metal-Oxide-Semiconductor}
 \sym{PV}{Photovoltaic}
 \sym{PWM}{Pulse Width Modulation}
+\sym{RMS}{Root Mean Square}
 \sym{S/H}{Sample and Hold}
-\sym{SoC}{State of Charge}
+\sym{SAR}{Successive Approximation Register}
+\sym{SFDR}{Spurious-Free Dynamic Range}
+\sym{SINAD}{Signal-to-Noise and Distortion Ratio}
+\sym{SNR}{Signal-to-Noise Ratio}
+\sym{SoC}{System-on-Chip}
+\sym{SPI}{Serial Peripheral Interface}
+\sym{THD}{Total Harmonic Distortion}
+\sym{UGBW}{Unity Gain Bandwidth}
+\sym{VCM}{Common-Mode Voltage}
 \end{abbreviations}
 
 % MAIN CHAPTERS
@@ -1037,28 +1106,28 @@ The fuzzification stage assigns membership values to fuzzify the crisp digital i
 The hardware implementation utilizes three primary types of membership functions: Z-shaped, S-shaped, and Triangular-shaped.
 
 \subsubsection{Z-Shaped Membership Function}
-The Z-shaped membership function implements a falling linear ramp. It assigns a high membership degree when the input is below a starting threshold ($A$) and a low membership degree when it exceeds the end threshold ($B$). For intermediate values, it computes the declining slope using the optimized lookup dividing logic. The SystemVerilog code is provided in Listing \ref{code:mf_z_dig}.
+The Z-shaped membership function implements a falling linear ramp. It assigns a high membership degree when the input is below a starting threshold ($A$) and a low membership degree when it exceeds the end threshold ($B$). For intermediate values, it computes the declining slope using the optimized lookup dividing logic. The SystemVerilog code is provided in Code Snippet \ref{code:mf_z_dig}.
 
 \lstinputlisting[caption={Z-Shaped Membership Function SystemVerilog Implementation}, label={code:mf_z_dig}]{systemverilogcode/dig/rtl/mf_z.sv}
 
 \subsubsection{S-Shaped Membership Function}
-The S-shaped membership function corresponds to a rising linear ramp. It evaluates to 0 for inputs below $A$ and reaches its maximum value of 255 for inputs above $B$. The linear increase between the thresholds is computed using the same hardware-efficient shift approximation. The SystemVerilog implementation is shown in Listing \ref{code:mf_s_dig}.
+The S-shaped membership function corresponds to a rising linear ramp. It evaluates to 0 for inputs below $A$ and reaches its maximum value of 255 for inputs above $B$. The linear increase between the thresholds is computed using the same hardware-efficient shift approximation. The SystemVerilog implementation is shown in Code Snippet \ref{code:mf_s_dig}.
 
 \lstinputlisting[caption={S-Shaped Membership Function SystemVerilog Implementation}, label={code:mf_s_dig}]{systemverilogcode/dig/rtl/mf_s.sv}
 
 \subsubsection{Triangular-Shaped Membership Function}
-The triangular membership function specifies a peak response. It combines a rising ramp from an initial point $A$ to a peak at $B$, and a falling ramp from $B$ to an end point $C$. The division for interpolating both slopes relies on the shift-amount lookup table to minimize quantization error. Its SystemVerilog code is provided in Listing \ref{code:mf_triangle_dig}.
+The triangular membership function specifies a peak response. It combines a rising ramp from an initial point $A$ to a peak at $B$, and a falling ramp from $B$ to an end point $C$. The division for interpolating both slopes relies on the shift-amount lookup table to minimize quantization error. Its SystemVerilog code is provided in Code Snippet \ref{code:mf_triangle_dig}.
 
 \lstinputlisting[caption={Triangular-Shaped Membership Function SystemVerilog Implementation}, label={code:mf_triangle_dig}]{systemverilogcode/dig/rtl/mf_triangle.sv}
 
 \subsubsection{Fuzzifier Module}
-The fuzzifier module acts as a top-level covering wrapper that incorporates the individual Z-shaped, S-shaped, and Triangular-shaped membership functions to build the complete three-input fuzzification stage. It instantiates these hardware-efficient blocks to evaluate the three primary inputs: the change in PV voltage ($dV$), the change in output current ($dI$), and the absolute PV voltage ($V_{pv}$). By operating these instances in parallel, the module rapidly assigns the corresponding linguistic membership degrees required by the subsequent inference engine. The SystemVerilog implementation for this encompassing module is provided in Listing \ref{code:fuzzifier_dig}.
+The fuzzifier module acts as a top-level covering wrapper that incorporates the individual Z-shaped, S-shaped, and Triangular-shaped membership functions to build the complete three-input fuzzification stage. It instantiates these hardware-efficient blocks to evaluate the three primary inputs: the change in PV voltage ($dV$), the change in output current ($dI$), and the absolute PV voltage ($V_{pv}$). By operating these instances in parallel, the module rapidly assigns the corresponding linguistic membership degrees required by the subsequent inference engine. The SystemVerilog implementation for this encompassing module is provided in Code Snippet \ref{code:fuzzifier_dig}.
 
 \lstinputlisting[caption={Fuzzifier SystemVerilog Implementation}, label={code:fuzzifier_dig}]{systemverilogcode/dig/rtl/fuzzifier.sv}
 
 \subsection{Inference Engine}
 The inference phase continuously evaluates the IF-THEN rules based on the three linguistic input variables: $dV$, $dI$, and absolute $V_{pv}$. A standard three-input fuzzy system with three linguistic states each would require a full combinatorial rule base of 27 distinct rules ($3 \times 3 \times 3$). To significantly reduce computational complexity and silicon area, the proposed architecture streamlines this rule base. The absolute PV voltage ($V_{pv}$) acts as a primary safety parameter; when it is operating far from the MPP voltage range, it overrides the other inputs using only two boundary rules. When within the optimal range, only 9 rules based on $dV$ and $dI$ are evaluated. This structural reduction from 27 to 11 total rules dramatically reduces the size of the required combinational logic and look-up tables.
-As shown in Listing \ref{code:inference_dig}, the SystemVerilog implementation further consolidates these 11 conceptual rules into just 8 explicitly calculated hardware weights by grouping the stable "Hold" conditions together. A custom 3-input minimum function continuously evaluates the rule firing strengths using purely combinational logic.
+As shown in Code Snippet \ref{code:inference_dig}, the SystemVerilog implementation further consolidates these 11 conceptual rules into just 8 explicitly calculated hardware weights by grouping the stable "Hold" conditions together. A custom 3-input minimum function continuously evaluates the rule firing strengths using purely combinational logic.
 
 \lstinputlisting[caption={Inference Engine SystemVerilog Implementation}, label={code:inference_dig}]{systemverilogcode/dig/rtl/inference.sv}
 
@@ -1067,7 +1136,7 @@ The final control output, $\Delta D$, is obtained using a Sugeno-type weighted a
 \begin{equation}
     \Delta D = \frac{\sum_{i=1}^{n} w_i \cdot c_i}{\sum_{i=1}^{n} w_i}
 \end{equation}
-In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. The SystemVerilog implementation of this optimized defuzzifier is presented in Listing \ref{code:defuzzifier_dig}.
+In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. The SystemVerilog implementation of this optimized defuzzifier is presented in Code Snippet \ref{code:defuzzifier_dig}.
 
 \lstinputlisting[caption={Defuzzifier SystemVerilog Implementation}, label={code:defuzzifier_dig}]{systemverilogcode/dig/rtl/defuzzifier.sv}
 
@@ -1076,12 +1145,12 @@ The defuzzified output represents the necessary \textit{change} in the duty cycl
 
 To degrade further oscillations and provide a digital damping effect, the system accumulates these integer steps into a higher-resolution 26-bit duty cycle register, but only slices the top 10 bits for the final DAC output. This fractional accumulation dampens the instantaneous adjustments and compensates for any quantization noise introduced by the approximations in the preceding fuzzification and defuzzification stages. 
 
-Furthermore, the module handles transitions between manual control and active MPPT tracking by pre-loading the accumulator with the scaled manual duty cycle. When the FLC takes over, it resumes accumulation from this exact state. This mechanism guarantees a "bumpless" transfer without abrupt adjustments, maintaining stability around the Maximum Power Point. The SystemVerilog implementation of the duty integrator, which also incorporates boundary saturation logic to ensure safe operation limits, is provided in Listing \ref{code:duty_int_dig}.
+Furthermore, the module handles transitions between manual control and active MPPT tracking by pre-loading the accumulator with the scaled manual duty cycle. When the FLC takes over, it resumes accumulation from this exact state. This mechanism guarantees a "bumpless" transfer without abrupt adjustments, maintaining stability around the Maximum Power Point. The SystemVerilog implementation of the duty integrator, which also incorporates boundary saturation logic to ensure safe operation limits, is provided in Code Snippet \ref{code:duty_int_dig}.
 
 \lstinputlisting[caption={Duty Integrator SystemVerilog Implementation}, label={code:duty_int_dig}]{systemverilogcode/dig/rtl/duty_integrator.sv}
 
 \subsection{Fuzzy Top Module}
-The fuzzy top module serves as the highest-level structural wrapper for the digital controller. It instantiates and routes the signals between all the previously discussed components, including the difference generators, the fuzzifier core, and the duty integrator. By seamlessly connecting these optimized sub-modules, the fuzzy top module forms the complete, hardware-efficient Maximum Power Point Tracking (MPPT) control logic, fully prepared for physical synthesis. The SystemVerilog implementation of this top-level module is provided in Listing \ref{code:fuzzy_top_dig}.
+The fuzzy top module serves as the highest-level structural wrapper for the digital controller. It instantiates and routes the signals between all the previously discussed components, including the difference generators, the fuzzifier core, and the duty integrator. By seamlessly connecting these optimized sub-modules, the fuzzy top module forms the complete, hardware-efficient Maximum Power Point Tracking (MPPT) control logic, fully prepared for physical synthesis. The SystemVerilog implementation of this top-level module is provided in Code Snippet \ref{code:fuzzy_top_dig}.
 
 \lstinputlisting[caption={Fuzzy Top Module SystemVerilog Implementation}, label={code:fuzzy_top_dig}]{systemverilogcode/dig/rtl/fuzzy_top.sv}
 
