@@ -1,6 +1,4 @@
-module mf_triangle #(
-    parameter SHIFT_BITS = 3  // For power-of-2 approximation
-)(
+module mf_triangle (
     input  logic signed [10:0] A,    // Left slope start
     input  logic signed [10:0] B,    // Peak
     input  logic signed [10:0] C,    // Right slope end

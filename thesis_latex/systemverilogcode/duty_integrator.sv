@@ -8,7 +8,7 @@ module duty_integrator (
 );
 
     // --- CONFIGURATION ---
-    // CHANGE THIS: 9 for Turbo Sim, 14 for Real Hardware
+    // CHANGE THIS: 6 for Turbo Sim, 14 for Real Hardware
     localparam int FRAC_BITS = 6; 
 
     // Safety Headroom: 10 (Data) + FRAC_BITS + 2 (Sign/Overflow)
@@ -48,8 +48,6 @@ module duty_integrator (
     end
 
     // === OUTPUT ===
-    // FIX: Dynamic Slicing
-    // We want the 10 bits STARTING after the fractional part.
     // Example (FRAC=9): We want bits [18:9]
     // Example (FRAC=14): We want bits [23:14]
     assign dac_value = acc[FRAC_BITS + 9 : FRAC_BITS];

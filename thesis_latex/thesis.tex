@@ -220,6 +220,7 @@ Bu tez, fotovoltaik (PV) batarya şarj sistemlerinde Maksimum Güç Noktası Tak
 \sym{GBW}{Gain-Bandwidth Product}
 \sym{HDL}{Hardware Description Language}
 \sym{I-V}{Current-Voltage}
+\sym{I2C}{Inter-Integrated Circuit}
 \sym{IC}{Integrated Circuit}
 \sym{IncCond}{Incremental Conductance}
 \sym{INL}{Integral Non-Linearity}
@@ -279,7 +280,13 @@ Fuzzy Logic Control (FLC) has emerged as a powerful alternative for MPPT, especi
 \label{sec:intro_proposed_system}
 Based on the comparison of MPPT techniques presented in the previous section, this thesis proposes a photovoltaic battery charger system that employs a Fuzzy Logic Controller (FLC). While P\&O is simple, it suffers from oscillations, and IncCond, while accurate, is computationally intensive. FLC offers a balance of robustness, fast convergence, and adaptability to the non-linear characteristics of PV panels without requiring complex mathematical modeling.
 
+Although FLC is an excellent choice and specific architectures like Sugeno (rather than Mamdani) are highly suitable for on-chip implementation, direct realization still relies on resource-hungry logic. Operations such as complex dividers and multipliers used in the weighted average calculations consume significant silicon area. To address this, the proposed solution not only utilizes the computationally efficient Sugeno inference model but also further optimizes the digital footprint by replacing these arithmetic operations with hardware-friendly bitwise shifts and simple look-up tables.
+
 The proposed system integrates the PV panel with a DC-DC buck converter controlled by the FLC algorithm to charge a battery efficiently. This approach ensures optimal energy harvesting even under rapidly changing atmospheric conditions.
+
+The global system parameters, including component values for the buck converter and the control loop sampling rates, are initialized using a dedicated MATLAB script, as shown in Code Snippet \ref{code:sys_params}. This script establishes the baseline values used across all simulations.
+
+\lstinputlisting[language=MATLAB, caption={System Parameters Initialization Script}, label={code:sys_params}]{matlab_code/parameters.m}
 
 \begin{figure}[H]
     \centering
@@ -327,7 +334,7 @@ The buck converter is a fundamental DC-DC topology used to step down a higher in
 
 In this specific application, the photovoltaic panel operates at a Maximum Power Point (MPP) voltage of approximately 30 V. However, the system is designed to charge a 12 V battery. Consequently, a buck converter is employed to bridge this voltage difference. This configuration not only steps down the voltage but also allows the MPPT algorithm to adjust the effective load impedance seen by the PV panel by varying the duty cycle, thereby maximizing power extraction.
 
-The design parameters for the buck converter, as defined in the system's MATLAB model, are presented in Table \ref{tab:buck_params}. These specifications are derived based on the design guidelines and component selection criteria described in \cite{EricksonBook, RashidBook, TIReport}.
+The design parameters for the buck converter, as defined in the system's MATLAB model initialization script (Code Snippet \ref{code:sys_params}), are presented in Table \ref{tab:buck_params}. These specifications are derived based on the design guidelines and component selection criteria described in \cite{EricksonBook, RashidBook, TIReport}.
 
 \begin{table}[H]
     \centering
@@ -364,7 +371,7 @@ The control algorithm is based on a Sugeno-type fuzzy inference system, which is
 \end{figure}
 
 \subsection{Sampling}
-The controller is implemented digitally with a sampling frequency of 20 kHz, as defined in the system parameters. At each sampling instant, the controller reads the PV voltage and current. The ADCs used for this purpose have a 10-bit resolution, which provides $2^{10} = 1024$ discrete levels (counts) to represent the analog signals. This allows for a fine-grained measurement of the PV voltage and current, which is essential for the accuracy of the MPPT algorithm. This sampling frequency is chosen to be sufficiently lower than the 500 kHz switching frequency to avoid aliasing while maintaining a fast transient response. 
+The controller is implemented digitally with a sampling frequency of 20 kHz, as defined in the system parameters script (Code Snippet \ref{code:sys_params}). At each sampling instant, the controller reads the PV voltage and current. The ADCs used for this purpose have a 10-bit resolution, which provides $2^{10} = 1024$ discrete levels (counts) to represent the analog signals. This allows for a fine-grained measurement of the PV voltage and current, which is essential for the accuracy of the MPPT algorithm. This sampling frequency is chosen to be sufficiently lower than the 500 kHz switching frequency to avoid aliasing while maintaining a fast transient response. 
 
 \subsection{Rule Firing}
 The core of the FLC is the rule firing stage, where the necessary change in the duty cycle ($\Delta D$) is determined based on the sampled inputs. This stage processes three key inputs:
@@ -381,9 +388,11 @@ The process involves three steps:
     \item \textbf{Defuzzification:} The output of the Sugeno system is a set of constant values for the change in duty cycle ($\Delta D$), such as \texttt{Big\textunderscore Decrease} (-15), \texttt{Decrease} (-1), \texttt{Hold} (0), \texttt{Increase} (+1), and \texttt{Big\textunderscore Increase} (+15). The final output is a weighted average of the active rule outputs.
 \end{itemize}
 
-These rules provide a two-tiered control strategy. The safety rules (Table \ref{tab:fuzzy_rules_safety}) trigger when the PV voltage moves into the \texttt{Low\textunderscore Voltage} or \texttt{High\textunderscore Voltage} regions. These regions are defined by membership functions in the fuzzy inference system, as specified in the \texttt{matlab\_code/create\_mppt\_fis.m} script. With a 10-bit ADC and a 40V reference, the conversion from a voltage $V$ to an ADC count is given by: $ADC_{count} = (V / 40V) \times 1024$.
+These rules provide a two-tiered control strategy. The safety rules (Table \ref{tab:fuzzy_rules_safety}) trigger when the PV voltage moves into the \texttt{Low\textunderscore Voltage} or \texttt{High\textunderscore Voltage} regions. These regions are defined by membership functions in the fuzzy inference system, as specified in the MATLAB script provided in Code Snippet \ref{code:create_mppt_fis}. With a 10-bit ADC and a 40V reference, the conversion from a voltage $V$ to an ADC count is given by: $ADC_{count} = (V / 40V) \times 1024$.
 
-The MPP for the modeled panel is at 30.6V (approx. ADC count 783). The safety rules are configured for large deviations from this point. For instance, the \texttt{Low\textunderscore Voltage} membership function (see \texttt{create\_mppt\_fis.m}) becomes fully active for ADC counts below 730. This corresponds to a voltage of approximately 28.5V, calculated as $(730 / 1024) \times 40V$. If the panel voltage drops into this region, the controller applies a \texttt{Big\textunderscore Decrease} to the duty cycle, raising the panel voltage back towards the MPP. Conversely, the \texttt{High\textunderscore Voltage} membership function begins to activate at an ADC count of 840, which corresponds to 32.8V ($(840 / 1024) \times 40V$). If the voltage exceeds this, the controller applies a \texttt{Big\textunderscore Increase} to lower the panel voltage.
+\lstinputlisting[language=MATLAB, caption={Fuzzy Inference System Creation Script}, label={code:create_mppt_fis}]{matlab_code/create_mppt_fis.m}
+
+The MPP for the modeled panel is at 30.6V (approx. ADC count 783). The safety rules are configured for large deviations from this point. For instance, the \texttt{Low\textunderscore Voltage} membership function (see Code Snippet \ref{code:create_mppt_fis}) becomes fully active for ADC counts below 730. This corresponds to a voltage of approximately 28.5V, calculated as $(730 / 1024) \times 40V$. If the panel voltage drops into this region, the controller applies a \texttt{Big\textunderscore Decrease} to the duty cycle, raising the panel voltage back towards the MPP. Conversely, the \texttt{High\textunderscore Voltage} membership function begins to activate at an ADC count of 840, which corresponds to 32.8V ($(840 / 1024) \times 40V$). If the voltage exceeds this, the controller applies a \texttt{Big\textunderscore Increase} to lower the panel voltage.
 
 Once the voltage is within the \texttt{Optimal\textunderscore Range}, the fine-tuning rules take over, making small adjustments to zero in on the precise MPP and hold it there, as detailed in Table \ref{tab:fuzzy_rules_optimal}.
 
@@ -530,7 +539,7 @@ With the slope and a known point, the membership degree ($y$) for any input ($x$
 \end{equation}
 This linear relationship makes the calculation straightforward to implement in hardware, as shown in the SystemVerilog code below.
 \lstinputlisting[caption={MF triangle SystemVerilog Implementation}, label={code:mf_triangle}]{systemverilogcode/mf_triangle.sv}
-Other common membership functions, such as the linear S-shaped and Z-shaped functions, are similarly simple to implement in hardware as they are also based on linear equations.
+Other common membership functions, such as the linear S-shaped and Z-shaped functions, are similarly simple to implement in SystemVerilog as they are also based on linear equations.
 
 \subsection{Inference}
 \label{sec:sv_inference}
@@ -705,7 +714,7 @@ Linearity is the main metric for this device, as any distortion introduced at th
 \end{table}
 
 \subsection{CapDAC}
-The Capacitor-DAC (CapDAC) utilizes a split-capacitor architecture to reduce the total capacitance and silicon area. Instead of a conventional $2^{12}$ unit capacitor array, the design employs a 6-bit MSB and 6-bit LSB split. Although the minimum Metal-Insulator-Metal (MIM) capacitor allowed by the PDK is 6 fF, a unit capacitor of 60 fF is used in this architecture. Following the equivalent value method described in \cite{Fan2023}, a bridge capacitor of 2C (twice the unit capacitance) was chosen, reducing the total number of unit capacitors to 128. To ensure proper binary weighting, an additional dummy capacitor is required. The calculation for this dummy capacitor was performed using the MATLAB script in Listing \ref{code:adc_split_cap}, which implements the method from \cite{Fan2023}, and resulted in a value of 62C. This configuration significantly improves the settling time and bandwidth of the ADC.
+The Capacitor-DAC (CapDAC) utilizes a split-capacitor architecture to reduce the total capacitance and silicon area. Instead of a conventional $2^{12}$ unit capacitor array, the design employs a 6-bit MSB and 6-bit LSB split. Although the minimum Metal-Insulator-Metal (MIM) capacitor allowed by the PDK is 6 fF, a unit capacitor of 60 fF is used in this architecture. Following the equivalent value method described in \cite{Fan2023}, a bridge capacitor of 2C (twice the unit capacitance) was chosen, reducing the total number of unit capacitors to 128. To ensure proper binary weighting, an additional dummy capacitor is required. The calculation for this dummy capacitor was performed using the MATLAB script in Code Snippet \ref{code:adc_split_cap}, which implements the method from \cite{Fan2023}, and resulted in a value of 62C. This configuration significantly improves the settling time and bandwidth of the ADC.
 
 \lstinputlisting[language=MATLAB, caption={Split Capacitor Array Calculation Script}, label={code:adc_split_cap}]{matlab_code/adc_split_cap.m}
 
@@ -720,7 +729,7 @@ The linearity of the CapDAC is paramount for the overall ADC performance. The tw
     \label{fig:capdac_linearity}
 \end{figure}
 
-The results shown in Figure \ref{fig:capdac_linearity} are obtained from a Monte Carlo simulation of 200 runs using a low-discrepancy sequence. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors consisting of 6 fF unit cells. Additionally, a calibration capacitance of $0.1 \times C_{unit}$ is added.
+The results shown in Figure \ref{fig:capdac_linearity} are obtained from a Monte Carlo simulation of 200 runs using a low-discrepancy sequence. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors. Given that the primary unit capacitance ($C_{unit}$) is 60 fF, these trim capacitors consist of 6 fF unit cells, corresponding to an added calibration capacitance of $0.1 \times C_{unit}$.
 
 \subsection{Preamplifier}
 In a high-resolution SAR ADC, the dynamic comparator can inject significant kickback noise back onto the sensitive CapDAC nodes when it fires. This charge injection can corrupt the voltage stored on the capacitor array, leading to erroneous bit decisions. To mitigate this effect and improve the overall linearity, a preamplifier is placed between the CapDAC and the comparator.
@@ -1017,7 +1026,7 @@ The duty cycle generator is responsible for converting the digital control signa
 \subsection{DAC}
 To generate the precise analog reference voltage required by the duty cycle generator, an R-2R resistor ladder Digital-to-Analog Converter (DAC) is employed. The R-2R topology is chosen for its simplicity and relatively small silicon area footprint. The 10-bit digital output from the FLC controls the switches in the R-2R ladder, producing a proportional analog voltage.
 
-The primary performance limitations in an R-2R DAC are Integral Non-Linearity (INL) and Differential Non-Linearity (DNL). These non-linearities arise predominantly from random and systematic mismatches in the resistors comprising the ladder. Since the accuracy of the analog output relies heavily on the precise $2:1$ ratio of the resistance values, any process variations directly degrade the step sizes (DNL) and the overall transfer curve linearity (INL). Figure \ref{fig:dac_inl_dnl} presents the performance plot of the implemented 10-bit R-2R DAC, demonstrating its INL and DNL characteristics evaluated over a Monte Carlo simulation of 200 runs using a low-discrepancy sequence.
+The primary performance limitations in an R-2R DAC are Integral Non-Linearity (INL) and Differential Non-Linearity (DNL). These non-linearities arise predominantly from random and systematic mismatches in the resistors comprising the ladder. Since the accuracy of the analog output relies heavily on the precise $2:1$ ratio of the resistance values, any process variations directly degrade the step sizes (DNL) and the overall transfer curve linearity (INL). To mitigate these mismatch errors and achieve an acceptable DNL, the unit resistor ($R_{unit}$) is designed to be relatively large. Specifically, P-poly type resistors are employed with a unit resistance of approximately 150 k$\Omega$. Figure \ref{fig:dac_inl_dnl} presents the performance plot of the implemented 10-bit R-2R DAC, demonstrating its INL and DNL characteristics evaluated over a Monte Carlo simulation of 200 runs using a low-discrepancy sequence.
 
 \begin{figure}[H]
     \centering
@@ -1096,7 +1105,7 @@ In digital hardware design, true multipliers and dividers are "logic-hungry" com
 To bridge the gap between theoretical performance and practical physical implementation, this chapter presents a highly optimized, hardware-friendly architecture. The core principle of this optimization is the elimination of complex arithmetic blocks. Instead, the fuzzy logic algorithms are reformulated to utilize highly efficient bitwise shift operations, simple adders, and compact Look-Up Tables (LUTs). The following subsections detail how these architectural simplifications are applied to each stage of the fuzzy inference process without significantly degrading the overall Maximum Power Point Tracking (MPPT) performance.
 
 \subsection{Difference Calculation}
-The first step in the MPPT algorithm is determining the change in the photovoltaic voltage ($dV$) and the change in output current ($dI$) between consecutive sampling intervals. In a digital hardware implementation, this requires storing the previous states using D-type flip-flop registers. At each clock cycle, a simple digital subtractor computes the difference between the current and previous samples, as shown in Listing \ref{code:diff_gen}.
+The first step in the MPPT algorithm is determining the change in the photovoltaic voltage ($dV$) and the change in output current ($dI$) between consecutive sampling intervals. In a digital hardware implementation, this requires storing the previous states using D-type flip-flop registers. At each clock cycle, a simple digital subtractor computes the difference between the current and previous samples, as shown in Code Snippet \ref{code:diff_gen}.
 
 \lstinputlisting[caption={Difference Generator SystemVerilog Implementation}, label={code:diff_gen}]{systemverilogcode/dig/rtl/diff_generator.sv}
 
@@ -1150,7 +1159,7 @@ Furthermore, the module handles transitions between manual control and active MP
 \lstinputlisting[caption={Duty Integrator SystemVerilog Implementation}, label={code:duty_int_dig}]{systemverilogcode/dig/rtl/duty_integrator.sv}
 
 \subsection{Fuzzy Top Module}
-The fuzzy top module serves as the highest-level structural wrapper for the digital controller. It instantiates and routes the signals between all the previously discussed components, including the difference generators, the fuzzifier core, and the duty integrator. By seamlessly connecting these optimized sub-modules, the fuzzy top module forms the complete, hardware-efficient Maximum Power Point Tracking (MPPT) control logic, fully prepared for physical synthesis. The SystemVerilog implementation of this top-level module is provided in Code Snippet \ref{code:fuzzy_top_dig}.
+The fuzzy top module serves as the highest-level structural wrapper for the digital controller. It instantiates and routes the signals between all the previously discussed components, including the difference generators, the fuzzifier core, and the duty integrator. It should be emphasized that these underlying modules are designed to be highly customizable. In a standard commercial deployment, their parameters (such as membership function thresholds and rule weights) would be dynamically configurable via a register bank accessed over an SPI or I2C kind of interface. While a dedicated communication protocol is not implemented in this work, these values are passed as structural \texttt{parameter} definitions at instantiation, fully preserving the design's modularity. By seamlessly connecting these optimized sub-modules, the fuzzy top module forms the complete, hardware-efficient Maximum Power Point Tracking (MPPT) control logic, fully prepared for physical synthesis. The SystemVerilog implementation of this top-level module is provided in Code Snippet \ref{code:fuzzy_top_dig}.
 
 \lstinputlisting[caption={Fuzzy Top Module SystemVerilog Implementation}, label={code:fuzzy_top_dig}]{systemverilogcode/dig/rtl/fuzzy_top.sv}
 
@@ -1166,7 +1175,7 @@ This thesis has presented the comprehensive modeling, design, and implementation
 
 The research began with high-level system modeling in MATLAB/Simulink, where a Sugeno-type fuzzy inference system was designed and validated. By evaluating three key parameters—change in PV voltage, change in output current, and absolute PV voltage—the controller demonstrated exceptional tracking accuracy and transient response. To transition this theoretical model towards a physical Integrated Circuit (IC), a mixed-signal architecture was developed within the Cadence Virtuoso environment. The analog front-end, encompassing a 12-bit asynchronous SAR ADC, an R-2R DAC, a high-speed continuous comparator, a ramp generator, and an LDO regulator, was designed to provide robust and precise interfacing between the continuous-time physical world and the discrete-time digital controller. Concurrently, the fuzzy logic algorithm was structurally optimized for digital synthesis. By replacing resource-intensive multipliers and dividers with bitwise shift operations and lookup tables, the digital footprint was drastically minimized without compromising the MPPT performance.
 
-To validate the complete system architecture, an Analog Mixed-Signal (AMS) testbench was constructed. The fully integrated \texttt{IC\_core}, which houses both the custom analog blocks and the synthesized SystemVerilog digital codes, is illustrated in Figure \ref{fig:ic_core}. This core was then instantiated within a comprehensive top-level testbench (Figure \ref{fig:ams_tb}), incorporating the Verilog-A photovoltaic panel model and the external buck converter power stage.
+To validate the complete system architecture, an Analog Mixed-Signal (AMS) testbench was constructed. The fully integrated \texttt{IC\_core}, which houses both the custom analog blocks and the synthesizable SystemVerilog digital codes, is illustrated in Figure \ref{fig:ic_core}. This core was then instantiated within a comprehensive top-level testbench (Figure \ref{fig:ams_tb}), incorporating the Verilog-A photovoltaic panel model and the external buck converter power stage.
 
 \begin{figure}[H]
     \centering

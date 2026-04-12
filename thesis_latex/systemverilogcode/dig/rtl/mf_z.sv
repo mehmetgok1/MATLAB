@@ -1,6 +1,4 @@
-module mf_z #(
-    parameter SHIFT_BITS = 3  // For power-of-2 approximation (2046 ~ 2^11, shift by 3)
-)(
+module mf_z (
     input  logic signed [10:0] A,
     input  logic signed [10:0] B,
     input  logic signed [10:0] x,

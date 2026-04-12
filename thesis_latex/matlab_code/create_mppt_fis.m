@@ -66,13 +66,7 @@ ruleList = [ruleList;
     3 1 2 4 1 1; % Pos/Neg -> Increase (+1)
     1 3 2 4 1 1; % Neg/Pos -> Increase (+1)
     1 1 2 2 1 1; % Neg/Neg -> Decrease (-1)
-    
-    % *** THE CRITICAL CHANGE IS HERE ***
-    % OLD: 2 2 2 2 1 1 (Stuck -> Perturb/Decrease)
-    % NEW: 2 2 2 3 1 1 (Stuck -> HOLD)
-    % If dV=0 and dI=0, do NOTHING. Stay there.
-    2 2 2 3 1 1; 
-
+    2 2 2 3 1 1; % If dV=0 and dI=0, do NOTHING. Stay there.
     2 1 2 3 1 1; % Stable  -> Hold (0)  //The "Shock Absorber" (The Filter Effect) ; The "Ocean" Analogy (The Battery Effect)
     2 3 2 3 1 1; % Stable  -> Hold (0)  //same effect as above, battery huge cap voltage can be constant and current can wiggle
 ];
@@ -81,4 +75,3 @@ fis = addRule(fis, ruleList);
 
 %% 6. Write to File
 writefis(fis, '../FIS_RULES/mppt_sugeno.fis');
-fprintf('Success: Perturb rule disabled. Controller will now HOLD at the peak.\n');

@@ -104,12 +104,12 @@ module fuzzy_top #(
     // Inside your Top Module
     logic [9:0] mppt_duty_wire;   // Output of the Integrator
 
-    // 1. The Integrator (Spying on the Manual Wire)
+    // 1. The Integrator 
     duty_integrator integrator_inst (
         .clk(clk),
         .reset_n(reset_n),
         .mppt_enable(mppt_enable),      // The physical switch state
-        .manual_duty_in(manual_duty_adj), // <--- CONNECT MANUAL INPUT HERE
+        .manual_duty_in(manual_duty_adj), // MANUAL INPUT 
         .duty_adjust(duty_adjust),
         .dac_value(mppt_duty_wire)
     );

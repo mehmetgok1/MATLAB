@@ -11,7 +11,7 @@ module defuzzifier (
 
     always_comb begin
         //======================================================================
-        // WEIGHTED SUM: Σ(wi * Ci) - Synthesizer optimizes multiplications
+        // WEIGHTED SUM: Σ(wi * Ci)
         //======================================================================
         sum_wi_ci = ( $signed({1'b0, w[1]}) * C1 ) +
                     ( $signed({1'b0, w[2]}) * C2 ) +
@@ -31,7 +31,6 @@ module defuzzifier (
         //======================================================================
         // HARDWARE-EFFICIENT DEFUZZIFICATION: Replace Divider with Right-Shift
         // Find the CLOSEST power of 2 to sum_wi for minimal quantization error
-        // This is more accurate than "greater than" logic
         //======================================================================
         if (sum_wi == 0) begin
             shift_amount = 5'd0;  // Avoid division by zero

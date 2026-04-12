@@ -2,7 +2,6 @@
 `include "constants.vams"
 
 // Photovoltaic Panel Model
-// Implementation for Master's Thesis: PV to Battery Charger System
 module pv_model (irradiance, temperatur, p, n);
     inout p, n;
     input irradiance, temperatur;

@@ -8,13 +8,11 @@ module duty_integrator (
 );
 
     // --- CONFIGURATION ---
-    // CHANGE THIS: 9 for Turbo Sim, 14 for Real Hardware
-    // 1 = Fast response (DAC steps by 20 per +/-40 adjustment)
-    // 2 = Slower response (DAC steps by 10 per +/-40 adjustment)
-    localparam int FRAC_BITS = 1; 
+    // CHANGE THIS: 4 for Turbo Sim, 14 for Real Hardware
+    localparam int FRAC_BITS = 4; 
 
     // Safety Headroom: 10 (Data) + FRAC_BITS + 2 (Sign/Overflow)
-    // We keep 26 bits because it is safe for both 9 and 14.
+    // Keep 26 bits because it is safe for both 9 and 14.
     logic signed [25:0] acc; 
 
     // --- SCALED LIMITS (Calculated automatically) ---
@@ -29,9 +27,6 @@ module duty_integrator (
             
             if (mppt_enable == 1'b0) begin
                 // === MANUAL MODE ===
-                // FIX: Use shift operator '<<' instead of hardcoded zeros.
-                // This automatically shifts by 9 or 14 depending on the param.
-                // We cast to 26-bit signed to ensure the width matches 'acc'.
                 acc <= signed'({1'b0, manual_duty_in}) << FRAC_BITS;
             end 
             else begin
@@ -50,10 +45,7 @@ module duty_integrator (
     end
 
     // === OUTPUT ===
-    // FIX: Dynamic Slicing
-    // We want the 10 bits STARTING after the fractional part.
-    // Example (FRAC=9): We want bits [18:9]
-    // Example (FRAC=14): We want bits [23:14]
+    // Dynamic Slicing
     assign dac_value = acc[FRAC_BITS + 9 : FRAC_BITS];
 
 endmodule
