@@ -9,9 +9,9 @@ module duty_integrator (
 
     // --- CONFIGURATION ---
     // CHANGE THIS: 9 for Turbo Sim, 14 for Real Hardware
-    // 1 = Fast response (DAC steps by 20 per ±40 adjustment)
-    // 2 = Slower response (DAC steps by 10 per ±40 adjustment)
-    localparam int FRAC_BITS = 3; 
+    // 1 = Fast response (DAC steps by 20 per +/-40 adjustment)
+    // 2 = Slower response (DAC steps by 10 per +/-40 adjustment)
+    localparam int FRAC_BITS = 1; 
 
     // Safety Headroom: 10 (Data) + FRAC_BITS + 2 (Sign/Overflow)
     // We keep 26 bits because it is safe for both 9 and 14.
@@ -22,7 +22,7 @@ module duty_integrator (
     localparam signed [25:0] MAX_ACC = 26'd716 << FRAC_BITS; 
     localparam signed [25:0] START_VAL = 26'd512 << FRAC_BITS;
 
-    always_ff @(posedge clk or negedge reset_n) begin
+    always_ff @(negedge clk or negedge reset_n) begin
         if (!reset_n) begin
             acc <= START_VAL; 
         end else begin

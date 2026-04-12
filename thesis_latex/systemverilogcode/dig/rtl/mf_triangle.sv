@@ -1,43 +1,65 @@
 module mf_triangle #(
-    parameter signed [10:0] A = -383,
-    parameter signed [10:0] B = -300,
-    parameter signed [10:0] C = -217
+    parameter SHIFT_BITS = 3  // For power-of-2 approximation
 )(
+    input  logic signed [10:0] A,    // Left slope start
+    input  logic signed [10:0] B,    // Peak
+    input  logic signed [10:0] C,    // Right slope end
     input  logic signed [10:0] x,    // input variable (ADC diff)
     output logic [7:0] mu            // membership degree (0-255)
 );
-    // --- HARDWARE OPTIMIZATION: DIVISION -> MULTIPLY & SHIFT ---
-    // Precompute the division as a constant multiplier and use a bitwise right shift (>> 10).
-    // This eliminates logic-hungry dividers during synthesis.
-    localparam integer DEN_LEFT  = B - A;
-    localparam integer DEN_RIGHT = C - B;
-    localparam integer MULT_LEFT  = (DEN_LEFT  != 0) ? ((255 << 10) / DEN_LEFT)  : 0;
-    localparam integer MULT_RIGHT = (DEN_RIGHT != 0) ? ((255 << 10) / DEN_RIGHT) : 0;
-
     // Internal signals
-    logic signed [11:0] num1, num2;
-    logic signed [21:0] tmp;
-    logic signed [15:0] result;
+    logic signed [11:0] num1, num2, den1, den2;
+    logic signed [19:0] scaled;
+    logic [7:0] shifted_result;
+    logic [4:0] shift_amount_left, shift_amount_right;
+    
     always_comb begin
         // Default outputs
         mu = 8'd0;
-        // Left slope: A < x < B
+        
+        // Left slope: A < x < B (rising)
         if ((x > A) && (x < B)) begin
             num1 = x - A;
-            tmp = num1 * MULT_LEFT;
-            // Bitwise shift replaces division (adding 512 for rounding)
-            result = (tmp + 512) >>> 10;
-            mu = (result > 255) ? 8'd255 : result[7:0];
+            den1 = B - A;
+            
+            // Determine shift amount based on CLOSEST power of 2
+            if (den1 < 12'd12) shift_amount_left = 5'd3;   // 2^3 = 8
+            else if (den1 < 12'd24) shift_amount_left = 5'd4;   // 2^4 = 16
+            else if (den1 < 12'd48) shift_amount_left = 5'd5;   // 2^5 = 32
+            else if (den1 < 12'd96) shift_amount_left = 5'd6;   // 2^6 = 64
+            else if (den1 < 12'd192) shift_amount_left = 5'd7;   // 2^7 = 128
+            else if (den1 < 12'd384) shift_amount_left = 5'd8;   // 2^8 = 256
+            else if (den1 < 12'd768) shift_amount_left = 5'd9;   // 2^9 = 512
+            else if (den1 < 12'd1536) shift_amount_left = 5'd10;  // 2^10 = 1024
+            else shift_amount_left = 5'd11;  // 2^11 = 2048
+            
+            // Hardware-efficient: mu = 255 * (x - A) / (B - A) ~ (255 * num1) >> shift_amount
+            scaled = num1 * 8'd255;
+            shifted_result = scaled >> shift_amount_left;
+            mu = (shifted_result > 255) ? 8'd255 : shifted_result;
         end
-        // Right slope: B <= x < C
+        // Right slope: B <= x < C (falling)
         else if ((x >= B) && (x < C)) begin
             num2 = C - x;
-            tmp = num2 * MULT_RIGHT;
-            // Bitwise shift replaces division (adding 512 for rounding)
-            result = (tmp + 512) >>> 10;
-            mu = (result > 255) ? 8'd255 : result[7:0];
+            den2 = C - B;
+            
+            // Determine shift amount based on CLOSEST power of 2
+            if (den2 < 12'd12) shift_amount_right = 5'd3;   // 2^3 = 8
+            else if (den2 < 12'd24) shift_amount_right = 5'd4;   // 2^4 = 16
+            else if (den2 < 12'd48) shift_amount_right = 5'd5;   // 2^5 = 32
+            else if (den2 < 12'd96) shift_amount_right = 5'd6;   // 2^6 = 64
+            else if (den2 < 12'd192) shift_amount_right = 5'd7;   // 2^7 = 128
+            else if (den2 < 12'd384) shift_amount_right = 5'd8;   // 2^8 = 256
+            else if (den2 < 12'd768) shift_amount_right = 5'd9;   // 2^9 = 512
+            else if (den2 < 12'd1536) shift_amount_right = 5'd10;  // 2^10 = 1024
+            else shift_amount_right = 5'd11;  // 2^11 = 2048
+            
+            // Hardware-efficient: mu = 255 * (C - x) / (C - B) ~ (255 * num2) >> shift_amount
+            scaled = num2 * 8'd255;
+            shifted_result = scaled >> shift_amount_right;
+            mu = (shifted_result > 255) ? 8'd255 : shifted_result;
         end
-        // Peak: x == B (technically covered above, but explicit)
+        // Peak: x == B
         else if (x == B) begin
             mu = 8'd255;
         end
