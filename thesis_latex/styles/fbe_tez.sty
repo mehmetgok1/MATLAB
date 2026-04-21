@@ -343,14 +343,7 @@ Science and Engineering \\
                         \addcontentsline{toc}{chapter}%
                             {\protect\numberline{\chaptocapp}#1}%
                       \else
-                        \addtocontents{toc}{%
-                        \noindent
-                        \appendixname\ \thechapter:\hspace{1.6ex}#1
-                        \nobreak\leaders
-                        \hbox{$\m@th \mkern \@dotsep mu.\mkern
-                              \@dotsep mu$}
-                        \hfill \nobreak
-                        \hb@xt@\@pnumwidth{\hss \thepage}\par}
+                        \addcontentsline{toc}{chapter}{\appendixname\ \thechapter:\hspace{1.6ex}#1}%
                       \fi
                     \else
                       \addcontentsline{toc}{chapter}{#1}%
