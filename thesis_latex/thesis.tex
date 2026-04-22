@@ -1142,7 +1142,24 @@ The final control output, $\Delta D$, is obtained using a Sugeno-type weighted a
 \begin{equation}
     \Delta D = \frac{\sum_{i=1}^{n} w_i \cdot c_i}{\sum_{i=1}^{n} w_i}
 \end{equation}
-In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. The SystemVerilog implementation of this optimized defuzzifier is presented in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzzifier_dig}).
+In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. Algorithm \ref{alg:defuzzification} illustrates this optimized process. The SystemVerilog implementation of this optimized defuzzifier is presented in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzzifier_dig}).
+
+\begin{algorithm}[H]
+\caption{Hardware-Efficient Sugeno Defuzzification}
+\label{alg:defuzzification}
+\begin{algorithmic}[1]
+\REQUIRE Active rule weights $w_i$, Crisp constants $C_i$, Total rules $N$
+\ENSURE Crisp output $\Delta D$
+\STATE $Numerator \leftarrow 0$
+\STATE $Denominator \leftarrow 0$
+\FOR{$i = 1$ \TO $N$}
+    \STATE $Numerator \leftarrow Numerator + (w_i \times C_i)$
+    \STATE $Denominator \leftarrow Denominator + w_i$
+\ENDFOR
+\STATE $shift\_val \leftarrow \text{LUT\_Nearest\_Power\_Of\_2}(Denominator)$
+\STATE $\Delta D \leftarrow Numerator \gg shift\_val$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Duty Integration}
 The defuzzified output represents the necessary \textit{change} in the duty cycle ($\Delta D$). The final stage is the discrete-time integration of this output to generate the absolute duty cycle for the PWM block. This is implemented using a digital accumulator.
