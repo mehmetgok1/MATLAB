@@ -703,18 +703,23 @@ Linearity is the main metric for this device, as any distortion introduced at th
 \subsection{CapDAC}
 The CapDAC utilizes a split-capacitor architecture to reduce the total capacitance and silicon area. Instead of a conventional $2^{12}$ unit capacitor array, the design employs a 6-bit MSB and 6-bit LSB split. Although the minimum Metal-Insulator-Metal (MIM) capacitor allowed by the PDK is 6 fF, a unit capacitor of 60 fF is used in this architecture. Following the equivalent value method described in \cite{Fan2023}, a bridge capacitor of 2C (twice the unit capacitance) was chosen, reducing the total number of unit capacitors to 128. To ensure proper binary weighting, an additional dummy capacitor is required. The calculation for this dummy capacitor was performed using the MATLAB script provided in Appendix \ref{app:matlab} (Code Snippet \ref{code:adc_split_cap}), which implements the method from \cite{Fan2023}, and resulted in a value of 62C. This configuration significantly improves the settling time and bandwidth of the ADC.
 
-The linearity of the CapDAC is paramount for the overall ADC performance. The two key metrics are Differential Non-Linearity (DNL), which measures the deviation in step width from the ideal 1 LSB, and Integral Non-Linearity (INL), which is the cumulative sum of DNL errors. Figure \ref{fig:capdac_linearity} shows the simulated DNL and INL of the designed CapDAC.
+The linearity of the CapDAC is paramount for the overall ADC performance. The two key metrics are Differential Non-Linearity (DNL), which measures the deviation in step width from the ideal 1 LSB, and Integral Non-Linearity (INL), which is the cumulative sum of DNL errors. Figure \ref{fig:capdac_dnl} and Figure \ref{fig:capdac_inl} show the simulated DNL and INL of the designed CapDAC, respectively.
 
 \begin{figure}[H]
     \centering
-    \subfigure[DNL\label{fig:capdac_dnl}]{\includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/dnlsim.png}}
-    \vfill
-    \subfigure[INL and its derivative\label{fig:capdac_inl}]{\includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/inlandderivinl.png}}
-    \caption{CapDAC Linearity Simulation Results.}
-    \label{fig:capdac_linearity}
+    \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/dnlsim.png}
+    \caption{CapDAC DNL Simulation Results.}
+    \label{fig:capdac_dnl}
 \end{figure}
 
-The results shown in Figure \ref{fig:capdac_linearity} are obtained from a Monte Carlo simulation of 200 runs using a low-discrepancy sequence. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors. Given that the primary unit capacitance ($C_{unit}$) is 60 fF, these trim capacitors consist of 6 fF unit cells, corresponding to an added calibration capacitance of $0.1 \times C_{unit}$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/inlandderivinl.png}
+    \caption{CapDAC INL and its derivative Simulation Results.}
+    \label{fig:capdac_inl}
+\end{figure}
+
+The results shown in Figure \ref{fig:capdac_dnl} and Figure \ref{fig:capdac_inl} are obtained from a Monte Carlo simulation of 200 runs using a low-discrepancy sequence. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors. Given that the primary unit capacitance ($C_{unit}$) is 60 fF, these trim capacitors consist of 6 fF unit cells, corresponding to an added calibration capacitance of $0.1 \times C_{unit}$.
 
 \subsection{Preamplifier}
 In a high-resolution SAR ADC, the dynamic comparator can inject significant kickback noise back onto the sensitive CapDAC nodes when it fires. This charge injection can corrupt the voltage stored on the capacitor array, leading to erroneous bit decisions. To mitigate this effect and improve the overall linearity, a preamplifier is placed between the CapDAC and the comparator.
@@ -725,7 +730,7 @@ The preamplifier serves two primary functions:
     \item \textbf{Gain:} It provides a moderate amount of voltage gain, amplifying the small differential voltage from the CapDAC. This relaxes the sensitivity requirements for the subsequent comparator, reducing its effective input-referred offset and noise.
 \end{enumerate}
 
-The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a fully differential amplifier that utilizes top-plate sampling. A fully differential topology is used to maintain high common-mode noise rejection throughout the signal path. To stabilize the output common-mode voltage, which is otherwise undefined in a differential amplifier, a dedicated Common-Mode Feedback (CMFB) circuit is employed. The reference voltage for the CMFB is set to VDD/2, which is generated by a simple resistive divider filtered by a capacitor to reduce noise; this VDD/2 reference will also be used by the top-plate biasing LDO. The CMFB circuit senses the average output voltage, compares it to this reference, and adjusts the gate voltage of the PMOS load transistors to maintain a stable DC operating point.
+The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a fully differential amplifier designed to interface directly with the CapDAC's top-plate sampling architecture. A fully differential topology is used to maintain high common-mode noise rejection throughout the signal path. To stabilize the output common-mode voltage, which is otherwise undefined in a differential amplifier, a dedicated Common-Mode Feedback (CMFB) circuit is employed. The reference voltage for the CMFB is set to VDD/2, which is generated by a simple resistive divider filtered by a capacitor to reduce noise; this VDD/2 reference will also be used by the top-plate biasing LDO. The CMFB circuit senses the average output voltage, compares it to this reference, and adjusts the gate voltage of the PMOS load transistors to maintain a stable DC operating point.
 
 \begin{figure}[H]
     \centering
@@ -1093,7 +1098,26 @@ To bridge the gap between theoretical performance and practical physical impleme
 The first step in the MPPT algorithm is determining the change in the photovoltaic voltage ($dV$) and the change in output current ($dI$) between consecutive sampling intervals. In a digital hardware implementation, this requires storing the previous states using D-type flip-flop registers. At each clock cycle, a simple digital subtractor computes the difference between the current and previous samples, as shown in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:diff_gen}).
 
 \subsection{Fuzzification}
-The fuzzification stage assigns membership values to fuzzify the crisp digital inputs into linguistic variables. An exact calculation of the membership degree (typically ranging from 0 to 255 for an 8-bit resolution) involves linear interpolation, which inherently requires a division operation. To circumvent this, the interpolation fraction is optimized by lookup dividing logic. The denominator is approximated to the nearest power of two, which transforms the complex division into a highly efficient bitwise right-shift ($\gg$) operation. This replaces a resource-intensive divider with simple comparative lookup logic and shift operations.
+The fuzzification stage assigns membership values to fuzzify the crisp digital inputs into linguistic variables. An exact calculation of the membership degree (typically ranging from 0 to 255 for an 8-bit resolution) involves linear interpolation, which inherently requires a division operation. To circumvent this, the interpolation fraction is optimized by lookup dividing logic. The denominator is approximated to the nearest power of two, which transforms the complex division into a highly efficient bitwise right-shift ($\gg$) operation. This replaces a resource-intensive divider with simple comparative lookup logic and shift operations. Algorithm \ref{alg:mf_interpolation} illustrates this shared underlying concept.
+
+\begin{algorithm}[H]
+\caption{Hardware-Efficient Linear Interpolation for Membership Functions}
+\label{alg:mf_interpolation}
+\begin{algorithmic}[1]
+\REQUIRE Crisp input $x$, Thresholds $A$ and $B$, Max Output $M$
+\ENSURE Membership degree $\mu \in [0, M]$
+\IF{$x \leq A$}
+    \STATE $\mu \leftarrow 0$ \COMMENT{Or $M$ for falling edge (Z-shape)}
+\ELSIF{$x \geq B$}
+    \STATE $\mu \leftarrow M$ \COMMENT{Or $0$ for falling edge (Z-shape)}
+\ELSE
+    \STATE $\Delta x \leftarrow |x - A|$
+    \STATE $\Delta_{th} \leftarrow B - A$
+    \STATE $shift\_val \leftarrow \text{LUT\_Nearest\_Power\_Of\_2}(\Delta_{th})$
+    \STATE $\mu \leftarrow (\Delta x \times M) \gg shift\_val$
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
 
 The hardware implementation utilizes three primary types of membership functions: Z-shaped, S-shaped, and Triangular-shaped.
 
