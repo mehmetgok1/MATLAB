@@ -1,58 +1,34 @@
 `include "disciplines.vams"
 `include "constants.vams"
-
-// Photovoltaic Panel Model
 module pv_model (irradiance, temperatur, p, n);
     inout p, n;
     input irradiance, temperatur;
     electrical p, n, irradiance, temperatur;
-
-    // --- Array Configuration ---
     parameter real Ns_mod  = 1;      // Series modules
     parameter real Np_mod  = 1;      // Parallel strings
     parameter real N_cell  = 60;     // Cells per module
-    
-    // --- Model Parameters (Extracted from Simulink/A10Green) ---
+    // ---(Extracted from Simulink/A10Green) ---
     parameter real IL_ref  = 8.2383;     // Light current [A]
     parameter real I0_ref  = 2.8335e-10; // Saturation current [A]
     parameter real n_id    = 0.98962;    // Ideality factor
     parameter real Rs_ref  = 0.25811;    // Series resistance [Ohm]
     parameter real Rsh_ref = 196.9278;   // Shunt resistance [Ohm]
-    
-    // --- Physics & Temp Constants ---
     parameter real alpha_Isc = 0.00096999; // Temperature coefficient [A/C]
     parameter real Tref      = 25.0;       // Reference temperature [C]
     parameter real Eg        = 1.12;       // Bandgap energy [eV] for Si
-
-    // Internal Variables
     real Tc_degC, Tc_K, Tref_K;
     real G_suns, IL, I0, Vt, Rs, Rsh, V_diode;
-
     analog begin
-        // 1. Environmental Input Scaling
         G_suns  = V(irradiance); 
         Tc_degC = V(temperatur);
         Tc_K    = Tc_degC + 273.15;
         Tref_K  = Tref + 273.15;
-
-        // 2. Variable Calculation
         Vt = (N_cell * Ns_mod * `P_K * Tc_K / `P_Q) * n_id;
-        
-        // Adjust for current irradiance and temperature
         IL = (IL_ref + alpha_Isc * (Tc_degC - Tref)) * G_suns;
-        
-        // Calculate saturation current temperature dependence
         I0 = I0_ref * pow((Tc_K / Tref_K), 3.0) * limexp((`P_Q * Eg / (n_id * `P_K)) * (1/Tref_K - 1/Tc_K));
-        
-        // Scale parasitic resistances for array size
         Rs  = Rs_ref * Ns_mod / Np_mod;
         Rsh = Rsh_ref * Ns_mod / Np_mod;
-
-        // 3. Kirchhoff's Current Law Implementation
-        // Define diode voltage including the drop across series resistance
         V_diode = V(p, n) - I(p, n) * Rs;
-
-        // Final output current: Losses (Diode + Shunt) minus Source (Photocurrent)
         I(p, n) <+ (I0 * Np_mod * (limexp(V_diode / Vt) - 1)) + 
                    (V_diode / Rsh) - (IL * Np_mod);
     end

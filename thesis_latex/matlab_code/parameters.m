@@ -7,42 +7,24 @@
 %  [3] Texas Instruments, "Basic Calculation of a Buck Converter" (SLVA477B).
 %  ====================================================
 clear; clc;
-
 %% 1. System Operating Points
-f_sw = 500e3;        % 500 kHz (Selected for Tape-out Logic density)
-P_max = 235;         % 235 Watts (User Spec)
-Vin_mpp = 30.6;      % PV Voltage at MPP
-Vout_nom = 14.4;     % Battery Charging Voltage
-
+f_sw = 500e3;       
+P_max = 235;         
+Vin_mpp = 30.6;      
+Vout_nom = 14.4;     
 % Max Output Current (I = P/V)
-% Designed for worst-case low battery voltage (12V)
 I_out_max = P_max / 12.0; % 19.5A
 
 %% 2. Inductor Sizing
-% Source: Erickson [1], Chapter 2, Equation 2.18
-% Rule: Select Ripple (dI) between 20-40% of max load [3].
 Ripple_Ratio = 0.30; 
-Delta_I_L = I_out_max * Ripple_Ratio; % ~6A
-D_nom = Vout_nom / Vin_mpp;           % Duty Cycle
-
-% Formula: L = (Vout * (1 - D)) / (f_sw * dI)
-L_calc = (Vout_nom * (1 - D_nom)) / (f_sw * Delta_I_L);
-% Result: ~2.6 uH
-
+Delta_I_L = I_out_max * Ripple_Ratio; 
+D_nom = Vout_nom / Vin_mpp;          
+L_calc = (Vout_nom * (1 - D_nom)) / (f_sw * Delta_I_L); % Formula: L = (Vout * (1 - D)) / (f_sw * dI)
 %% 3. Input Capacitor Sizing
-% Source: Rashid [2], Chapter 10 "DC-DC Converters", Eq 10.32
-% Also derived in TI Application Report SLTA055 for input ripple.
-% Target Input Ripple: 1% of Vin (Essential for MPPT accuracy).
 Delta_V_in = Vin_mpp * 0.01; 
-
-% Formula: Cin = (I_out * D * (1-D)) / (f_sw * dV_in)
-Cin_calc = (I_out_max * D_nom * (1 - D_nom)) / (f_sw * Delta_V_in);
-% Result: ~32 uF (Select standard 47uF)
-
+Cin_calc = (I_out_max * D_nom * (1 - D_nom)) / (f_sw * Delta_V_in);% Formula: Cin = (I_out * D * (1-D)) / (f_sw * dV_in)
 %% 4. Sampling Frequency
-% Source: Nyquist-Shannon Theorem & Feedback Control Theory
-% Rule: Sampling Freq < 1/10th of Switching Freq to avoid aliasing noise.
-sampling = 20e3;     % 20 kHz
-
+sampling = 20e3; % Rule: Sampling Freq < 1/10th of Switching Freq to avoid aliasing noise.
+%% Sim time
 Sim_Time = 0.6; % Seconds
 
