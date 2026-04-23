@@ -359,7 +359,7 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
 \label{sec:matlab_flc}
 To address the non-linear characteristics of the PV array and the need for robust tracking under changing environmental conditions, this thesis employs a Fuzzy Logic Controller (FLC). Unlike traditional linear controllers, the FLC does not require an exact mathematical model of the plant, making it highly effective for the time-varying nature of solar irradiance and temperature.
 
-The control algorithm is based on a Sugeno-type fuzzy inference system, which is chosen for its computational efficiency and its suitability for generating a crisp control output, making it well-suited for digital implementation in control systems. The overall process of the FLC can be divided into three main stages: sampling, rule firing, and duty adjustment.
+The control algorithm is based on a Sugeno-type fuzzy inference system, which is chosen for its computational efficiency and its suitability for generating a crisp control output, making it well-suited for digital implementation in control systems. The overall process of the FLC can be divided into three main stages: sampling, rule firing, and duty cycle adjustment.
 
 \begin{figure}[H]
     \centering
@@ -392,7 +392,7 @@ The MPP for the modeled panel is at 30.6V (approx. ADC count 783). The safety ru
 
 Once the voltage is within the \texttt{Optimal\textunderscore Range}, the fine-tuning rules take over, making small adjustments to zero in on the precise MPP and hold it there, as detailed in Table \ref{tab:fuzzy_rules_optimal}.
 
-\subsection{Duty Adjustment}
+\subsection{Duty Cycle Adjustment}
 The final stage is the adjustment of the duty cycle. To ensure a smooth transition between different control states and prevent abrupt changes in the duty cycle, a bumpless transfer mechanism is implemented. This is achieved by taking the duty cycle output from the general duty cycle register ($D[n-1]$) and adding the calculated change ($\Delta D$). This feedback loop ensures that the control signal evolves continuously from the previous state, preventing discontinuities when switching between loop dynamics.
 
 Additionally, the integrator and the scaling of the output provide a damping effect. This lowers the impact of abrupt changes, reducing oscillations and making the system robust against noise and environmental disturbances. In the MATLAB model, the calculated $\Delta D$ is divided by a gain factor (e.g., 16384). This ``lowering effect'' reduces the magnitude of the duty cycle adjustments, allowing for very fine control granularity in the continuous simulation environment.
@@ -564,7 +564,7 @@ where $w_i$ is the firing strength of the $i$-th rule, $C_i$ is the constant out
 The SystemVerilog implementation, provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzz}), defines the singleton constants corresponding to the linguistic variables \texttt{Big\textunderscore Decrease} (-15), \texttt{Decrease} (-1), \texttt{Hold} (0), \texttt{Increase} (+1), and \texttt{Big\textunderscore Increase} (+15). The module accumulates the weighted sum (numerator) and the total weight (denominator) to compute the final integer division.
 \subsection{Duty Cycle Integration and Bumpless Transfer}
 \label{sec:sv_duty_integrator}
-The final stage of the digital control loop is the Duty Integrator. While the fuzzy inference engine determines the required \textit{change} in the operating point ($\Delta D$), the Pulse Width Modulation (PWM) generator requires an absolute duty cycle value to drive the power MOSFETs. This module performs the discrete-time integration of the fuzzy output, mathematically represented as:
+The final stage of the digital control loop is the Duty Cycle Integrator. While the fuzzy inference engine determines the required \textit{change} in the operating point ($\Delta D$), the Pulse Width Modulation (PWM) generator requires an absolute duty cycle value to drive the power MOSFETs. This module performs the discrete-time integration of the fuzzy output, mathematically represented as:
 \begin{equation}
     D[n] = D[n-1] + \Delta D[n]
 \end{equation}
@@ -584,7 +584,7 @@ It is important to note that the SystemVerilog code snippets provided in this se
 \label{sec:sv_simulation_results}
 The functional verification of the SystemVerilog implementation was performed within the Cadence Virtuoso environment. The simulation was run for 180 ms, with the MPPT enabled at 0.3 ms.
 
-As discussed in the duty integrator section, the selection of the damping fraction is critical. A fraction of 6 was selected; a higher value (e.g., 15) would result in excessive settling time for transient ringing. To further stabilize the inputs, $V_{pv}$, $I_{pv}$, and $I_{out}$ are processed through a moving average block with a window width of 200 $\mu$s.
+As discussed in the duty cycle integrator section, the selection of the damping fraction is critical. A fraction of 6 was selected; a higher value (e.g., 15) would result in excessive settling time for transient ringing. To further stabilize the inputs, $V_{pv}$, $I_{pv}$, and $I_{out}$ are processed through a moving average block with a window width of 200 $\mu$s.
 
 Figure \ref{fig:cadence_results} illustrates the system's response. The extracted input power ($P_{in}$) settles at 227 W, which is close to the theoretical maximum of 231.4 W listed in Table \ref{tab:pv_model_comparison}. The average PV voltage ($V_{pv\_avg}$) stabilizes at 30.48 V, compared to the theoretical MPP voltage of 30.29 V. The output power ($P_{out}$) is measured at 217 W. This results in a PV efficiency ($P_{in}/P_{vmax}$) of $227/231.4 \approx 98.1\%$ and a converter efficiency ($P_{out}/P_{in}$) of $217/227 \approx 95.6\%$. Despite these minor deviations, the model demonstrates robust operation and successful tracking.
 
@@ -611,7 +611,7 @@ To ensure precise tracking and stable operation, the system is decomposed into t
 \begin{itemize}
     \item \textbf{Digital Controller}
     \begin{itemize}
-        \item \textbf{Fuzzy Logic Controller:} Implements the Sugeno inference engine, rule base, and duty integrator.
+        \item \textbf{Fuzzy Logic Controller:} Implements the Sugeno inference engine, rule base, and duty cycle integrator.
     \end{itemize}
     
     \item \textbf{Analog / Mixed-Signal Interface}
@@ -625,7 +625,7 @@ To ensure precise tracking and stable operation, the system is decomposed into t
         \item \textbf{Digital-to-Analog Converter (DAC)}
         \begin{itemize}
             \item \textit{Resolution:} 10-bit
-            \item \textit{Function:} Converts the digital output of the FLC to an analog signal to drive the duty controller.
+            \item \textit{Function:} Converts the digital output of the FLC to an analog signal to drive the duty cycle controller.
         \end{itemize}
     \end{itemize}
 
@@ -637,7 +637,7 @@ To ensure precise tracking and stable operation, the system is decomposed into t
     
     \item \textbf{Power Stage \& Drivers}
     \begin{itemize}
-        \item \textbf{Duty Generator (PWM Adjuster):} This block compares the analog control voltage from the DAC against a high-frequency triangular waveform to generate the PWM signal. The resulting duty cycle is proportional to the control voltage, directly modulating the power flow through the buck converter.
+        \item \textbf{Duty Cycle Generator (PWM Adjuster):} This block compares the analog control voltage from the DAC against a high-frequency triangular waveform to generate the PWM signal. The resulting duty cycle is proportional to the control voltage, directly modulating the power flow through the buck converter.
         \item \textbf{High-Side Switch Driver:} A specialized circuit required to drive the gate of the high-side N-MOSFET. Since the MOSFET's source is not ground-referenced but connected to the switching node, this driver must provide a gate voltage that is higher than the input voltage ($V_{in}$) to turn the switch on. This is typically achieved using a bootstrap circuit.
         \item \textbf{Low-Side Switch Driver:} This circuit drives the gate of the low-side synchronous N-MOSFET. As its source is connected to ground, the driver provides a simpler 0V to $V_{DD}$ logic-level signal, but it must be capable of sourcing and sinking high peak currents to charge and discharge the gate capacitance quickly, minimizing switching losses.
     \end{itemize}
@@ -1161,15 +1161,15 @@ In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Duty Integration}
+\subsection{Duty Cycle Integration}
 The defuzzified output represents the necessary \textit{change} in the duty cycle ($\Delta D$). The final stage is the discrete-time integration of this output to generate the absolute duty cycle for the PWM block. This is implemented using a digital accumulator.
 
 To degrade further oscillations and provide a digital damping effect, the system accumulates these integer steps into a higher-resolution 26-bit duty cycle register, but only slices the top 10 bits for the final DAC output. This fractional accumulation dampens the instantaneous adjustments and compensates for any quantization noise introduced by the approximations in the preceding fuzzification and defuzzification stages. 
 
-Furthermore, the module handles transitions between manual control and active MPPT tracking by pre-loading the accumulator with the scaled manual duty cycle. When the FLC takes over, it resumes accumulation from this exact state. This mechanism guarantees a "bumpless" transfer without abrupt adjustments, maintaining stability around the Maximum Power Point. The SystemVerilog implementation of the duty integrator, which also incorporates boundary saturation logic to ensure safe operation limits, is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:duty_int_dig}).
+Furthermore, the module handles transitions between manual control and active MPPT tracking by pre-loading the accumulator with the scaled manual duty cycle. When the FLC takes over, it resumes accumulation from this exact state. This mechanism guarantees a "bumpless" transfer without abrupt adjustments, maintaining stability around the Maximum Power Point. The SystemVerilog implementation of the duty cycle integrator, which also incorporates boundary saturation logic to ensure safe operation limits, is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:duty_int_dig}).
 
 \subsection{Fuzzy Top Module}
-The fuzzy top module serves as the highest-level structural wrapper for the digital controller. It instantiates and routes the signals between all the previously discussed components, including the difference generators, the fuzzifier core, and the duty integrator. It should be emphasized that these underlying modules are designed to be highly customizable. In a standard commercial deployment, their parameters (such as membership function thresholds and rule weights) would be dynamically configurable via a register bank accessed over an SPI or I2C kind of interface. While a dedicated communication protocol is not implemented in this work, these values are passed as structural \texttt{parameter} definitions at instantiation, fully preserving the design's modularity. By seamlessly connecting these optimized sub-modules, the fuzzy top module forms the complete, hardware-efficient Maximum Power Point Tracking (MPPT) control logic, fully prepared for physical synthesis. The SystemVerilog implementation of this top-level module is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:fuzzy_top_dig}).
+The fuzzy top module serves as the highest-level structural wrapper for the digital controller. It instantiates and routes the signals between all the previously discussed components, including the difference generators, the fuzzifier core, and the duty cycle integrator. It should be emphasized that these underlying modules are designed to be highly customizable. In a standard commercial deployment, their parameters (such as membership function thresholds and rule weights) would be dynamically configurable via a register bank accessed over an SPI or I2C kind of interface. While a dedicated communication protocol is not implemented in this work, these values are passed as structural \texttt{parameter} definitions at instantiation, fully preserving the design's modularity. By seamlessly connecting these optimized sub-modules, the fuzzy top module forms the complete, hardware-efficient Maximum Power Point Tracking (MPPT) control logic, fully prepared for physical synthesis. The SystemVerilog implementation of this top-level module is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:fuzzy_top_dig}).
 
 \section{Parameter Configuration and SPI Integration}
 In a fully integrated mixed-signal System-on-Chip (SoC), a digital communication interface, such as a Serial Peripheral Interface (SPI), is typically employed to configure digital parameters and calibrate analog blocks. Such an interface would enable the dynamic adjustment of the fuzzy logic parameters—such as membership function thresholds and Sugeno output weights—as well as the calibration trims for the ADC, DAC, and ramp generator arrays.
@@ -1262,7 +1262,7 @@ To promote reproducibility and encourage further research, the complete MATLAB/S
 \lstinputlisting[caption={MF triangle SystemVerilog Implementation}, label={code:mf_triangle}]{systemverilogcode/mf_triangle.sv}
 \lstinputlisting[caption={Inference SystemVerilog Implementation}, label={code:inference}]{systemverilogcode/inference.sv}
 \lstinputlisting[caption={defuzzification SystemVerilog Implementation}, label={code:defuzz}]{systemverilogcode/defuzzifier.sv}
-\lstinputlisting[caption={Duty Integrator SystemVerilog Implementation}, label={code:duty_int}]{systemverilogcode/duty_integrator.sv}
+\lstinputlisting[caption={Duty Cycle Integrator SystemVerilog Implementation}, label={code:duty_int}]{systemverilogcode/duty_integrator.sv}
 
 \section{Hardware-Friendly RTL Implementations}
 \lstinputlisting[caption={Difference Generator SystemVerilog Implementation}, label={code:diff_gen}]{systemverilogcode/dig/rtl/diff_generator.sv}
@@ -1272,7 +1272,7 @@ To promote reproducibility and encourage further research, the complete MATLAB/S
 \lstinputlisting[caption={Fuzzifier SystemVerilog Implementation}, label={code:fuzzifier_dig}]{systemverilogcode/dig/rtl/fuzzifier.sv}
 \lstinputlisting[caption={Inference Engine SystemVerilog Implementation}, label={code:inference_dig}]{systemverilogcode/dig/rtl/inference.sv}
 \lstinputlisting[caption={Defuzzifier SystemVerilog Implementation}, label={code:defuzzifier_dig}]{systemverilogcode/dig/rtl/defuzzifier.sv}
-\lstinputlisting[caption={Duty Integrator SystemVerilog Implementation}, label={code:duty_int_dig}]{systemverilogcode/dig/rtl/duty_integrator.sv}
+\lstinputlisting[caption={Duty Cycle Integrator SystemVerilog Implementation}, label={code:duty_int_dig}]{systemverilogcode/dig/rtl/duty_integrator.sv}
 \lstinputlisting[caption={Fuzzy Top Module SystemVerilog Implementation}, label={code:fuzzy_top_dig}]{systemverilogcode/dig/rtl/fuzzy_top.sv}
 
 \nocite{*}
