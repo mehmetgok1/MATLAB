@@ -515,7 +515,7 @@ While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A beh
 
 \section{Fuzzy Logic Controller}
 \label{sec:sv_fuzzy_engine}
-To prepare the design for hardware implementation, the fuzzy logic controller, previously validated in MATLAB, was implemented as a digital module using SystemVerilog. SystemVerilog is a hardware description and verification language that allows for the creation of synthesizable logic, providing a direct path to a physical integrated circuit. This implementation follows a Sugeno-type fuzzy inference model, which is well-suited for hardware due to its computational efficiency. The process is broken down into three fundamental stages: fuzzification, inference, and defuzzification.
+To prepare the design for hardware implementation, the fuzzy logic controller, previously validated in MATLAB, was implemented as a digital module using SystemVerilog. SystemVerilog is a hardware description and verification language that allows for the creation of synthesizable logic, providing a direct path to a physical integrated circuit. This implementation follows a Sugeno-type fuzzy inference model, which is well-suited for hardware implementation due to its computational efficiency. The process is broken down into three fundamental stages: fuzzification, inference, and defuzzification.
 
 \subsection{Fuzzification}
 \label{sec:sv_fuzzification}
@@ -562,7 +562,7 @@ The crisp output, representing the required change in duty cycle ($\Delta D$), i
 where $w_i$ is the firing strength of the $i$-th rule, $C_i$ is the constant output value associated with that rule, and $N$ is the total number of rules.
 
 The SystemVerilog implementation, provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzz}), defines the singleton constants corresponding to the linguistic variables \texttt{Big\textunderscore Decrease} (-15), \texttt{Decrease} (-1), \texttt{Hold} (0), \texttt{Increase} (+1), and \texttt{Big\textunderscore Increase} (+15). The module accumulates the weighted sum (numerator) and the total weight (denominator) to compute the final integer division.
-\subsection{Duty Integration and Bumpless Transfer}
+\subsection{Duty Cycle Integration and Bumpless Transfer}
 \label{sec:sv_duty_integrator}
 The final stage of the digital control loop is the Duty Integrator. While the fuzzy inference engine determines the required \textit{change} in the operating point ($\Delta D$), the Pulse Width Modulation (PWM) generator requires an absolute duty cycle value to drive the power MOSFETs. This module performs the discrete-time integration of the fuzzy output, mathematically represented as:
 \begin{equation}
