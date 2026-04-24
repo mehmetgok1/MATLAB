@@ -910,15 +910,15 @@ The bit generator controls the sequential switching of the capacitor array, movi
 \subsection{ADC Buffer}
 To drive the switched-capacitor input of the SAR ADC and provide isolation from the preceding analog sensor stages, a dedicated ADC buffer is employed. The buffer structure is designed based on an instrumentation amplifier topology to ensure high input impedance and precise differential signal driving.
 
-The architecture consists of three amplifiers. The first stage utilizes two standard operational amplifiers configured as unity-gain buffers. These pre-amplifiers provide the necessary high input impedance so that the preceding sensor circuitry is not loaded. The outputs of these unity-gain buffers are then fed into the second stage, which employs a Fully Differential Amplifier (FDA). This third amplifier acts as a differential stage, converting the buffered signals into a robust, fully differential output specifically tailored to drive the CapDAC array of the SAR ADC while rejecting common-mode noise.
+The architecture consists of three amplifiers. The first stage utilizes two single-ended two-stage operational amplifiers configured as unity-gain buffers. These pre-amplifiers provide the necessary high input impedance so that the preceding sensor circuitry is not loaded. The outputs of these unity-gain buffers are then fed into the second stage, which employs a Fully Differential Amplifier (FDA). This third amplifier acts as a differential stage, converting the buffered signals into a robust, fully differential output specifically tailored to drive the CapDAC array of the SAR ADC while rejecting common-mode noise.
 
-Figure \ref{fig:buffer_opamp} illustrates the schematic of the normal op-amp used in the unity-gain stage, and Figure \ref{fig:buffer_fda} presents the schematic for the Fully Differential Amplifier. Additionally, Figure \ref{fig:buffer_inst_amp} shows the schematic for the overall instrumentation amplifier structure to demonstrate the differential topology.
+Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-stage operational amplifier used in the unity-gain stage, and Figure \ref{fig:buffer_fda} presents the schematic for the Fully Differential Amplifier. Additionally, Figure \ref{fig:buffer_inst_amp} shows the schematic for the overall instrumentation amplifier structure to demonstrate the differential topology.
 
 \begin{figure}[H]
     \centering
     % Placeholder: Update 'opamp_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/opamp.png} 
-    \caption{Schematic of the normal operational amplifier used in the unity-gain stage.}
+    \caption{Schematic of the single-ended two-stage operational amplifier used in the unity-gain stage.}
     \label{fig:buffer_opamp}
 \end{figure}
 
