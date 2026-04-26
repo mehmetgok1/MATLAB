@@ -1198,12 +1198,8 @@ In a fully integrated mixed-signal System-on-Chip (SoC), a digital communication
 However, the development of a complete SPI module and its associated register map falls outside the primary scope of this thesis, which focuses on the architectural optimization of the MPPT fuzzy logic controller. Therefore, a dedicated communication interface was not implemented. Instead, the fuzzy logic settings are hardcoded as structural \texttt{parameter} definitions at the top level of the \texttt{fuzzy\_top} module. Similarly, the necessary trim and calibration signals for the analog front-end are supplied using ideal static sources within the Cadence simulation environment. This approach simplifies the verification testbench and design complexity while fully preserving the functional validation of the core MPPT algorithm and hardware-efficient architecture.
 
 
-\chapter{CONCLUSION}
-\label{chapter:conclusion}
-This thesis has presented the comprehensive modeling, design, and implementation of a Fuzzy Logic-based Maximum Power Point Tracking (MPPT) controller for photovoltaic battery charging systems. The primary objective was to develop an intelligent, highly responsive, and hardware-efficient MPPT solution capable of overcoming the limitations of conventional algorithms under dynamic environmental conditions.
-
-The research began with high-level system modeling in MATLAB/Simulink, where a Sugeno-type fuzzy inference system was designed and validated. By evaluating three key parameters—change in PV voltage, change in output current, and absolute PV voltage—the controller demonstrated exceptional tracking accuracy and transient response. To transition this theoretical model towards a physical Integrated Circuit (IC), a mixed-signal architecture was developed within the Cadence Virtuoso environment. The analog front-end, encompassing a 12-bit asynchronous SAR ADC, an R-2R DAC, a high-speed continuous comparator, a ramp generator, and an LDO regulator, was designed to provide robust and precise interfacing between the continuous-time physical world and the discrete-time digital controller. Concurrently, the fuzzy logic algorithm was structurally optimized for digital synthesis. By replacing resource-intensive multipliers and dividers with bitwise shift operations and lookup tables, the digital footprint was drastically minimized without compromising the MPPT performance.
-
+\chapter{RESULTS}
+\label{chapter:results}
 To validate the complete system architecture, an Analog Mixed-Signal (AMS) testbench was constructed. The fully integrated \texttt{IC\_core}, which houses both the custom analog blocks and the synthesizable SystemVerilog digital codes, is illustrated in Figure \ref{fig:ic_core}. This core was then instantiated within a comprehensive top-level testbench (Figure \ref{fig:ams_tb}), incorporating the Verilog-A photovoltaic panel model and the external buck converter power stage.
 
 \begin{figure}[H]
@@ -1253,6 +1249,12 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
     \caption{Final AMS simulation results demonstrating successful MPPT tracking.}
     \label{fig:final_sim}
 \end{figure}
+
+\chapter{CONCLUSION}
+\label{chapter:conclusion}
+This thesis has presented the comprehensive modeling, design, and implementation of a Fuzzy Logic-based Maximum Power Point Tracking (MPPT) controller for photovoltaic battery charging systems. The primary objective was to develop an intelligent, highly responsive, and hardware-efficient MPPT solution capable of overcoming the limitations of conventional algorithms under dynamic environmental conditions.
+
+The research began with high-level system modeling in MATLAB/Simulink, where a Sugeno-type fuzzy inference system was designed and validated. By evaluating three key parameters—change in PV voltage, change in output current, and absolute PV voltage—the controller demonstrated exceptional tracking accuracy and transient response. To transition this theoretical model towards a physical Integrated Circuit (IC), a mixed-signal architecture was developed within the Cadence Virtuoso environment. The analog front-end, encompassing a 12-bit asynchronous SAR ADC, an R-2R DAC, a high-speed continuous comparator, a ramp generator, and an LDO regulator, was designed to provide robust and precise interfacing between the continuous-time physical world and the discrete-time digital controller. Concurrently, the fuzzy logic algorithm was structurally optimized for digital synthesis. By replacing resource-intensive multipliers and dividers with bitwise shift operations and lookup tables, the digital footprint was drastically minimized without compromising the MPPT performance.
 
 In conclusion, this thesis successfully bridges the gap between advanced intelligent control algorithms and practical, low-cost silicon implementation. The proposed hardware-efficient fuzzy logic architecture, coupled with the robust analog front-end design, provides a highly effective solution for next-generation, fully integrated PV power management ICs. Future work will focus on the physical layout, tape-out, and subsequent experimental hardware validation of the fabricated prototype.
 
