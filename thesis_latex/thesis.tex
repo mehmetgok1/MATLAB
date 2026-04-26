@@ -1124,11 +1124,32 @@ The hardware implementation utilizes three primary types of membership functions
 \subsubsection{Z-Shaped Membership Function}
 The Z-shaped membership function implements a falling linear ramp. It assigns a high membership degree when the input is below a starting threshold ($A$) and a low membership degree when it exceeds the end threshold ($B$). For intermediate values, it computes the declining slope using the optimized lookup dividing logic. The SystemVerilog code is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:mf_z_dig}).
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cadence_implement/dig/linz.png}
+    \caption{Z-Shaped Membership Function Implementation.}
+    \label{fig:mf_z_dig}
+\end{figure}
+
 \subsubsection{S-Shaped Membership Function}
 The S-shaped membership function corresponds to a rising linear ramp. It evaluates to 0 for inputs below $A$ and reaches its maximum value of 255 for inputs above $B$. The linear increase between the thresholds is computed using the same hardware-efficient shift approximation. The SystemVerilog implementation is shown in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:mf_s_dig}).
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cadence_implement/dig/lins.png}
+    \caption{S-Shaped Membership Function Implementation.}
+    \label{fig:mf_s_dig}
+\end{figure}
+
 \subsubsection{Triangular-Shaped Membership Function}
 The triangular membership function specifies a peak response. It combines a rising ramp from an initial point $A$ to a peak at $B$, and a falling ramp from $B$ to an end point $C$. The division for interpolating both slopes relies on the shift-amount lookup table to minimize quantization error. Its SystemVerilog code is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:mf_triangle_dig}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{cadence_implement/dig/triang.png}
+    \caption{Triangular-Shaped Membership Function Implementation.}
+    \label{fig:mf_triang_dig}
+\end{figure}
 
 \subsubsection{Fuzzifier Module}
 The fuzzifier module acts as a top-level covering wrapper that incorporates the individual Z-shaped, S-shaped, and Triangular-shaped membership functions to build the complete three-input fuzzification stage. It instantiates these hardware-efficient blocks to evaluate the three primary inputs: the change in PV voltage ($dV$), the change in output current ($dI$), and the absolute PV voltage ($V_{pv}$). By operating these instances in parallel, the module rapidly assigns the corresponding linguistic membership degrees required by the subsequent inference engine. The SystemVerilog implementation for this encompassing module is provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:fuzzifier_dig}).
