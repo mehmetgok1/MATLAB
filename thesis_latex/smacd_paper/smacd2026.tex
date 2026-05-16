@@ -38,38 +38,72 @@
 }
 \maketitle
 
-\begin{abstract}
-Maximizing power extraction from photovoltaic (PV) arrays under dynamically changing environmental conditions is a critical challenge in renewable energy systems. Specifically for PV battery charging applications, conventional Maximum Power Point Tracking (MPPT) algorithms often struggle with slow transient responses and steady-state oscillations. To address these limitations, this paper presents an ASIC-oriented fuzzy logic controller modeled in MATLAB/Simulink that utilizes three input parameters: change in PV voltage ($\Delta V_{pv}$), change in output current ($\Delta I_{out}$), and absolute PV voltage ($V_{pv}$). The proposed architecture is designed to eliminate complex hardware multipliers and dividers by proposing the use of simple look-up tables and bitwise shift operations, making it highly suitable for low-cost integrated circuit implementations. 
-Simulation results demonstrate the robustness of the proposed method, achieving a steady-state PV tracking efficiency exceeding 99\% and a buck converter power conversion efficiency of approximately 95\%. 
-Furthermore, the system exhibits rapid transient recovery within milliseconds during sudden irradiance drops, ensuring stable and highly efficient energy transfer.
-
-Simulation results confirm the effectiveness of the proposed method, achieving over 99\% steady-state PV tracking efficiency and around 95\% buck converter efficiency. The system exhibits rapid transient recovery within milliseconds under sudden irradiance changes, ensuring stable and efficient operation. The results demonstrate that the proposed hardware-efficient fuzzy MPPT achieves near-optimal performance with significantly reduced implementation complexity, making it highly suitable for fully integrated PV power management ICs.
-
-
+\begin{abstract} Maximizing power extraction from photovoltaic (PV)
+    arrays under dynamic environmental conditions is critical
+    for battery charging. Conventional MPPT (Maximum Power Point
+    Tracking) algorithms suffer
+    from slow transients and steady-state oscillations.
+    To address these limits, this paper presents an
+    ASIC-oriented FLC (fuzzy logic controller) modeled in
+    MATLAB/Simulink using three parameters:
+    $\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$.
+    To avoid complex hardware division in the FLC,
+    a hardware-efficient method utilizing look-up
+    tables and bitwise shift operations is proposed.
+    Simulation results show a 
+    steady-state PV tracking efficiency exceeding
+    99\%, a buck converter efficiency of $\sim$95\%,
+    and millisecond-level transient recovery during
+    sudden irradiance drops, achieving near-optimal performance
+    with significantly reduced complexity.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Fuzzy Logic Control, Maximum Power Point Tracking (MPPT), Photovoltaic (PV) Systems, Multi-Input Fuzzy Inference, Battery Charging, MPPT Optimization
+Fuzzy Logic Control (FLC), Maximum Power Point Tracking (MPPT),
+Photovoltaic (PV) Systems, Multi-Input Fuzzy Inference,
+Battery Charging, MPPT Optimization
 \end{IEEEkeywords}
 
 \section{Introduction}
 \label{sec:intro}
-The integration of renewable energy sources, particularly photovoltaic (PV) systems, has become increasingly critical for sustainable power generation worldwide. However, the power output of PV arrays is inherently non-linear and heavily dependent on dynamic environmental conditions such as solar irradiance and temperature. 
+The integration of photovoltaic (PV) systems
+is critical for sustainable power generation,
+but PV power output is non-linear and depends
+heavily on dynamic environmental conditions.
+MPPT algorithms are
+essential to maximize energy extraction,
+reduce energy waste, and improve battery charging
+efficiency.
 
-To maximize energy extraction under these varying conditions, Maximum Power Point Tracking (MPPT) algorithms are employed. The primary benefit of an effective MPPT system in PV battery chargers is the assurance of optimal power transfer, which significantly reduces energy waste, accelerates charging times, and improves the overall system efficiency. 
+Although conventional algorithms such as Perturb
+and Observe (P\&O) and Incremental Conductance (IC) are
+widely used \cite{po_ic}, they are often enhanced with 
+intelligent control techniques such as fuzzy logic
+to handle rapidly changing conditions \cite{fuzzy_review}. 
 
-In this work, we present an ASIC-oriented, three-input fuzzy logic MPPT controller, validated at the system level in MATLAB/Simulink. The proposed architecture achieves accurate and fast tracking by evaluating the change in PV voltage, change in output current, and absolute PV voltage. To pave the way for future low-cost integrated circuit design, we propose a hardware-friendly algorithmic mapping designed to avoid complex arithmetic operations. In the proposed hardware implementation, standard multipliers and dividers will be replaced with simple look-up tables and bitwise shift approximations. The overall system overview is illustrated in Figure \ref{fig:system_overview}.
-
-In the broader context of MPPT, conventional algorithms such as Perturb and Observe (P\&O) and Incremental Conductance (IC) are widely utilized \cite{po_ic}. The IC algorithm, for example, locates the MPP by evaluating the instantaneous and incremental conductance based on the slope of the power-voltage curve, effectively balancing tracking speed with steady-state accuracy. To address rapidly changing atmospheric conditions, these traditional methods are frequently augmented with variable step-sizes or intelligent control techniques, including neural networks and fuzzy logic \cite{fuzzy_review}. While this paper does not present a direct quantitative comparison against these baseline techniques, it builds upon the inherent strengths of fuzzy logic by introducing an algorithmic mapping specifically optimized to reduce computational complexity for future hardware integration.
-
-The paper is organized as follows: Section \ref{sec:pv} describes the PV model, Section \ref{sec:architecture} details the system architecture, Section \ref{sec:results} presents the results, and Section \ref{sec:conclusion} concludes.
+In this work, we introduce a hardware-efficient,
+three-input fuzzy MPPT architecture that combines a 
+deterministic boundary safety override with multi
+-input fuzzy logic tracking. By processing $\Delta V_{pv}$,
+$\Delta I_{out}$, and $V_{pv}$ using only simple
+look-up tables and bitwise shifts, the design eliminates
+complex arithmetic blocks, making it ideal for
+low-cost power management ICs.
+The system overview is shown in Figure 
+\ref{fig:matlab_overview}.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.8\columnwidth]{./images/introduction/system_overview.drawio.png}
-\caption{System diagram}
-\label{fig:system_overview}
+\includegraphics[width=\columnwidth]{./images/matlab/matlab_model_overview.png}
+\caption{Simulink model overview of the proposed fuzzy logic-based MPPT system for PV battery charger.}
+\label{fig:matlab_overview}
 \end{figure}
+
+The remainder of this paper is organized as follows:
+Section \ref{sec:pv} describes the PV model,
+Section \ref{sec:architecture} details the system architecture,
+Section \ref{sec:results} presents the simulation results,
+and Section \ref{sec:conclusion} concludes.
 
 \section{Photovoltaic Panel Model}
 \label{sec:pv}
@@ -88,12 +122,6 @@ The PV model's example I-V \& Power characteristics, based on De Soto et al. \ci
 
 MATLAB/Simulink is chosen as the simulation environment for implementing and validating the proposed system (Figure \ref{fig:matlab_overview}).
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\columnwidth]{./images/matlab/matlab_model_overview.png}
-\caption{Simulink model overview of the proposed fuzzy logic-based MPPT system for PV battery charger.}
-\label{fig:matlab_overview}
-\end{figure}
 
 \subsection{Buck Converter}
 \label{subsec:buck_converter}
