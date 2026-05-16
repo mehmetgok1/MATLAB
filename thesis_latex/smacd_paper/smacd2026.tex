@@ -100,13 +100,25 @@ The system overview is shown in Figure
 \end{figure}
 
 The remainder of this paper is organized as follows:
-Section \ref{sec:pv} describes the PV model,
-Section \ref{sec:architecture} details the system architecture,
+Section \ref{sec:architecture} details the system architecture including the PV model and buck converter,
 Section \ref{sec:results} presents the simulation results,
 and Section \ref{sec:conclusion} concludes.
 
-\section{Photovoltaic Panel Model}
-\label{sec:pv}
+\section{System Architecture}
+\label{sec:architecture}
+
+This project aims to charge a $\sim$12V car battery
+using PV modules that have a Maximum Power Point (MPP)
+voltage of $\sim$30V.
+Because the PV voltage is significantly higher than
+the target battery voltage, a buck converter
+is chosen to efficiently step down the voltage.
+MATLAB/Simulink is chosen as the simulation environment 
+for implementing and validating the proposed system 
+(Figure \ref{fig:matlab_overview}).
+
+\subsection{Photovoltaic Panel Model}
+\label{subsec:pv}
 
 \begin{figure}[ht]
 \centering
@@ -115,13 +127,18 @@ and Section \ref{sec:conclusion} concludes.
 \label{fig:pv_curves}
 \end{figure}
 
-The PV model's example I-V \& Power characteristics, based on De Soto et al. \cite{DeSoto2006}, is shown in Figure \ref{fig:pv_curves}. Despite irradiance variations, the MPP voltage remains confined to a narrow range but constantly shifts, requiring active tracking. The controller adjusts the converter's duty cycle to modulate the PV panel impedance. For instance, when both voltage and current increase, duty cycle reduction brings the operating point closer to the new MPP; conversely, when voltage increases but current decreases, duty cycle increase steers the system back toward the MPP. The inference mechanism details are provided in Section \ref{subsec:fuzzy_controller}.
-
-\section{System Architecture}
-\label{sec:architecture}
-
-MATLAB/Simulink is chosen as the simulation environment for implementing and validating the proposed system (Figure \ref{fig:matlab_overview}).
-
+The PV model's example I-V \& Power characteristics,
+based on De Soto et al. \cite{DeSoto2006}, are shown 
+in Figure \ref{fig:pv_curves}. As observed in the 
+figure, despite varying irradiance conditions, the 
+MPP is compressed into a narrow voltage range 
+(around 30V). Our tracking goal is to maintain 
+system operation within this narrow target range. 
+The controller adjusts the converter's 
+duty cycle to modulate the PV panel impedance 
+and maintain optimal operation. The inference 
+mechanism details are provided in 
+Section \ref{subsec:fuzzy_controller}.
 
 \subsection{Buck Converter}
 \label{subsec:buck_converter}
