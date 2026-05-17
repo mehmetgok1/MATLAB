@@ -371,7 +371,7 @@ Table \ref{tab:steady_state_results} summarizes the steady-state performance of 
 
 \section{Conclusions}
 \label{sec:conclusion}
-This paper presents an ASIC-oriented, three-input fuzzy logic MPPT controller for PV battery chargers that evaluates changes in PV voltage, output current, and absolute PV voltage to achieve highly responsive tracking. A major contribution is the proposed hardware-efficient architecture that replaces complex multipliers and dividers with simple look-up tables and bitwise shifts, significantly reducing implementation complexity for low-cost IC design. Simulation results demonstrate over 99\% PV tracking efficiency and validate the effectiveness of this approach compared to previous 2-input systems (Table \ref{tab:comparison}). The three-input architecture eliminates local minima trapping and maintains high steady-state stability at 500 kHz switching frequency, providing a favorable trade-off between tracking accuracy, transient response, and hardware complexity.
+This paper presents an ASIC-oriented, three-input fuzzy MPPT controller for PV battery chargers. By evaluating $\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$, the system avoids local minima and achieves highly responsive tracking. A key contribution is the hardware-efficient architecture, replacing complex multipliers and dividers with look-up tables and bitwise shifts to minimize IC area. Simulations confirm $>99\%$ PV tracking efficiency and rapid transient recovery at 500 kHz switching frequency, outperforming traditional 2-input systems (Table \ref{tab:comparison}).
 
 \begin{table}[h]
 \centering
@@ -389,8 +389,7 @@ IC Area Optimization & Multiplier-based & LUT \& Bitwise Shifts \\ \hline
 \end{tabular}
 \end{table}
 
-The proposed approach provides a favorable trade-off between tracking accuracy, transient response, and hardware complexity, highlighting its suitability for low-cost ASIC implementations. Future work will focus on the complete physical integrated circuit (IC) implementation and experimental hardware validation of the proposed system.
-To promote reproducibility and encourage further research, the complete MATLAB/Simulink models and associated code developed for this study are publicly available at \url{https://github.com/mehmetgok1/MATLAB}.
+This approach offers an optimal trade-off between accuracy and hardware complexity for low-cost ASICs. Future work targets physical IC implementation. Models and code are available at \url{https://github.com/mehmetgok1/MATLAB}.
 \begin{thebibliography}{99}
 
 \bibitem{DeSoto2006} W. De Soto, S.A. Klein, and W.A. Beckman, "Improvement and validation of a model for photovoltaic array performance," Solar Energy, vol. 80, no. 1, pp. 78--88, 2006.
