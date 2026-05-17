@@ -4,11 +4,11 @@
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
+\usepackage{algorithm}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usepackage{subfigure}
 \usepackage{threeparttable} % Supports footnotes inside tables
 \usepackage{graphicx} % Add this to your preamble
 \usepackage{tabularx} % Add this to your preamble
@@ -101,6 +101,7 @@ The system overview is shown in Figure
 
 The remainder of this paper is organized as follows:
 Section \ref{sec:architecture} details the system architecture including the PV model and buck converter,
+Section \ref{sec:fuzzy_controller} describes the proposed fuzzy logic controller,
 Section \ref{sec:results} presents the simulation results,
 and Section \ref{sec:conclusion} concludes.
 
@@ -120,6 +121,13 @@ for implementing and validating the proposed system
 \subsection{Photovoltaic Panel Model}
 \label{subsec:pv}
 
+The PV model's example I-V \& Power characteristics,
+based on De Soto et al. \cite{DeSoto2006}, are shown 
+in Figure \ref{fig:pv_curves}. As observed in the 
+figure, despite varying irradiance conditions, the 
+MPP is compressed into a narrow voltage range 
+(around 30V). 
+
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\columnwidth]{./images/matlab/pv_IV&powercurves.jpg}
@@ -127,18 +135,13 @@ for implementing and validating the proposed system
 \label{fig:pv_curves}
 \end{figure}
 
-The PV model's example I-V \& Power characteristics,
-based on De Soto et al. \cite{DeSoto2006}, are shown 
-in Figure \ref{fig:pv_curves}. As observed in the 
-figure, despite varying irradiance conditions, the 
-MPP is compressed into a narrow voltage range 
-(around 30V). Our tracking goal is to maintain 
+Our tracking goal is to maintain 
 system operation within this narrow target range. 
 The controller adjusts the converter's 
 duty cycle to modulate the PV panel impedance 
 and maintain optimal operation. The inference 
 mechanism details are provided in 
-Section \ref{subsec:fuzzy_controller}.
+Section \ref{sec:fuzzy_controller}.
 
 \subsection{Buck Converter}
 \label{subsec:buck_converter}
@@ -175,33 +178,50 @@ Diode Forward Voltage & $V_f$ & 0.5 V \\
 \end{tabular}
 \end{table}
 
-\subsection{Fuzzy Logic Controller}
-\label{subsec:fuzzy_controller}
+\section{Fuzzy Logic Controller}
+\label{sec:fuzzy_controller}
 
-The fuzzy logic controller operates in three phases: Sampling \& Fuzzification, Inference, and Defuzzification \& Duty Adjustment.
-The controller takes the three input parameters ($\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$) and produces the duty cycle change ($\Delta D$) as output.
-The diagram is shown in Figure \ref{fig:fuzzy_diagram}.
+The fuzzy logic controller takes three input parameters ($\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$) to compute the duty cycle change ($\Delta D$). 
+The block diagram is shown in Figure \ref{fig:fuzzy_diagram}.
 
-\begin{figure*}[t]
+\begin{figure}[ht]
 \centering
-\includegraphics[width=0.8\textwidth]{./images/matlab/fuzzy_controller_block_diagram.png}
+\includegraphics[width=\columnwidth]{./images/matlab/fuzzy_controller_block_diagram.png}
 \caption{Fuzzy logic controller block diagram showing the three phases of operation.}
 \label{fig:fuzzy_diagram}
-\end{figure*}
+\end{figure}
 
-\subsubsection{Sampling \& Fuzzification}
-In this phase, the three input parameters are sampled at the defined sampling frequency ($f_{sample} = 20$ kHz) using a 10-bit ADC for analog-to-digital converter. The first two parameters ($\Delta V_{pv}$ and $\Delta I_{out}$) are converted to digital form and their differences with previous sampled values are computed. The third parameter ($V_{pv}$) is taken directly without computing differences. These digital codes are then given to the inference part.
+Input sampling and final duty adjustment are straightforward processes. Therefore, this section focuses on the key operations: inference, fuzzification, and defuzzification.
 
-The degree of membership is determined by mapping the crisp digital input onto the corresponding linear segment of the membership function. The membership value, which ranges from 0 to 255, is extracted using linear interpolation between the defined vertices of the fuzzy set. To avoid complex division operations and maintain an ASIC-friendly architecture, it is proposed to approximate the interpolation fraction by rounding the denominator from 2046 to 2048 ($2^{11}$). For future hardware implementation, this enables the calculation to be simplified into a highly efficient bitwise right-shift ($\gg$) and addition:
+\subsection{Inference}
+This phase evaluates IF-THEN rules using the \textbf{min} 
+operator for logical AND. 
+The inputs $\Delta V_{pv}$ and $\Delta I_{out}$ are 
+mapped to three fuzzy sets: \textbf{Negative}, 
+\textbf{Zero}, and \textbf{Positive}. $V_{pv}$ is 
+mapped to \textbf{Low\_Voltage}, \textbf{Optimal\_Voltage}
+, and \textbf{High\_Voltage}. The output $\Delta D$ 
+is mapped to five sets: \textbf{Big\_Decrease}, 
+\textbf{Decrease}, \textbf{Hold}, \textbf{Increase}, 
+and \textbf{Big\_Increase}.
 
-\begin{equation}
-    b = \frac{(a + 1023) \times 256}{2046} \approx (a \gg 3) + 128
-    \label{eq:membership_calc}
-\end{equation}
-where $a$ represents the crisp digital input and $b$ represents the resulting 8-bit membership value.
-
-\subsubsection{Inference}
-The inference phase continuously evaluates a set of IF-THEN rules based on the three linguistic input variables: $\Delta V_{pv}$, $\Delta I_{out}$, and $V_{pv}$, using the \texttt{min} operator for the logical AND operation to determine the firing strength of each rule. In a standard three-input fuzzy system with three linguistic states each, a full combinatorial rule base would require 27 distinct rules ($3 \times 3 \times 3$). To significantly reduce computational complexity and silicon area, our proposed architecture streamlines this rule base. The absolute PV voltage ($V_{pv}$) acts as a primary safety and reference parameter. When $V_{pv}$ is operating far from the MPP voltage range, it overrides the other inputs to aggressively steer the system using only two boundary rules (Table \ref{tab:fuzzy_rules_safety}). When the voltage is within the optimal range, the controller evaluates only 9 rules based on the variations in voltage and current to precisely adjust the duty cycle, as defined in Table \ref{tab:fuzzy_rules_optimal}. This structural reduction from 27 to 11 total rules further optimizes the design for compact hardware implementation.
+3 inputs with 3 fuzzy sets would yield a total of  
+27 ($3 \times 3 \times 3$) rules. However, to reduce
+silicon area, we streamline this to 11 rules. There is
+another advantage to this approach: it prevents local minima
+trapping by prioritizing the absolute voltage level 
+($V_{pv}$) over the incremental changes ($\Delta V_{pv}$ 
+and $\Delta I_{out}$).
+When $V_{pv}$ is outside the MPP range, two boundary 
+safety rules override and suppress the others 
+(Table \ref{tab:fuzzy_rules_safety}). 
+When $V_{pv}$ is optimal, only the 9 rules 
+based on voltage and current variations are 
+evaluated (Table \ref{tab:fuzzy_rules_optimal}). 
+This approach maintains the advantage of avoiding 
+local minima while optimizing the 
+hardware implementation. Effectively FLC is constructed 
+with P\&O enhancement.
 
 \begin{table}[htbp]
     \centering
@@ -210,9 +230,9 @@ The inference phase continuously evaluates a set of IF-THEN rules based on the t
         \hline
         \textbf{PV Voltage ($V_{pv}$)} & \textbf{Output ($\Delta D$)} \\
         \hline
-        \texttt{Low\textunderscore Voltage} & \texttt{Big\textunderscore Decrease} \\
+        \textbf{Low\_Voltage} & \textbf{Big\_Decrease} \\
         \hline
-        \texttt{High\textunderscore Voltage} & \texttt{Big\textunderscore Increase} \\
+        \textbf{High\_Voltage} & \textbf{Big\_Increase} \\
         \hline
     \end{tabular}
     \label{tab:fuzzy_rules_safety}
@@ -225,51 +245,112 @@ The inference phase continuously evaluates a set of IF-THEN rules based on the t
         \hline
         \diagbox{$dI$}{$dV$} & \textbf{Negative} & \textbf{Zero} & \textbf{Positive} \\
         \hline
-        \textbf{Negative} & \texttt{Decrease} & \texttt{Hold} & \texttt{Increase} \\
+        \textbf{Negative} & \textbf{Decrease} & \textbf{Hold} & \textbf{Increase} \\
         \hline
-        \textbf{Zero} & \texttt{Hold} & \texttt{Hold} & \texttt{Hold} \\
+        \textbf{Zero} & \textbf{Hold} & \textbf{Hold} & \textbf{Hold} \\
         \hline
-        \textbf{Positive} & \texttt{Increase} & \texttt{Hold} & \texttt{Decrease} \\
+        \textbf{Positive} & \textbf{Increase} & \textbf{Hold} & \textbf{Decrease} \\
         \hline
     \end{tabular}
     \label{tab:fuzzy_rules_optimal}
 \end{table}
 
-\subsubsection{Defuzzification \& Duty Adjustment}
-In this final phase, a Sugeno-type weighted average is used to defuzzify the output of the inference process into a crisp value, $\Delta D$, according to the following equation:
+\subsection{Fuzzification}
+The hardware implementation utilizes three primary types of membership functions: Z-shaped, S-shaped, and Triangular-shaped. The degree of membership is found by mapping the crisp digital 10-bit input to a linear segment. The membership range value is chosen as 0 to 255 ($M=255$). It is extracted using linear interpolation. To avoid complex division, we round the denominator to the nearest power of 2, which allows us to replace the division with a simple right bitwise shift. The membership calculation procedure is summarized in Algorithm \ref{alg:mf_interpolation}.
+
+\begin{algorithm}[H]
+\caption{Hardware-Efficient Linear Interpolation for Membership Functions}
+\label{alg:mf_interpolation}
+\begin{algorithmic}[1]
+\REQUIRE Crisp input $x$, Thresholds $A$ and $B$, Max Output $M$
+\ENSURE Membership degree $\mu \in [0, M]$
+\IF{$x \leq A$}
+    \STATE $\mu \leftarrow 0$ \COMMENT{Or $M$ for falling edge (Z-shape)}
+\ELSIF{$x \geq B$}
+    \STATE $\mu \leftarrow M$ \COMMENT{Or $0$ for falling edge (Z-shape)}
+\ELSE
+    \STATE $\Delta x \leftarrow |x - A|$
+    \STATE $\Delta_{th} \leftarrow B - A$
+    \STATE $shift\_val \leftarrow \text{LUT\_Nearest\_Power\_Of\_2}(\Delta_{th})$
+    \STATE $\mu \leftarrow (\Delta x \times M) \gg shift\_val$
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+To translate this algorithm into efficient Register-Transfer Level (RTL) logic, the hardware replaces the exact denominator ($B - A$) evaluation with a combinational look-up table. This table categorizes the interval width and maps it to its closest power of 2. The dynamic shift amount scales up to 11 ($2^{11} = 2048$) for wide fuzzy sets that span the full 10-bit ADC limit. However, to prevent excessive quantization errors and potential overflow when evaluating extremely narrow fuzzy boundaries, the power of 2 approximation deliberately stops near $2^4 = 16$ (a minimum shift amount of 4). Differences smaller than this lower bound automatically default to the minimum shift constraint. During processing, the input distance ($\Delta x$) is multiplied by the maximum membership degree ($M=255$)—a constant operation easily synthesized using bitwise shifts and a subtractor—and then logically right-shifted by the evaluated amount. This architecture entirely eliminates the need for complex, area-intensive hardware dividers.
+
+All input parameters share a similar fuzzy set structure, utilizing Z-shaped, Triangular-shaped, and S-shaped functions with varying ranges to provide comprehensive coverage. An example of these RTL-emulated membership functions is shown in Figure \ref{fig:fuzzy_sets}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{./images/matlab/fuzzy_sets.png}
+\caption{RTL-emulated 3-set membership functions, illustrating the Z-shaped, Triangular-shaped, and S-shaped structures.}
+\label{fig:fuzzy_sets}
+\end{figure}
+
+\subsection{Defuzzification}
+A Sugeno-type weighted average defuzzifies the inference
+output into a crisp value, $\Delta D$:
 \begin{equation}
     \Delta D = \frac{\sum_{i=1}^{n} w_i \cdot c_i}{\sum_{i=1}^{n} w_i}
     \label{eq:defuzzification}
 \end{equation}
-where $n$ is the total number of active rules, $w_i$ represents the firing strength of the $i$-th rule obtained using the \texttt{min} operator, and $c_i$ is the constant crisp output coefficient defined for that rule. To enhance the ASIC-oriented architecture, hardware simplifications replace complex operations: the multiplication ($w_i \cdot c_i$) is approximated using a simple look-up table for conditional 1-bit right shifts, and the denominator summation (maximum 7 active rules) is converted into an efficient bitwise right-shift operation by 0, 1, 2, or 3 bits. The precision loss from these approximations is compensated by dividing the final output by a large factor, while a bumpless transfer mechanism ensures smooth transitions without abrupt adjustments to the converter's operation.
+Here, $n$ is the active rule count, $w_i$ is 
+the firing strength, and $c_i$ is the constant 
+output coefficient. These $c_i$ values are 
+hardware-encoded constants defined in tabular form 
+corresponding to the five output 
+fuzzy sets: \textbf{Big\_Decrease} (-16), 
+\textbf{Decrease} (-4), 
+\textbf{Hold} (0), \textbf{Increase} 
+(4), and \textbf{Big\_Increase} (16). 
+
+To eliminate the complex hardware division, 
+a structure similar to Algorithm 
+\ref{alg:mf_interpolation} is used. The 
+denominator sum ($\sum w_i$) is mapped to its 
+nearest power of 2, allowing the division to be 
+replaced by an efficient bitwise right-shift. 
+Furthermore, since the non-zero $c_i$ values are strictly 
+powers of 2, the multiplication ($w_i \cdot c_i$) is precisely 
+executed via simple bitwise shift operations, completely 
+eliminating the need for hardware multipliers.
 
 \section{Simulation and Results}
 \label{sec:results}
 
-\begin{figure*}[t]
-    \centering
-    \subfigure[Overall simulation results showing the three performance phases.]{\includegraphics[width=0.32\textwidth]{./images/matlab/matlabsimresult.jpg}\label{fig:matlab_sim_overall}}
-    \hfill
-    \subfigure[Zoomed-in view of FLC activation at 0.2s.]{\includegraphics[width=0.32\textwidth]{./images/matlab/matlab_sim_result_around0_2.jpg}\label{fig:sim_zoom_02}}
-    \hfill
-    \subfigure[Zoomed-in view of transient response at 0.4s.]{\includegraphics[width=0.32\textwidth]{./images/matlab/matlab_sim_result_around0_4.jpg}\label{fig:sim_zoom_04}}
-    \caption{MATLAB simulation results. (a) Overall performance across three phases. (b) Controller activation detail. (c) Transient response detail.}
-    \label{fig:matlab_sim_zooms}
-\end{figure*}
+The performance of the proposed fuzzy logic-based MPPT controller was validated through a comprehensive simulation conducted in MATLAB/Simulink. The total simulation time was 0.6 seconds, divided into three distinct sections to demonstrate the controller's performance during both steady-state and transient conditions. 
 
-The performance of the proposed fuzzy logic-based MPPT controller was validated through a comprehensive simulation conducted in MATLAB/Simulink, with the overall results depicted in Figure \ref{fig:matlab_sim_overall}. The total simulation time was 0.6 seconds, designed to demonstrate the controller's performance during both steady-state and transient conditions. The converter efficiency, calculated as $P_{out}/P_{in}$, was maintained at approximately 95\% throughout the simulation. The PV efficiency, defined as $P_{in}/P_{vmax}$, is the primary metric for evaluating the MPPT algorithm's effectiveness.
+The PV efficiency, calculated as $P_{pv}/P_{pvmax}$, is the primary metric for evaluating the MPPT algorithm's effectiveness. The converter efficiency is evaluated as $P_{bat}/P_{pv}$. Due to the absence of signal filtering in the measurement blocks, instantaneous efficiency readings can momentarily appear above 100\% during sharp transients.
 
-The simulation is divided into three distinct phases, with the critical transient moments highlighted in detail in Figure \ref{fig:matlab_sim_zooms}(b) and (c).
+\textbf{Phase 1: Initial Stabilization (0s - 0.2s):} During the first 0.2 seconds, the system operates with a manual, fixed duty cycle setting. The fuzzy logic controller is not active, allowing the converter to stabilize. The overall simulation results across the full 0.6 seconds, illustrating this initial phase, are depicted in Figure \ref{fig:matlab_sim_overall}.
 
-\begin{enumerate}
-    \item \textbf{Initial Stabilization (0s - 0.2s):} For the first 0.2 seconds, the system operates with a fixed duty cycle. The fuzzy logic controller is inactive, allowing the converter to stabilize without active MPPT control, as seen in the first section of Figure \ref{fig:matlab_sim_overall}.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{./images/matlab/matlabsimresult.jpg}
+\caption{Overall MATLAB simulation results across the three performance phases.}
+\label{fig:matlab_sim_overall}
+\end{figure}
 
-    \item \textbf{Fuzzy Controller Activation (0.2s):} At 0.2 seconds, the fuzzy logic MPPT controller is enabled. Figure \ref{fig:sim_zoom_02} shows a zoomed-in view of this event. The controller rapidly adjusts the duty cycle to find the maximum power point, achieving over 99\% PV efficiency in just 13.4 milliseconds, which highlights its fast convergence speed.
+\textbf{Phase 2: Fuzzy Controller Activation (0.2s):} At 0.2 seconds, the fuzzy logic MPPT controller is activated. Figure \ref{fig:sim_zoom_02} provides a zoomed-in view of this specific moment in time. The controller rapidly adjusts the duty cycle to bring the system to the maximum power point (MPP), achieving over 99\% PV efficiency in just 13.4 milliseconds.
 
-    \item \textbf{Transient Response (0.4s):} At 0.4 seconds, a step change simulates a sudden decrease in solar irradiance. Figure \ref{fig:sim_zoom_04} details this transient. Despite the disturbance causing a momentary dip in PV efficiency to 90\%, the fuzzy controller responds swiftly, restoring the efficiency to over 99\% in approximately 1 millisecond.
-\end{enumerate}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{./images/matlab/matlab_sim_result_around0_2.jpg}
+\caption{Zoomed-in view of the FLC activation at 0.2s, showing rapid convergence to MPP.}
+\label{fig:sim_zoom_02}
+\end{figure}
 
-These results confirm the robustness and high performance of the fuzzy logic controller, showcasing its ability to quickly track the MPP and maintain high efficiency, even under rapidly changing conditions.
+\textbf{Phase 3: Transient Response (0.4s):} At 0.4 seconds, the solar irradiance is dropped from 1000 $W/m^2$ to 500 $W/m^2$ to evaluate the effect of sudden environmental changes. Figure \ref{fig:sim_zoom_04} shows the zoomed-in transient response. Despite the disturbance causing a momentary dip in PV efficiency, the fuzzy controller responds swiftly, restoring the efficiency to over 99\% in approximately 1 millisecond.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{./images/matlab/matlab_sim_result_around0_4.jpg}
+\caption{Zoomed-in view of the transient response at 0.4s during an irradiance drop from 1000 to 500 $W/m^2$.}
+\label{fig:sim_zoom_04}
+\end{figure}
+
+These individual observations confirm the robustness and high performance of the fuzzy logic controller, showcasing its ability to quickly track the MPP and maintain high efficiency, even under rapidly changing environmental conditions.
 
 Table \ref{tab:steady_state_results} summarizes the steady-state performance of the proposed system under the evaluated varying irradiance conditions. The results demonstrate that the fuzzy logic controller maintains exceptional PV tracking efficiency while the buck converter sustains high power conversion efficiency across varying environmental states. Notably, the PV efficiency and buck converter efficiency remain around 99\% and 95\%, respectively, up until the converter enters Discontinuous Conduction Mode (DCM) at very low irradiance levels, which explains the efficiency drop observed at 200 $W/m^2$.
 
