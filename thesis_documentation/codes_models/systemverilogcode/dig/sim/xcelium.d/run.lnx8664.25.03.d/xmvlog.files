@@ -1,0 +1,15 @@
+//
+// File created by:  xrun
+// Do not modify this file
+//
+/cad_data/users/mgok/Thesis_PV/dig/rtl/mf_triangle.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/mf_z.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/mf_s.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzifier.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/inference.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/defuzzifier.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzy_core.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/diff_generator.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/duty_integrator.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzy_top.sv
+/cad_data/users/mgok/Thesis_PV/dig_optimized/tb/tb_fuzzy_core.sv

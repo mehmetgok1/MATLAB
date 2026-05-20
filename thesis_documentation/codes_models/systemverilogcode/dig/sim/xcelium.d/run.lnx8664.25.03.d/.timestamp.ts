@@ -1,0 +1,12 @@
+1775839231 /cad_data/users/mgok/Thesis_PV/dig/rtl/duty_integrator.sv
+1775750652 /cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzy_core.sv
+1775750652 /cad_data/users/mgok/Thesis_PV/dig/rtl/mf_s.sv
+1771510442 /cad_data/users/mgok/Thesis_PV/dig/tb/tb_fuzzy_core.sv
+1775754953 /cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzy_top.sv
+1775750652 /cad_data/users/mgok/Thesis_PV/dig/rtl/diff_generator.sv
+1775839331 /cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzifier.sv
+1775750652 /cad_data/users/mgok/Thesis_PV/dig/rtl/mf_z.sv
+1775839225 /cad_data/users/mgok/Thesis_PV/dig/rtl/defuzzifier.sv
+1775750652 /cad_data/users/mgok/Thesis_PV/dig/rtl/inference.sv
+1775903578 /cad_data/users/mgok/Thesis_PV/dig_optimized/tb/tb_fuzzy_core.sv
+1775750652 /cad_data/users/mgok/Thesis_PV/dig/rtl/mf_triangle.sv

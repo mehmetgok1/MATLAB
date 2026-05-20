@@ -1,0 +1,34 @@
+//
+// File created by:  xrun
+// Do not modify this file
+//
+-XLMODE
+./xcelium.d/run.lnx8664.25.03.d
+-RUNMODE
+-sv
+-assert
+-DELAY_TRIGGER
+-DEFINE
+RTL
+/cad_data/users/mgok/Thesis_PV/dig/rtl/mf_triangle.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/mf_z.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/mf_s.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzifier.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/inference.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/defuzzifier.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzy_core.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/diff_generator.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/duty_integrator.sv
+/cad_data/users/mgok/Thesis_PV/dig/rtl/fuzzy_top.sv
+../tb/tb_fuzzy_core.sv
+-CDSLIB
+./xcelium.d/run.lnx8664.25.03.d/cdsrun.lib
+-HDLVAR
+./xcelium.d/run.lnx8664.25.03.d/hdlrun.var
+-no_analogsolver
+-MESSAGES
+-UPDATE
+-XLLIBSTORE
+./xcelium.d/run.lnx8664.25.03.d/xllibs
+-ALLOWUNBOUND
+-sv_ms

@@ -1,0 +1,4 @@
+#e1(20Feb2026:16:29:16): source ./xcelium.d/env.d/env.history.20Feb2026_16_29_16
+s1(20Feb2026:16:29:16):  xrun -f ../scripts/xrun_options.rtl 
+#e2(11Apr2026:13:38:43): source ./xcelium.d/env.d/env.history.11Apr2026_13_38_43
+s2(11Apr2026:13:38:43):  xrun -f ../scripts/xrun_options.rtl 
