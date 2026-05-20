@@ -1,0 +1,15 @@
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/mf_triangle.sv
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/fuzzifier.sv
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/inference.sv
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/defuzzifier.sv
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/fuzzy_core.sv
+
+## 
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/diff_generator.sv
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/duty_integrator.sv
+
+##
+/projects/ATEK/FAS-TSMC-018BCD/work/mgok/dig/sourcecode/rtl/fuzzy_top.sv
+
+
+
