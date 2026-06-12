@@ -437,7 +437,11 @@ Science and Engineering \\
       \@mkboth{\MakeUppercase\listfigurename}%
               {\MakeUppercase\listfigurename}}%
     \vskip\baselineskip
-    \@starttoc{lof}%
+    \begingroup
+      \let\oldnumberline\numberline
+      \renewcommand{\numberline}[1]{\oldnumberline{\figurename~##1.}}%
+      \@starttoc{lof}%
+    \endgroup
 \parskip\ev}
 %
 \renewcommand\listoftables{% \ev is used for temporary storage of \parskip
@@ -447,7 +451,11 @@ Science and Engineering \\
       \@mkboth{%
           \MakeUppercase\listtablename}{\MakeUppercase\listtablename}}%
     \vskip\baselineskip
-    \@starttoc{lot}%
+    \begingroup
+      \let\oldnumberline\numberline
+      \renewcommand{\numberline}[1]{\oldnumberline{\tablename~##1.}}%
+      \@starttoc{lot}%
+    \endgroup
 \parskip\ev}
 %
 % The expressions 'FIGURE' and 'TABLE' also appear in the LOF and LOT.

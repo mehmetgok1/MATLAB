@@ -19,7 +19,7 @@
 \usepackage{subfigure} % 
 \usepackage{amsmath}
 \usepackage{notoccite}
-\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage[colorlinks=true, allcolors=blue, linkcolor=black]{hyperref}
 \usepackage{grffile}
 %%mehmet added
 \usepackage{listings}
@@ -88,6 +88,18 @@
 \def\eset{\end{array} \right\}}
 \def\bpar{\left( \begin{array}}
 \def\epar{\end{array} \right)}
+
+\makeatletter
+\let\oldlstlistoflistings\lstlistoflistings
+\renewcommand{\lstlistoflistings}{%
+  \begingroup
+  \let\oldnumberline\numberline
+  \renewcommand{\numberline}[1]{\oldnumberline{\lstlistingname~##1.}}%
+  \renewcommand\l@lstlisting{\@dottedtocline{1}{0em}{8em}}% Increase space to fit "Code Snippet"
+  \oldlstlistoflistings
+  \endgroup
+}
+\makeatother
 
 \graphicspath{{figures/}} % Graphics will be here
 
