@@ -371,21 +371,21 @@ The controller is implemented digitally with a sampling frequency of 20 kHz, as 
 \subsection{Rule Firing}
 The core of the FLC is the rule firing stage, where the necessary change in the duty cycle ($\Delta D$) is determined based on the sampled inputs. This stage processes three key inputs:
 \begin{enumerate}
-    \item \textbf{Change in PV Voltage ($dV$):} The difference in the PV voltage reading between consecutive samples.
-    \item \textbf{Change in PV Current ($dI$):} The difference in the PV current reading between consecutive samples.
-    \item \textbf{PV Voltage ($V_{pv}$):} The instantaneous PV voltage, used to determine the operating region of the PV panel.
+    \item Change in PV Voltage ($dV$): The difference in the PV voltage reading between consecutive samples.
+    \item Change in PV Current ($dI$): The difference in the PV current reading between consecutive samples.
+    \item PV Voltage ($V_{pv}$): The instantaneous PV voltage, used to determine the operating region of the PV panel.
 \end{enumerate}
 
 The process involves three steps:
 \begin{itemize}
-    \item \textbf{Fuzzification:} The crisp input values are converted into linguistic variables (e.g., Negative, Zero, Positive for $dV$ and $dI$; \texttt{Low\textunderscore Voltage}, \texttt{Optimal\textunderscore Range}, \texttt{High\textunderscore Voltage} for $V_{pv}$) using linear and triangular membership functions.
-    \item \textbf{Rule Evaluation:} A set of linguistic rules is evaluated to determine the control action. The rule base, summarized in Tables \ref{tab:fuzzy_rules_safety} and \ref{tab:fuzzy_rules_optimal}, is divided into two main groups: safety rules that make large adjustments when the voltage is too low or too high, and fine-tuning rules for operation near the MPP. A critical rule is that if both $dV$ and $dI$ are zero, the duty cycle is held constant to prevent oscillations at the power peak.
-    \item \textbf{Defuzzification:} The output of the Sugeno system is a set of constant values for the change in duty cycle ($\Delta D$), such as \texttt{Big\textunderscore Decrease} (-15), \texttt{Decrease} (-1), \texttt{Hold} (0), \texttt{Increase} (+1), and \texttt{Big\textunderscore Increase} (+15). The final output is a weighted average of the active rule outputs.
+    \item Fuzzification: The crisp input values are converted into linguistic variables (e.g., Negative, Zero, Positive for $dV$ and $dI$; {Low\textunderscore Voltage}, {Optimal\textunderscore Range}, {High\textunderscore Voltage} for $V_{pv}$) using linear and triangular membership functions.
+    \item Rule Evaluation: A set of linguistic rules is evaluated to determine the control action. The rule base, summarized in Tables \ref{tab:fuzzy_rules_safety} and \ref{tab:fuzzy_rules_optimal}, is divided into two main groups: safety rules that make large adjustments when the voltage is too low or too high, and fine-tuning rules for operation near the MPP. A critical rule is that if both $dV$ and $dI$ are zero, the duty cycle is held constant to prevent oscillations at the power peak.
+    \item Defuzzification: The output of the Sugeno system is a set of constant values for the change in duty cycle ($\Delta D$), such as {Big\textunderscore Decrease} (-15), {Decrease} (-1), {Hold} (0), {Increase} (+1), and {Big\textunderscore Increase} (+15). The final output is a weighted average of the active rule outputs.
 \end{itemize}
 
-These rules provide a two-tiered control strategy. The safety rules (Table \ref{tab:fuzzy_rules_safety}) trigger when the PV voltage moves into the \texttt{Low\textunderscore Voltage} or \texttt{High\textunderscore Voltage} regions. These regions are defined by membership functions in the fuzzy inference system, as specified in the MATLAB script provided in Appendix \ref{app:matlab} (Code Snippet \ref{code:create_mppt_fis}). With a 10-bit ADC and a 40V reference, the conversion from a voltage $V$ to an ADC count is given by: $ADC_{count} = (V / 40V) \times 1024$.
+These rules provide a two-tiered control strategy. The safety rules (Table \ref{tab:fuzzy_rules_safety}) trigger when the PV voltage moves into the {Low\textunderscore Voltage} or {High\textunderscore Voltage} regions. These regions are defined by membership functions in the fuzzy inference system, as specified in the MATLAB script provided in Appendix \ref{app:matlab} (Code Snippet \ref{code:create_mppt_fis}). With a 10-bit ADC and a 40V reference, the conversion from a voltage $V$ to an ADC count is given by: $ADC_{count} = (V / 40V) \times 1024$.
 
-The MPP for the modeled panel is at 30.6V (approx. ADC count 783). The safety rules are configured for large deviations from this point. For instance, the \texttt{Low\textunderscore Voltage} membership function (see Code Snippet \ref{code:create_mppt_fis}) becomes fully active for ADC counts below 730. This corresponds to a voltage of approximately 28.5V, calculated as $(730 / 1024) \times 40V$. If the panel voltage drops into this region, the controller applies a \texttt{Big\textunderscore Decrease} to the duty cycle, raising the panel voltage back towards the MPP. Conversely, the \texttt{High\textunderscore Voltage} membership function begins to activate at an ADC count of 840, which corresponds to 32.8V ($(840 / 1024) \times 40V$). If the voltage exceeds this, the controller applies a \texttt{Big\textunderscore Increase} to lower the panel voltage.
+The MPP for the modeled panel is at 30.6V (approx. ADC count 783). The safety rules are configured for large deviations from this point. For instance, the {Low\textunderscore Voltage} membership function (see Code Snippet \ref{code:create_mppt_fis}) becomes fully active for ADC counts below 730. This corresponds to a voltage of approximately 28.5V, calculated as $(730 / 1024) \times 40V$. If the panel voltage drops into this region, the controller applies a {Big\textunderscore Decrease} to the duty cycle, raising the panel voltage back towards the MPP. Conversely, the {High\textunderscore Voltage} membership function begins to activate at an ADC count of 840, which corresponds to 32.8V ($(840 / 1024) \times 40V$). If the voltage exceeds this, the controller applies a {Big\textunderscore Increase} to lower the panel voltage.
 
 Once the voltage is within the \texttt{Optimal\textunderscore Range}, the fine-tuning rules take over, making small adjustments to zero in on the precise MPP and hold it there, as detailed in Table \ref{tab:fuzzy_rules_optimal}.
 
@@ -433,11 +433,11 @@ The performance of the proposed fuzzy logic-based MPPT controller was validated 
 The simulation is divided into three distinct phases, with the critical transient moments highlighted in detail in Figure \ref{fig:matlab_sim_zooms}.
 
 \begin{enumerate}
-    \item \textbf{Initial Stabilization (0s - 0.2s):} For the first 0.2 seconds, the system operates with a fixed duty cycle. The fuzzy logic controller is inactive, allowing the converter to stabilize without active MPPT control, as seen in the first section of Figure \ref{fig:matlab_sim_result}.
+    \item Initial Stabilization (0s - 0.2s): For the first 0.2 seconds, the system operates with a fixed duty cycle. The fuzzy logic controller is inactive, allowing the converter to stabilize without active MPPT control, as seen in the first section of Figure \ref{fig:matlab_sim_result}.
 
-    \item \textbf{Fuzzy Controller Activation (0.2s):} At 0.2 seconds, the fuzzy logic MPPT controller is enabled. Figure \ref{fig:sim_zoom_02} shows a zoomed-in view of this event. The controller rapidly adjusts the duty cycle to find the maximum power point, achieving over 99\% PV efficiency in just 13.4 milliseconds, which highlights its fast convergence speed.
+    \item Fuzzy Controller Activation (0.2s): At 0.2 seconds, the fuzzy logic MPPT controller is enabled. Figure \ref{fig:sim_zoom_02} shows a zoomed-in view of this event. The controller rapidly adjusts the duty cycle to find the maximum power point, achieving over 99\% PV efficiency in just 13.4 milliseconds, which highlights its fast convergence speed.
 
-    \item \textbf{Transient Response (0.4s):} At 0.4 seconds, a step change simulates a sudden decrease in solar irradiance. Figure \ref{fig:sim_zoom_04} details this transient. Despite the disturbance causing a momentary dip in PV efficiency to 90\%, the fuzzy controller responds swiftly, restoring the efficiency to over 99\% in approximately 1 millisecond.
+    \item Transient Response (0.4s): At 0.4 seconds, a step change simulates a sudden decrease in solar irradiance. Figure \ref{fig:sim_zoom_04} details this transient. Despite the disturbance causing a momentary dip in PV efficiency to 90\%, the fuzzy controller responds swiftly, restoring the efficiency to over 99\% in approximately 1 millisecond.
 \end{enumerate}
 
 These results confirm the robustness and high performance of the fuzzy logic controller, showcasing its ability to quickly track the MPP and maintain high efficiency, even under rapidly changing conditions.
@@ -569,8 +569,8 @@ where $D[n]$ is the current duty cycle and $\Delta D[n]$ is the adjustment calcu
 
 This integration strategy serves two critical purposes:
 \begin{enumerate}
-    \item \textbf{Bumpless Transfer:} We take the duty cycle output from the general duty cycle register ($D[n-1]$) as the baseline. By adding the calculated change ($\Delta D$) to this existing global output, the system ensures a smooth transition. This prevents discontinuities that would otherwise occur when switching between different control dynamics (e.g., Safety vs. Fine-Tuning).
-    \item \textbf{Robustness and Damping:} The integrator and damping provide the opportunity to lower oscillations and make the system robust. In the MATLAB model, this was achieved by dividing the output by a large gain factor. In the SystemVerilog implementation, where integer arithmetic prevents such division (as it would result in zero), this damping is achieved by accumulating small integer steps ($\pm 1, \pm 15$) into the high-resolution duty cycle register. This effectively lowers the impact of individual control actions, filtering out transient noise and maintaining stability around the MPP.
+    \item Bumpless Transfer: We take the duty cycle output from the general duty cycle register ($D[n-1]$) as the baseline. By adding the calculated change ($\Delta D$) to this existing global output, the system ensures a smooth transition. This prevents discontinuities that would otherwise occur when switching between different control dynamics (e.g., Safety vs. Fine-Tuning).
+    \item Robustness and Damping: The integrator and damping provide the opportunity to lower oscillations and make the system robust. In the MATLAB model, this was achieved by dividing the output by a large gain factor. In the SystemVerilog implementation, where integer arithmetic prevents such division (as it would result in zero), this damping is achieved by accumulating small integer steps ($\pm 1, \pm 15$) into the high-resolution duty cycle register. This effectively lowers the impact of individual control actions, filtering out transient noise and maintaining stability around the MPP.
 \end{enumerate}
 
 The SystemVerilog implementation, provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:duty_int}), includes saturation logic to constrain the duty cycle within safe hardware limits. It takes the signed 8-bit output from the defuzzifier and updates the 10-bit duty cycle register on every clock cycle.
@@ -606,37 +606,37 @@ The complete system architecture integrates the digital control logic with the a
 To ensure precise tracking and stable operation, the system is decomposed into the following hierarchical requirements:
 
 \begin{itemize}
-    \item \textbf{Digital Controller}
+    \item Digital Controller
     \begin{itemize}
-        \item \textbf{Fuzzy Logic Controller:} Implements the Sugeno inference engine, rule base, and duty cycle integrator.
+        \item Fuzzy Logic Controller: Implements the Sugeno inference engine, rule base, and duty cycle integrator.
     \end{itemize}
     
-    \item \textbf{Analog / Mixed-Signal Interface}
+    \item Analog / Mixed-Signal Interface
     \begin{itemize}
-        \item \textbf{Analog-to-Digital Converters (ADC)}
+        \item Analog-to-Digital Converters (ADC)
         \begin{itemize}
             \item \textit{Resolution:} 10-bit
             \item \textit{Sampling Rate:} 20 kSPS
             \item \textit{Function:} Digitizes $V_{pv}$ and $I_{pv}$ for the controller.
         \end{itemize}
-        \item \textbf{Digital-to-Analog Converter (DAC)}
+        \item Digital-to-Analog Converter (DAC)
         \begin{itemize}
             \item \textit{Resolution:} 10-bit
             \item \textit{Function:} Converts the digital output of the FLC to an analog signal to drive the duty cycle controller.
         \end{itemize}
     \end{itemize}
 
-    \item \textbf{Analog Support \& References} (Required for ADC/DAC precision)
+    \item Analog Support \& References (Required for ADC/DAC precision)
     \begin{itemize}
-        \item \textbf{Low Dropout Regulator (LDO):} Provides a clean, regulated supply voltage to isolate the sensitive analog blocks from switching noise.
-        \item \textbf{Bandgap Reference (BGR):} Generates a stable, temperature-independent voltage reference required by the LDO and ADCs.
+        \item Low Dropout Regulator (LDO): Provides a clean, regulated supply voltage to isolate the sensitive analog blocks from switching noise.
+        \item Bandgap Reference (BGR): Generates a stable, temperature-independent voltage reference required by the LDO and ADCs.
     \end{itemize}
     
-    \item \textbf{Power Stage \& Drivers}
+    \item Power Stage \& Drivers
     \begin{itemize}
-        \item \textbf{Duty Cycle Generator (PWM Adjuster):} This block compares the analog control voltage from the DAC against a high-frequency triangular waveform to generate the PWM signal. The resulting duty cycle is proportional to the control voltage, directly modulating the power flow through the buck converter.
-        \item \textbf{High-Side Switch Driver:} A specialized circuit required to drive the gate of the high-side N-MOSFET. Since the MOSFET's source is not ground-referenced but connected to the switching node, this driver must provide a gate voltage that is higher than the input voltage ($V_{in}$) to turn the switch on. This is typically achieved using a bootstrap circuit.
-        \item \textbf{Low-Side Switch Driver:} This circuit drives the gate of the low-side synchronous N-MOSFET. As its source is connected to ground, the driver provides a simpler 0V to $V_{DD}$ logic-level signal, but it must be capable of sourcing and sinking high peak currents to charge and discharge the gate capacitance quickly, minimizing switching losses.
+        \item Duty Cycle Generator (PWM Adjuster): This block compares the analog control voltage from the DAC against a high-frequency triangular waveform to generate the PWM signal. The resulting duty cycle is proportional to the control voltage, directly modulating the power flow through the buck converter.
+        \item High-Side Switch Driver: A specialized circuit required to drive the gate of the high-side N-MOSFET. Since the MOSFET's source is not ground-referenced but connected to the switching node, this driver must provide a gate voltage that is higher than the input voltage ($V_{in}$) to turn the switch on. This is typically achieved using a bootstrap circuit.
+        \item Low-Side Switch Driver: This circuit drives the gate of the low-side synchronous N-MOSFET. As its source is connected to ground, the driver provides a simpler 0V to $V_{DD}$ logic-level signal, but it must be capable of sourcing and sinking high peak currents to charge and discharge the gate capacitance quickly, minimizing switching losses.
     \end{itemize}
 \end{itemize}
 
@@ -723,8 +723,8 @@ In a high-resolution SAR ADC, the dynamic comparator can inject significant kick
 
 The preamplifier serves two primary functions:
 \begin{enumerate}
-    \item \textbf{Isolation:} It acts as a buffer, shielding the delicate analog nodes of the CapDAC from the comparator's kickback noise.
-    \item \textbf{Gain:} It provides a moderate amount of voltage gain, amplifying the small differential voltage from the CapDAC. This relaxes the sensitivity requirements for the subsequent comparator, reducing its effective input-referred offset and noise.
+    \item Isolation: It acts as a buffer, shielding the delicate analog nodes of the CapDAC from the comparator's kickback noise.
+    \item Gain: It provides a moderate amount of voltage gain, amplifying the small differential voltage from the CapDAC. This relaxes the sensitivity requirements for the subsequent comparator, reducing its effective input-referred offset and noise.
 \end{enumerate}
 
 The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a fully differential amplifier designed to interface directly with the CapDAC's top-plate sampling architecture. A fully differential topology is used to maintain high common-mode noise rejection throughout the signal path. To stabilize the output common-mode voltage, which is otherwise undefined in a differential amplifier, a dedicated Common-Mode Feedback (CMFB) circuit is employed. The reference voltage for the CMFB is set to VDD/2, which is generated by a simple resistive divider filtered by a capacitor to reduce noise; this VDD/2 reference will also be used by the top-plate biasing LDO. The CMFB circuit senses the average output voltage, compares it to this reference, and adjusts the gate voltage of the PMOS load transistors to maintain a stable DC operating point.
