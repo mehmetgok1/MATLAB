@@ -286,7 +286,7 @@ The global system parameters, including component values for the buck converter 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{introduction/system_overview.drawio.png}
-    \caption{Fuzzy Logic PV Charger Overview.}
+    \caption{Fuzzy logic PV charger overview.}
     \label{fig:intro_system_overview}
 \end{figure}
 
@@ -304,7 +304,7 @@ Furthermore, MATLAB's Fuzzy Logic Toolbox facilitates the design and visualizati
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{matlab/matlab_model_overview.png}
-    \caption{MATLAB Model Block Diagram.}
+    \caption{MATLAB model block diagram.}
     \label{fig:matlab_model_block_diagram}
 \end{figure}
 
@@ -319,7 +319,7 @@ Figure \ref{fig:pv_curves} illustrates the I-V and P-V characteristics of the mo
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{introduction/pv_IV&powercurves.jpg}
-    \caption{PV Cell I-V and P-V Characteristics.}
+    \caption{PV cell I-V and P-V characteristics.}
     \label{fig:pv_curves}
 \end{figure}
 
@@ -333,7 +333,7 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
 
 \begin{table}[H]
     \centering
-    \caption{Buck Converter Specifications}
+    \caption{Buck converter specifications}
     \begin{tabular}{|l|c|c|}
         \hline
         \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
@@ -361,7 +361,7 @@ The control algorithm is based on a Sugeno-type fuzzy inference system, which is
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{matlab/fuzzy_controller_block_diagram.png}
-    \caption{Fuzzy Logic Controller Block Diagram.}
+    \caption{Fuzzy logic controller block diagram.}
     \label{fig:fuzzy_controller_block_diagram}
 \end{figure}
 
@@ -396,7 +396,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy Logic Safety Rules}
+    \caption{Fuzzy logic safety rules}
     \begin{tabular}{|c|c|}
         \hline
         \textbf{PV Voltage ($V_{pv}$)} & \textbf{Output ($\Delta D$)} \\
@@ -411,7 +411,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy Logic Rules for Optimal Range (Updated to Match FIS)}
+    \caption{Fuzzy logic rules for optimal range (updated to match FIS)}
     \begin{tabular}{|c|c|c|c|}
         \hline
         \diagbox{$dI$}{$dV$} & \textbf{Negative} & \textbf{Zero} & \textbf{Positive} \\
@@ -466,7 +466,7 @@ The initial design and verification of the fuzzy logic controller were conducted
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/cadence_system_model.png}
-    \caption{Top Level System Layout.}
+    \caption{Top level system layout.}
     \label{fig:cadence_layout}
 \end{figure}
 
@@ -485,7 +485,7 @@ The Verilog-A code provides a behavioral model of the PV cell. Figure \ref{fig:p
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/pvmodel_ivandpower.png}
-    \caption{I-V and P-V Characteristics of the Verilog-A PV Model.}
+    \caption{I-V and P-V characteristics of the Verilog-A PV model.}
     \label{fig:pvmodel_ivandpower}
 \end{figure}
 
@@ -493,7 +493,7 @@ While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A beh
 
 \begin{table}[H]
     \centering
-    \caption{Comparison of PV Model Parameters}
+    \caption{Comparison of PV model parameters}
     \begin{tabular}{|l|c|c|}
         \hline
         \textbf{Parameter} & \textbf{MATLAB Model} & \textbf{Verilog-A Model} \\
@@ -588,7 +588,7 @@ Figure \ref{fig:cadence_results} illustrates the system's response. The extracte
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/cadence_sim_result.png}
-    \caption{Cadence Mixed-Signal Simulation Results showing MPP Tracking.}
+    \caption{Cadence mixed-signal simulation results showing MPP tracking.}
     \label{fig:cadence_results}
 \end{figure}
 
@@ -599,7 +599,7 @@ The complete system architecture integrates the digital control logic with the a
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{{cadence_model/Cadence_model.drawio}.png}
-    \caption{System Block Diagram.}
+    \caption{System block diagram.}
     \label{fig:system_block_diagram}
 \end{figure}
 
@@ -653,7 +653,7 @@ Figure \ref{fig:adc_arch} illustrates the top-level architecture of the implemen
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/SARADC.drawio.png}
-    \caption{Fully Differential 12-bit Asynchronous SAR ADC Architecture.}
+    \caption{Fully differential 12-bit asynchronous SAR ADC architecture.}
     \label{fig:adc_arch}
 \end{figure}
 
@@ -667,7 +667,7 @@ To further enhance robustness, the bulk connections of the transistors are criti
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{cadence_implement/ADC/sh/shswitch.png}
-    \caption{Bootstrapped Sample and Hold Switch Implementation.}
+    \caption{Bootstrapped sample and hold switch implementation.}
     \label{fig:sh_switch}
 \end{figure}
 
@@ -678,13 +678,13 @@ Linearity is the main metric for this device, as any distortion introduced at th
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sh/shswitchsim.png}
-    \caption{DFT of the Signal Passed Through the Sample and Hold Switch.}
+    \caption{DFT of the signal passed through the sample and hold switch.}
     \label{fig:sh_dft}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{Sample and Hold Switch Performance Metrics (Input: 0-5 V FS)}
+    \caption{Sample and hold switch performance metrics (input: 0-5 V FS)}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Metric} & \textbf{Value} \\
@@ -705,14 +705,14 @@ The linearity of the CapDAC is paramount for the overall ADC performance. The tw
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/dnlsim.png}
-    \caption{CapDAC DNL Simulation Results.}
+    \caption{CapDAC DNL simulation results.}
     \label{fig:capdac_dnl}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/inlandderivinl.png}
-    \caption{CapDAC INL and its derivative Simulation Results.}
+    \caption{CapDAC INL and its derivative simulation results.}
     \label{fig:capdac_inl}
 \end{figure}
 
@@ -732,7 +732,7 @@ The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a f
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{cadence_implement/ADC/preamp/preamp.png}
-    \caption{Fully Differential Preamplifier with CMFB Circuit.}
+    \caption{Fully differential preamplifier with CMFB circuit.}
     \label{fig:preamp_schematic}
 \end{figure}
 
@@ -745,7 +745,7 @@ Ensuring stability is crucial for the preamplifier. The primary concern is the s
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/cmfb_stb.png}
-    \caption{CMFB Loop Stability Simulation.}
+    \caption{CMFB loop stability simulation.}
     \label{fig:preamp_cmfb_stb}
 \end{figure}
 
@@ -755,7 +755,7 @@ The output common-mode voltage is maintained by the CMFB loop. Figure \ref{fig:p
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/cm_v_hist.png}
-    \caption{Output Common Mode Voltage Monte Carlo Simulation.}
+    \caption{Output common mode voltage Monte Carlo simulation.}
     \label{fig:preamp_cm_hist}
 \end{figure}
 
@@ -765,7 +765,7 @@ The open-loop differential path is also analyzed, mainly to observe its phase de
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/diff_open_loop.png}
-    \caption{Differential Open Loop AC Response.}
+    \caption{Differential open loop AC response.}
     \label{fig:preamp_diff_open}
 \end{figure}
 
@@ -775,7 +775,7 @@ The input-referred offset directly impacts the effective resolution of the ADC.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/offset_hist.png}
-    \caption{Input Referred Offset Monte Carlo Simulation.}
+    \caption{Input referred offset Monte Carlo simulation.}
     \label{fig:preamp_offset}
 \end{figure}
 
@@ -785,13 +785,13 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/noise_sim.png}
-    \caption{Input Referred Noise Simulation.}
+    \caption{Input referred noise simulation.}
     \label{fig:preamp_noise}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{Preamplifier Performance Summary}
+    \caption{Preamplifier performance summary}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\
@@ -825,20 +825,20 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/comparator/offset_hist.png}
-    \caption{Comparator Input Referred Offset Monte Carlo Simulation.}
+    \caption{Comparator input referred offset Monte Carlo simulation.}
     \label{fig:comp_offset}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/comparator/noise_sim.png}
-    \caption{Comparator Input Referred Noise Simulation.}
+    \caption{Comparator input referred noise simulation.}
     \label{fig:comp_noise}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{Comparator Performance Summary}
+    \caption{Comparator performance summary}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\
@@ -861,7 +861,7 @@ The system operates across two voltage domains. The analog front-end, including 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/sar_logic_overview.png}
-    \caption{Asynchronous SAR Logic Overview with Level Shifters.}
+    \caption{Asynchronous SAR logic overview with level shifters.}
     \label{fig:sar_logic_overview}
 \end{figure}
 
@@ -871,7 +871,7 @@ The window generator is responsible for orchestrating the timing of the bit tria
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/window_gen.png}
-    \caption{Window Generator Logic Implementation.}
+    \caption{Window generator logic implementation.}
     \label{fig:window_gen}
 \end{figure}
 
@@ -881,7 +881,7 @@ The comparator clock is generated asynchronously to maximize speed and eliminate
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/comp_clk_gen.png}
-    \caption{Asynchronous Comparator Clock Generation Logic.}
+    \caption{Asynchronous comparator clock generation logic.}
     \label{fig:comp_clk_gen}
 \end{figure}
 
@@ -890,7 +890,7 @@ A potential enhancement for this architecture is the implementation of adaptive 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/timing_diagram.png}
-    \caption{Timing Diagram of the Asynchronous Operation.}
+    \caption{Timing diagram of the asynchronous operation.}
     \label{fig:sar_timing}
 \end{figure}
 
@@ -900,7 +900,7 @@ The bit generator controls the sequential switching of the capacitor array, movi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/bit_gen.png}
-    \caption{Bit Generator Logic Implementation.}
+    \caption{Bit generator logic implementation.}
     \label{fig:bit_gen}
 \end{figure}
 
@@ -923,7 +923,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     \centering
     % Placeholder: Update 'fda_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/fda.png} 
-    \caption{Schematic of the Fully Differential Amplifier (FDA) stage.}
+    \caption{Schematic of the fully differential amplifier (FDA) stage.}
     \label{fig:buffer_fda}
 \end{figure}
 
@@ -950,7 +950,7 @@ To ensure that the LDO remains stable and does not oscillate under these conditi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/ldo/ldo_schematic.png} 
-    \caption{Schematic design of the Low-Dropout (LDO) regulator.}
+    \caption{Schematic design of the low-dropout (LDO) regulator.}
     \label{fig:ldo_schematic}
 \end{figure}
 
@@ -977,13 +977,13 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/adc_fft.png}
-    \caption{4096-Point FFT of the ADC Output.}
+    \caption{4096-point FFT of the ADC output.}
     \label{fig:adc_fft}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{ADC Performance Across Process Corners}
+    \caption{ADC performance across process corners}
     \vspace{2mm}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
@@ -1006,7 +1006,7 @@ The duty cycle generator is responsible for converting the digital control signa
     \centering
     % Placeholder: Update 'duty_gen_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/duty_gen_schematic.png} 
-    \caption{Schematic of the Duty Cycle Generator circuit.}
+    \caption{Schematic of the duty cycle generator circuit.}
     \label{fig:duty_gen_schematic}
 \end{figure}
 
@@ -1019,7 +1019,7 @@ The primary performance limitations in an R-2R DAC are Integral Non-Linearity (I
     \centering
     % Placeholder: Update 'dac_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac/dac_plot.png} 
-    \caption{Performance plot showing the Integral Non-Linearity (INL) and Differential Non-Linearity (DNL) of the 10-bit R-2R DAC.}
+    \caption{Performance plot showing the integral non-linearity (INL) and differential non-linearity (DNL) of the 10-bit R-2R DAC.}
     \label{fig:dac_inl_dnl}
 \end{figure}
 
@@ -1040,7 +1040,7 @@ Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the de
 
 \begin{table}[H]
     \centering
-    \caption{DAC Buffer Amplifier Performance Summary}
+    \caption{DAC buffer amplifier performance summary}
     \vspace{2mm}
     \begin{tabular}{|l|c|}
         \hline
@@ -1071,7 +1071,7 @@ To account for process variations and ensure the precise slope and amplitude of 
     \centering
     % Placeholder: Update 'ramp_gen_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/ramp_gen/ramp_gen_schematic.png} 
-    \caption{Schematic of the Ramp Generator circuit.}
+    \caption{Schematic of the ramp generator circuit.}
     \label{fig:ramp_gen_schematic}
 \end{figure}
 
@@ -1098,7 +1098,7 @@ The first step in the MPPT algorithm is determining the change in the photovolta
 The fuzzification stage assigns membership values to fuzzify the crisp digital inputs into linguistic variables. An exact calculation of the membership degree (typically ranging from 0 to 255 for an 8-bit resolution) involves linear interpolation, which inherently requires a division operation. To circumvent this, the interpolation fraction is optimized by lookup dividing logic. The denominator is approximated to the nearest power of two, which transforms the complex division into a highly efficient bitwise right-shift ($\gg$) operation. This replaces a resource-intensive divider with simple comparative lookup logic and shift operations. Algorithm \ref{alg:mf_interpolation} illustrates this shared underlying concept.
 
 \begin{algorithm}[H]
-\caption{Hardware-Efficient Linear Interpolation for Membership Functions}
+    \caption{Hardware-efficient linear interpolation for membership functions}
 \label{alg:mf_interpolation}
 \begin{algorithmic}[1]
 \REQUIRE Crisp input $x$, Thresholds $A$ and $B$, Max Output $M$
@@ -1124,7 +1124,7 @@ The Z-shaped membership function implements a falling linear ramp. It assigns a 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/linz.png}
-    \caption{Z-Shaped Membership Function Implementation.}
+    \caption{Z-shaped membership function implementation.}
     \label{fig:mf_z_dig}
 \end{figure}
 
@@ -1134,7 +1134,7 @@ The S-shaped membership function corresponds to a rising linear ramp. It evaluat
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/lins.png}
-    \caption{S-Shaped Membership Function Implementation.}
+    \caption{S-shaped membership function implementation.}
     \label{fig:mf_s_dig}
 \end{figure}
 
@@ -1144,7 +1144,7 @@ The triangular membership function specifies a peak response. It combines a risi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/triang.png}
-    \caption{Triangular-Shaped Membership Function Implementation.}
+    \caption{Triangular-shaped membership function implementation.}
     \label{fig:mf_triang_dig}
 \end{figure}
 
@@ -1163,7 +1163,7 @@ The final control output, $\Delta D$, is obtained using a Sugeno-type weighted a
 In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. Algorithm \ref{alg:defuzzification} illustrates this optimized process. The SystemVerilog implementation of this optimized defuzzifier is presented in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzzifier_dig}).
 
 \begin{algorithm}[H]
-\caption{Hardware-Efficient Sugeno Defuzzification}
+    \caption{Hardware-efficient Sugeno defuzzification}
 \label{alg:defuzzification}
 \begin{algorithmic}[1]
 \REQUIRE Active rule weights $w_i$, Crisp constants $C_i$, Total rules $N$
@@ -1219,7 +1219,7 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
 
 \begin{table}[H]
     \centering
-    \caption{Summary of Final AMS Simulation Performance}
+    \caption{Summary of final AMS simulation performance}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\
@@ -1262,38 +1262,38 @@ To promote reproducibility and encourage further research, the complete MATLAB/S
 \label{app:matlab}
 
 \section{System Parameters Initialization Script}
-\lstinputlisting[language=MATLAB, caption={System Parameters Initialization Script}, label={code:sys_params}]{codes_models/matlab_code/parameters.m}
+\lstinputlisting[language=MATLAB, caption={System parameters initialization script}, label={code:sys_params}]{codes_models/matlab_code/parameters.m}
 
 \section{Fuzzy Inference System Creation Script}
-\lstinputlisting[language=MATLAB, caption={Fuzzy Inference System Creation Script}, label={code:create_mppt_fis}]{codes_models/matlab_code/create_mppt_fis.m}
+\lstinputlisting[language=MATLAB, caption={Fuzzy inference system creation script}, label={code:create_mppt_fis}]{codes_models/matlab_code/create_mppt_fis.m}
 
 \section{Split Capacitor Array Calculation Script}
-\lstinputlisting[language=MATLAB, caption={Split Capacitor Array Calculation Script}, label={code:adc_split_cap}]{codes_models/matlab_code/adc_split_cap.m}
+\lstinputlisting[language=MATLAB, caption={Split capacitor array calculation script}, label={code:adc_split_cap}]{codes_models/matlab_code/adc_split_cap.m}
 
 \chapter{VERILOG-A MODELS}
 \label{app:veriloga}
 
 \section{Verilog-A PV Model Implementation}
-\lstinputlisting[language=Verilog-A, caption={Verilog-A PV Model Implementation}, label={code:pv_model_va}]{codes_models/pvmodel_veriloga/pv_model.va}
+\lstinputlisting[language=Verilog-A, caption={Verilog-A PV model implementation}, label={code:pv_model_va}]{codes_models/pvmodel_veriloga/pv_model.va}
 
 \chapter{SYSTEMVERILOG IMPLEMENTATIONS}
 \label{app:systemverilog}
 \section{Cadence Simulation Models}
-\lstinputlisting[caption={MF triangle SystemVerilog Implementation}, label={code:mf_triangle}]{codes_models/systemverilogcode/mf_triangle.sv}
-\lstinputlisting[caption={Inference SystemVerilog Implementation}, label={code:inference}]{codes_models/systemverilogcode/inference.sv}
-\lstinputlisting[caption={defuzzification SystemVerilog Implementation}, label={code:defuzz}]{codes_models/systemverilogcode/defuzzifier.sv}
-\lstinputlisting[caption={Duty Cycle Integrator SystemVerilog Implementation}, label={code:duty_int}]{codes_models/systemverilogcode/duty_integrator.sv}
+\lstinputlisting[caption={MF triangle SystemVerilog implementation}, label={code:mf_triangle}]{codes_models/systemverilogcode/mf_triangle.sv}
+\lstinputlisting[caption={Inference SystemVerilog implementation}, label={code:inference}]{codes_models/systemverilogcode/inference.sv}
+\lstinputlisting[caption={Defuzzification SystemVerilog implementation}, label={code:defuzz}]{codes_models/systemverilogcode/defuzzifier.sv}
+\lstinputlisting[caption={Duty cycle integrator SystemVerilog implementation}, label={code:duty_int}]{codes_models/systemverilogcode/duty_integrator.sv}
 
 \section{Hardware-Friendly RTL Implementations}
-\lstinputlisting[caption={Difference Generator SystemVerilog Implementation}, label={code:diff_gen}]{codes_models/systemverilogcode/dig/rtl/diff_generator.sv}
-\lstinputlisting[caption={Z-Shaped Membership Function SystemVerilog Implementation}, label={code:mf_z_dig}]{codes_models/systemverilogcode/dig/rtl/mf_z.sv}
-\lstinputlisting[caption={S-Shaped Membership Function SystemVerilog Implementation}, label={code:mf_s_dig}]{codes_models/systemverilogcode/dig/rtl/mf_s.sv}
-\lstinputlisting[caption={Triangular-Shaped Membership Function SystemVerilog Implementation}, label={code:mf_triangle_dig}]{codes_models/systemverilogcode/dig/rtl/mf_triangle.sv}
-\lstinputlisting[caption={Fuzzifier SystemVerilog Implementation}, label={code:fuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzifier.sv}
-\lstinputlisting[caption={Inference Engine SystemVerilog Implementation}, label={code:inference_dig}]{codes_models/systemverilogcode/dig/rtl/inference.sv}
-\lstinputlisting[caption={Defuzzifier SystemVerilog Implementation}, label={code:defuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/defuzzifier.sv}
-\lstinputlisting[caption={Duty Cycle Integrator SystemVerilog Implementation}, label={code:duty_int_dig}]{codes_models/systemverilogcode/dig/rtl/duty_integrator.sv}
-\lstinputlisting[caption={Fuzzy Top Module SystemVerilog Implementation}, label={code:fuzzy_top_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzy_top.sv}
+\lstinputlisting[caption={Difference generator SystemVerilog implementation}, label={code:diff_gen}]{codes_models/systemverilogcode/dig/rtl/diff_generator.sv}
+\lstinputlisting[caption={Z-shaped membership function SystemVerilog implementation}, label={code:mf_z_dig}]{codes_models/systemverilogcode/dig/rtl/mf_z.sv}
+\lstinputlisting[caption={S-shaped membership function SystemVerilog implementation}, label={code:mf_s_dig}]{codes_models/systemverilogcode/dig/rtl/mf_s.sv}
+\lstinputlisting[caption={Triangular-shaped membership function SystemVerilog implementation}, label={code:mf_triangle_dig}]{codes_models/systemverilogcode/dig/rtl/mf_triangle.sv}
+\lstinputlisting[caption={Fuzzifier SystemVerilog implementation}, label={code:fuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzifier.sv}
+\lstinputlisting[caption={Inference engine SystemVerilog implementation}, label={code:inference_dig}]{codes_models/systemverilogcode/dig/rtl/inference.sv}
+\lstinputlisting[caption={Defuzzifier SystemVerilog implementation}, label={code:defuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/defuzzifier.sv}
+\lstinputlisting[caption={Duty cycle integrator SystemVerilog implementation}, label={code:duty_int_dig}]{codes_models/systemverilogcode/dig/rtl/duty_integrator.sv}
+\lstinputlisting[caption={Fuzzy top module SystemVerilog implementation}, label={code:fuzzy_top_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzy_top.sv}
 
 \nocite{*}
 \bibliographystyle{styles/fbe_tez_v11}
