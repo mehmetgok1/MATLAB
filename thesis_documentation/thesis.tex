@@ -1096,10 +1096,8 @@ The first step in the MPPT algorithm is determining the change in the photovolta
 \subsection{Fuzzification}
 The fuzzification stage assigns membership values to fuzzify the crisp digital inputs into linguistic variables. An exact calculation of the membership degree (typically ranging from 0 to 255 for an 8-bit resolution) involves linear interpolation, which inherently requires a division operation. To circumvent this, the interpolation fraction is optimized by lookup dividing logic. The denominator is approximated to the nearest power of two, which transforms the complex division into a highly efficient bitwise right-shift ($\gg$) operation. This replaces a resource-intensive divider with simple comparative lookup logic and shift operations. Algorithm \ref{alg:mf_interpolation} illustrates this shared underlying concept.
 
-\begin{algorithm}[H]
-    \caption{Hardware-efficient linear interpolation for membership functions}
-\label{alg:mf_interpolation}
-\begin{algorithmic}[1]
+\begin{figure}[H]
+    \begin{algorithmic}[1]
 \REQUIRE Crisp input $x$, Thresholds $A$ and $B$, Max Output $M$
 \ENSURE Membership degree $\mu \in [0, M]$
 \IF{$x \leq A$}
@@ -1113,7 +1111,9 @@ The fuzzification stage assigns membership values to fuzzify the crisp digital i
     \STATE $\mu \leftarrow (\Delta x \times M) \gg shift\_val$
 \ENDIF
 \end{algorithmic}
-\end{algorithm}
+    \caption{Hardware-efficient linear interpolation for membership functions}
+    \label{alg:mf_interpolation}
+\end{figure}
 
 The hardware implementation utilizes three primary types of membership functions: Z-shaped, S-shaped, and Triangular-shaped.
 
@@ -1159,12 +1159,10 @@ The final control output, $\Delta D$, is obtained using a Sugeno-type weighted a
 \begin{equation}
     \Delta D = \frac{\sum_{i=1}^{n} w_i \cdot c_i}{\sum_{i=1}^{n} w_i}.
 \end{equation}
-In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. Algorithm \ref{alg:defuzzification} illustrates this optimized process. The SystemVerilog implementation of this optimized defuzzifier is presented in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzzifier_dig}).
+In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of weights are computationally expensive. We optimize this by relying on the synthesizer to implement efficient constant multiplications (or shifts and adders) for the fixed crisp output constants ($C_i$). More importantly, the hardware-expensive division by the denominator summation ($\sum w_i$) is completely eliminated. By identifying the nearest power of two to the total weight, the division is transformed into an efficient bitwise right-shift ($\gg$) operation. This approximation drastically reduces the logic footprint while maintaining adequate precision for the duty cycle adjustment. Figure \ref{alg:defuzzification} illustrates this optimized process. The SystemVerilog implementation of this optimized defuzzifier is presented in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:defuzzifier_dig}).
 
-\begin{algorithm}[H]
-    \caption{Hardware-efficient Sugeno defuzzification}
-\label{alg:defuzzification}
-\begin{algorithmic}[1]
+\begin{figure}[H]
+    \begin{algorithmic}[1]
 \REQUIRE Active rule weights $w_i$, Crisp constants $C_i$, Total rules $N$
 \ENSURE Crisp output $\Delta D$
 \STATE $Numerator \leftarrow 0$
@@ -1176,7 +1174,9 @@ In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of
 \STATE $shift\_val \leftarrow \text{LUT\_Nearest\_Power\_Of\_2}(Denominator)$
 \STATE $\Delta D \leftarrow Numerator \gg shift\_val$
 \end{algorithmic}
-\end{algorithm}
+    \caption{Hardware-efficient Sugeno defuzzification}
+    \label{alg:defuzzification}
+\end{figure}
 
 \subsection{Duty Cycle Integration}
 The defuzzified output represents the necessary \textit{change} in the duty cycle ($\Delta D$). The final stage is the discrete-time integration of this output to generate the absolute duty cycle for the PWM block. This is implemented using a digital accumulator.
