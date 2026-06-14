@@ -19,7 +19,7 @@
 \usepackage{subfigure} % 
 \usepackage{amsmath}
 \usepackage{notoccite}
-\usepackage[colorlinks=true, allcolors=blue, linkcolor=black]{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{grffile}
 %%mehmet added
 \usepackage{listings}
@@ -334,6 +334,7 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
 \begin{table}[H]
     \centering
     \caption{Buck converter specifications}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
         \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
@@ -397,6 +398,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 \begin{table}[H]
     \centering
     \caption{Fuzzy logic safety rules}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|}
         \hline
         \textbf{PV Voltage ($V_{pv}$)} & \textbf{Output ($\Delta D$)} \\
@@ -412,6 +414,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 \begin{table}[H]
     \centering
     \caption{Fuzzy logic rules for optimal range (updated to match FIS)}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|c|c|}
         \hline
         \diagbox{$dI$}{$dV$} & \textbf{Negative} & \textbf{Zero} & \textbf{Positive} \\
@@ -494,6 +497,7 @@ While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A beh
 \begin{table}[H]
     \centering
     \caption{Comparison of PV model parameters}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
         \textbf{Parameter} & \textbf{MATLAB Model} & \textbf{Verilog-A Model} \\
@@ -684,6 +688,7 @@ Linearity is the main metric for this device, as any distortion introduced at th
 \begin{table}[H]
     \centering
     \caption{Sample and hold switch performance metrics (input: 0-5 V FS)}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Metric} & \textbf{Value} \\
@@ -791,6 +796,7 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
 \begin{table}[H]
     \centering
     \caption{Preamplifier performance summary}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\
@@ -838,6 +844,7 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
 \begin{table}[H]
     \centering
     \caption{Comparator performance summary}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\
@@ -983,7 +990,7 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
 \begin{table}[H]
     \centering
     \caption{ADC performance across process corners}
-    \vspace{2mm}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
         \textbf{Corner} & \textbf{SFDR (dB)} & \textbf{SNR (dB)} & \textbf{SINAD (dB)} & \textbf{ENOB (bits)} \\
@@ -1040,7 +1047,7 @@ Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the de
 \begin{table}[H]
     \centering
     \caption{DAC buffer amplifier performance summary}
-    \vspace{2mm}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\
@@ -1219,6 +1226,7 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
 \begin{table}[H]
     \centering
     \caption{Summary of final AMS simulation performance}
+    \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
         \textbf{Parameter} & \textbf{Value} \\

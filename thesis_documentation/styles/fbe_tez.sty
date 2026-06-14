@@ -343,7 +343,14 @@ Science and Engineering \\
                         \addcontentsline{toc}{chapter}%
                             {\protect\numberline{\chaptocapp}#1}%
                       \else
-                        \addcontentsline{toc}{chapter}{\appendixname\ \thechapter:\hspace{1.6ex}#1}%
+                        \addtocontents{toc}{%
+                        \noindent
+                        \appendixname\ \thechapter:\hspace{1.6ex}#1
+                        \nobreak\leaders
+                        \hbox{$\m@th \mkern \@dotsep mu.\mkern
+                              \@dotsep mu$}
+                        \hfill \nobreak
+                        \hb@xt@\@pnumwidth{\hss \thepage}\par}
                       \fi
                     \else
                       \addcontentsline{toc}{chapter}{#1}%
@@ -437,11 +444,7 @@ Science and Engineering \\
       \@mkboth{\MakeUppercase\listfigurename}%
               {\MakeUppercase\listfigurename}}%
     \vskip\baselineskip
-    \begingroup
-      \let\oldnumberline\numberline
-      \renewcommand{\numberline}[1]{\oldnumberline{\figurename~##1.}}%
-      \@starttoc{lof}%
-    \endgroup
+        \@starttoc{lof}%
 \parskip\ev}
 %
 \renewcommand\listoftables{% \ev is used for temporary storage of \parskip
@@ -451,11 +454,7 @@ Science and Engineering \\
       \@mkboth{%
           \MakeUppercase\listtablename}{\MakeUppercase\listtablename}}%
     \vskip\baselineskip
-    \begingroup
-      \let\oldnumberline\numberline
-      \renewcommand{\numberline}[1]{\oldnumberline{\tablename~##1.}}%
-      \@starttoc{lot}%
-    \endgroup
+        \@starttoc{lot}%
 \parskip\ev}
 %
 % The expressions 'FIGURE' and 'TABLE' also appear in the LOF and LOT.

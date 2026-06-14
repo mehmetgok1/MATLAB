@@ -15,3 +15,4 @@ build/
 *.asv
 systemverilogcode/dig/sim
 systemverilogcode/dig/tb
+original_template/
