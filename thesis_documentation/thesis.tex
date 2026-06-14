@@ -340,7 +340,7 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
-        \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
+        Parameter & Symbol & Value \\
         \hline
         Input Voltage (MPP) & $V_{in}$ & 30.6 V \\
         \hline
@@ -405,7 +405,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
     \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|}
         \hline
-        \textbf{PV Voltage ($V_{pv}$)} & \textbf{Output ($\Delta D$)} \\
+        PV Voltage ($V_{pv}$) & Output ($\Delta D$) \\
         \hline
         \texttt{Low\textunderscore Voltage} & \texttt{Big\textunderscore Decrease} \\
         \hline
@@ -421,13 +421,13 @@ Additionally, the integrator and the scaling of the output provide a damping eff
     \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|c|c|}
         \hline
-        \diagbox{$dI$}{$dV$} & \textbf{Negative} & \textbf{Zero} & \textbf{Positive} \\
+        \diagbox{$dI$}{$dV$} & Negative & Zero & Positive \\
         \hline
-        \textbf{Negative} & \texttt{Decrease} & \texttt{Hold} & \texttt{Increase} \\
+        Negative & \texttt{Decrease} & \texttt{Hold} & \texttt{Increase} \\
         \hline
-        \textbf{Zero} & \texttt{Hold} & \texttt{Hold} & \texttt{Hold} \\
+        Zero & \texttt{Hold} & \texttt{Hold} & \texttt{Hold} \\
         \hline
-        \textbf{Positive} & \texttt{Increase} & \texttt{Hold} & \texttt{Decrease} \\
+        Positive & \texttt{Increase} & \texttt{Hold} & \texttt{Decrease} \\
         \hline
     \end{tabular}
     \label{tab:fuzzy_rules_optimal}
@@ -508,7 +508,7 @@ While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A beh
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
-        \textbf{Parameter} & \textbf{MATLAB Model} & \textbf{Verilog-A Model} \\
+        Parameter & MATLAB Model & Verilog-A Model \\
         \hline
         Open Circuit Voltage ($V_{oc}$) & 36.72 V & 36.5 V \\
         \hline
@@ -704,7 +704,7 @@ Linearity is the main metric for this device, as any distortion introduced at th
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
-        \textbf{Metric} & \textbf{Value} \\
+        Metric & Value \\
         \hline
         THDB3 & -89.12 dB \\
         \hline
@@ -820,7 +820,7 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
-        \textbf{Parameter} & \textbf{Value} \\
+        Parameter & Value \\
         \hline
         Differential Gain & 38.7-41.8 dB \\
         \hline
@@ -870,7 +870,7 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
-        \textbf{Parameter} & \textbf{Value} \\
+        Parameter & Value \\
         \hline
         Input Referred Offset ($\sigma$) & -15-12 mV \\
         \hline
@@ -1027,7 +1027,7 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
-        \textbf{Corner} & \textbf{SFDR (dB)} & \textbf{SNR (dB)} & \textbf{SINAD (dB)} & \textbf{ENOB (bits)} \\
+        Corner & SFDR (dB) & SNR (dB) & SINAD (dB) & ENOB (bits) \\
         \hline
         Typical (tt) & 98.12 & 72.03 & 72 & 11.99 \\
         \hline
@@ -1087,7 +1087,7 @@ Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the de
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
-        \textbf{Parameter} & \textbf{Value} \\
+        Parameter & Value \\
         \hline
         DC Gain & 85.1 dB \\
         \hline
@@ -1274,7 +1274,7 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
-        \textbf{Parameter} & \textbf{Value} \\
+        Parameter & Value \\
         \hline
         PV Operating Voltage ($V_{pv}$) & $\sim$30.4 V \\
         \hline
