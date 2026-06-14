@@ -574,7 +574,7 @@ The SystemVerilog implementation, provided in Appendix \ref{app:systemverilog} (
 \label{sec:sv_duty_integrator}
 The final stage of the digital control loop is the Duty Cycle Integrator. While the fuzzy inference engine determines the required \textit{change} in the operating point ($\Delta D$), the Pulse Width Modulation (PWM) generator requires an absolute duty cycle value to drive the power MOSFETs. This module performs the discrete-time integration of the fuzzy output, mathematically represented as:
 \begin{equation}
-    D[n] = D[n-1] + \Delta D[n]
+    D[n] = D[n-1] + \Delta D[n],
 \end{equation}
 where $D[n]$ is the current duty cycle and $\Delta D[n]$ is the adjustment calculated by the defuzzifier.
 
