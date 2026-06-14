@@ -250,18 +250,15 @@ Bu tez, fotovoltaik (PV) batarya şarj sistemlerinde Maksimum Güç Noktası Tak
 \end{abbreviations}
 
 % MAIN CHAPTERS
-\chapter{INTRODUCTION}
-\label{chapter:introduction}
+\chapter{INTRODUCTION}\label{chapter:introduction}
 \pagenumbering{arabic}
 
-\section{Renewable Energy and Photovoltaic Systems}
-\label{sec:intro_renewable}
+\section{Renewable Energy and Photovoltaic Systems}\label{sec:intro_renewable}
 The global demand for energy is rising rapidly, driven by population growth and industrialization. Concurrently, environmental concerns regarding fossil fuels have accelerated the transition towards renewable energy sources. Among these, solar energy stands out as a clean, abundant, and sustainable resource. Photovoltaic (PV) systems, which convert sunlight directly into electricity using semiconductor materials, have become a dominant technology in the renewable energy sector.
 
 However, the efficiency of energy conversion in PV systems is heavily dependent on environmental conditions. The power output of a PV panel is non-linear and varies significantly with solar irradiance and ambient temperature. Unlike conventional power sources, a PV array does not have a constant internal impedance. Consequently, to extract the maximum available power, the load impedance must be dynamically matched to the source impedance. This necessity leads to the implementation of Maximum Power Point Tracking (MPPT) controllers.
 
-\section{Maximum Power Point Tracking Algorithms}
-\label{sec:intro_mppt_techniques}
+\section{Maximum Power Point Tracking Algorithms}\label{sec:intro_mppt_techniques}
 Maximum Power Point Tracking (MPPT) is a critical technique in photovoltaic (PV) systems used to maximize power extraction under all conditions. The P-V characteristic of a solar panel is non-linear and varies with solar irradiance and temperature. There is a unique point on the P-V curve, known as the Maximum Power Point (MPP), where the PV system produces maximum power. MPPT algorithms adjust the electrical operating point of the modules to keep them at the MPP. Several algorithms have been developed to achieve this, varying in complexity, sensor requirements, convergence speed, and cost.
 
 \subsection{Perturb and Observe (P\&O)}
@@ -287,15 +284,12 @@ The global system parameters, including component values for the buck converter 
     \centering
     \includegraphics[width=0.8\textwidth]{introduction/system_overview.drawio.png}
     \vspace{\baselineskip}
-    \caption{Fuzzy logic PV charger overview.}
-    \label{fig:intro_system_overview}
+    \caption{Fuzzy logic PV charger overview.}\label{fig:intro_system_overview}
 \end{figure}
 
-\chapter{MATLAB MODEL}
-\label{chapter:matlab_model}
+\chapter{MATLAB MODEL}\label{chapter:matlab_model}
 
-\section{MATLAB Model Overview}
-\label{sec:matlab_overview}
+\section{MATLAB Model Overview}\label{sec:matlab_overview}
 The design and verification of the proposed photovoltaic battery charger system were initially conducted using the MATLAB/Simulink environment. Simulink provides a comprehensive platform for Model-Based Design, allowing for the simulation of complex dynamic systems before physical implementation.
 
 One of the primary advantages of using Simulink for this application is the availability of the Simscape Electrical library. This library offers pre-built, high-fidelity models for power electronic components, such as MOSFETs, diodes, inductors, and capacitors, as well as specialized sources like the Photovoltaic Array block. The built-in PV array model allows for precise definition of the panel's characteristics and enables the simulation of varying environmental conditions, such as changes in solar irradiance and temperature, which are crucial for testing MPPT algorithms.
@@ -306,12 +300,10 @@ Furthermore, MATLAB's Fuzzy Logic Toolbox facilitates the design and visualizati
     \centering
     \includegraphics[width=0.8\textwidth]{matlab/matlab_model_overview.png}
     \vspace{\baselineskip}
-    \caption{MATLAB model block diagram.}
-    \label{fig:matlab_model_block_diagram}
+    \caption{MATLAB model block diagram.}\label{fig:matlab_model_block_diagram}
 \end{figure}
 
-\section{Photovoltaic Cell Model}
-\label{sec:matlab_pv_model}
+\section{Photovoltaic Cell Model}\label{sec:matlab_pv_model}
 A fundamental component of the proposed system is the photovoltaic (PV) cell, which converts solar energy into electrical energy. To accurately simulate and control the charging process, a mathematical model representing the PV cell's behavior is essential. This section details the model used, specifically focusing on its non-linear current-voltage (I-V) and power-voltage (P-V) characteristics.
 
 The output power of a PV panel is not constant; it varies significantly with environmental conditions, primarily solar irradiance and temperature. As shown in the P-V characteristics, there exists a single operating point for any given set of conditions where the power extraction is maximized. This point is referred to as the Maximum Power Point (MPP). Because the location of the MPP shifts as irradiance or temperature changes, a static connection between the panel and the load is inefficient. Therefore, it is imperative to employ Maximum Power Point Tracking (MPPT) techniques. MPPT ensures that the load impedance seen by the source is adjusted to match the optimal operating point, thereby maximizing the efficiency of energy harvesting.
@@ -322,12 +314,10 @@ Figure \ref{fig:pv_curves} illustrates the I-V and P-V characteristics of the mo
     \centering
     \includegraphics[width=0.8\textwidth]{introduction/pv_IV&powercurves.jpg}
     \vspace{\baselineskip}
-    \caption{PV cell I-V and P-V characteristics.}
-    \label{fig:pv_curves}
+    \caption{PV cell I-V and P-V characteristics.}\label{fig:pv_curves}
 \end{figure}
 
-\section{Buck Converter}
-\label{sec:matlab_buck_converter}
+\section{Buck Converter}\label{sec:matlab_buck_converter}
 The buck converter is a fundamental DC-DC topology used to step down a higher input voltage to a lower output voltage while maintaining high efficiency. It operates by chopping the input voltage using a controlled switch (typically a MOSFET) and filtering the resulting signal with an inductor and a capacitor. The ratio of the output voltage to the input voltage is primarily determined by the duty cycle of the switch.
 
 In this specific application, the photovoltaic panel operates at a Maximum Power Point (MPP) voltage of approximately 30 V. However, the system is designed to charge a 12 V battery. Consequently, a buck converter is employed to bridge this voltage difference. This configuration not only steps down the voltage but also allows the MPPT algorithm to adjust the effective load impedance seen by the PV panel by varying the duty cycle, thereby maximizing power extraction.
@@ -336,7 +326,7 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
 
 \begin{table}[H]
     \centering
-    \caption{Buck converter specifications.}
+    \caption{Buck converter specifications.}\label{tab:buck_params}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
@@ -353,11 +343,9 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
         Input Capacitance & $C_{in}$ & 47 $\mu$F \\
         \hline
     \end{tabular}
-    \label{tab:buck_params}
 \end{table}
 
-\section{Fuzzy Logic Controller}
-\label{sec:matlab_flc}
+\section{Fuzzy Logic Controller}\label{sec:matlab_flc}
 To address the non-linear characteristics of the PV array and the need for robust tracking under changing environmental conditions, this thesis employs a Fuzzy Logic Controller (FLC). Unlike traditional linear controllers, the FLC does not require an exact mathematical model of the plant, making it highly effective for the time-varying nature of solar irradiance and temperature.
 
 The control algorithm is based on a Sugeno-type fuzzy inference system, which is chosen for its computational efficiency and its suitability for generating a crisp control output, making it well-suited for digital implementation in control systems. The overall process of the FLC can be divided into three main stages: sampling, rule firing, and duty cycle adjustment.
@@ -366,8 +354,7 @@ The control algorithm is based on a Sugeno-type fuzzy inference system, which is
     \centering
     \includegraphics[width=0.8\textwidth]{matlab/fuzzy_controller_block_diagram.png}
     \vspace{\baselineskip}
-    \caption{Fuzzy logic controller block diagram.}
-    \label{fig:fuzzy_controller_block_diagram}
+    \caption{Fuzzy logic controller block diagram.}\label{fig:fuzzy_controller_block_diagram}
 \end{figure}
 
 \subsection{Sampling}
@@ -401,7 +388,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy logic safety rules.}
+    \caption{Fuzzy logic safety rules.}\label{tab:fuzzy_rules_safety}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|}
         \hline
@@ -412,12 +399,11 @@ Additionally, the integrator and the scaling of the output provide a damping eff
         \texttt{High\textunderscore Voltage} & \texttt{Big\textunderscore Increase} \\
         \hline
     \end{tabular}
-    \label{tab:fuzzy_rules_safety}
 \end{table}
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy logic rules for optimal range (updated to match FIS).}
+    \caption{Fuzzy logic rules for optimal range (updated to match FIS).}\label{tab:fuzzy_rules_optimal}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|c|c|}
         \hline
@@ -430,11 +416,9 @@ Additionally, the integrator and the scaling of the output provide a damping eff
         Positive & \texttt{Increase} & \texttt{Hold} & \texttt{Decrease} \\
         \hline
     \end{tabular}
-    \label{tab:fuzzy_rules_optimal}
 \end{table}
 
-\section{Simulation Results}
-\label{sec:matlab_sim_results}
+\section{Simulation Results}\label{sec:matlab_sim_results}
 The performance of the proposed fuzzy logic-based MPPT controller was validated through a comprehensive simulation conducted in MATLAB/Simulink, with the overall results depicted in Figure \ref{fig:matlab_sim_result}. The total simulation time was 0.6 seconds, designed to demonstrate the controller's performance during both steady-state and transient conditions. The converter efficiency, calculated as $P_{out}/P_{in}$, was maintained at approximately 95\% throughout the simulation. The PV efficiency, defined as $P_{in}/P_{vmax}$, is the primary metric for evaluating the MPPT algorithm's effectiveness.
 
 The simulation is divided into three distinct phases, with the critical transient moments highlighted in detail in Figure \ref{fig:matlab_sim_zooms}.
@@ -453,8 +437,7 @@ These results confirm the robustness and high performance of the fuzzy logic con
     \centering
     \includegraphics[width=0.9\textwidth]{matlab/matlabsimresult.jpg}
     \vspace{\baselineskip}
-    \caption{Overall MATLAB simulation results showing the three performance phases.}
-    \label{fig:matlab_sim_result}
+    \caption{Overall MATLAB simulation results showing the three performance phases.}\label{fig:matlab_sim_result}
 \end{figure}
 
 \begin{figure}[H]
@@ -463,12 +446,10 @@ These results confirm the robustness and high performance of the fuzzy logic con
     \vfill
     \subfigure[Zoomed-in view of transient response at 0.4s.\label{fig:sim_zoom_04}]{\includegraphics[width=0.7\textwidth]{matlab/matlab_sim_result_around0_4.jpg}}
     \vspace{\baselineskip}
-    \caption{Zoomed-in views of transient events.}
-    \label{fig:matlab_sim_zooms}
+    \caption{Zoomed-in views of transient events.}\label{fig:matlab_sim_zooms}
 \end{figure}
 
-\chapter{BEHAVIORAL MODELING AND SYSTEM INTEGRATION}
-\label{chapter:behavioral_modeling}
+\chapter{BEHAVIORAL MODELING AND SYSTEM INTEGRATION}\label{chapter:behavioral_modeling}
 
 The initial design and verification of the fuzzy logic controller were conducted in the MATLAB/Simulink environment, as detailed in Chapter 2. While MATLAB provides a powerful platform for algorithmic development and system-level simulation, the ultimate goal is to create a physical integrated circuit. To move towards a silicon-compatible implementation, the validated model must be migrated from the abstract, high-level MATLAB environment to a hardware description language (HDL) and simulated in an environment that supports circuit-level design and verification, such as Cadence. This chapter details the process of this migration, covering the implementation of the core components in SystemVerilog and Verilog-A, and the verification of the complete system within the Cadence Virtuoso platform.
 
@@ -476,14 +457,12 @@ The initial design and verification of the fuzzy logic controller were conducted
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/cadence_system_model.png}
     \vspace{\baselineskip}
-    \caption{Top level system layout.}
-    \label{fig:cadence_layout}
+    \caption{Top level system layout.}\label{fig:cadence_layout}
 \end{figure}
 
 The overall system layout for the Cadence implementation is shown in Figure \ref{fig:cadence_layout}. While some components of the system, such as the ADCs, DACs, and the power switches of the buck converter, are based on standard and well-understood designs, their detailed implementation is not the focus of this chapter. Instead, the following subsections will focus on the more complex and non-straightforward parts of the design: the implementation of the fuzzy inference engine in SystemVerilog and the behavioral modeling of the PV panel in Verilog-A.
 
-\section{PV Model Implementation in Verilog-A}
-\label{sec:sv_pv_model}
+\section{PV Model Implementation in Verilog-A}\label{sec:sv_pv_model}
 To create a realistic simulation environment in Cadence, the photovoltaic panel was modeled using Verilog-A. This behavioral model replicates the non-linear I-V and P-V characteristics of the PV cell, allowing for accurate simulation of its interaction with the digitally-controlled buck converter. The model is based on the same mathematical equations used in the MATLAB simulation.
 
 A widely recognized method for modeling PV panels is the five-parameter model, which uses a simplified equivalent circuit to predict the I-V curve. A significant contribution in this area was made by De Soto et al. \cite{DeSoto2006}, who developed and validated a method to determine the five key parameters (light-generated current $I_L$, diode saturation current $I_0$, ideality factor $n$, series resistance $R_s$, and shunt resistance $R_{sh}$) from standard manufacturer datasheet values. This approach allows for accurate performance prediction across a wide range of operating conditions (irradiance and temperature), which is essential for testing MPPT algorithms.
@@ -496,15 +475,14 @@ The Verilog-A code provides a behavioral model of the PV cell. Figure \ref{fig:p
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/pvmodel_ivandpower.png}
     \vspace{\baselineskip}
-    \caption{I-V and P-V characteristics of the Verilog-A PV model.}
-    \label{fig:pvmodel_ivandpower}
+    \caption{I-V and P-V characteristics of the Verilog-A PV model.}\label{fig:pvmodel_ivandpower}
 \end{figure}
 
 While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A behavioral model implemented in Cadence exhibits slight deviations in the electrical characteristics. These minor discrepancies arise from the implementation of the five-parameter equations and the analog solver's interpretation. Table \ref{tab:pv_model_comparison} compares the key parameters of the MATLAB reference model and the Verilog-A implementation.
 
 \begin{table}[H]
     \centering
-    \caption{Comparison of PV model parameters.}
+    \caption{Comparison of PV model parameters.}\label{tab:pv_model_comparison}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
@@ -519,15 +497,12 @@ While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A beh
         Maximum Power ($P_{mpp}$) & 235.008 W & 231.4 W \\
         \hline
     \end{tabular}
-    \label{tab:pv_model_comparison}
 \end{table}
 
-\section{Fuzzy Logic Controller}
-\label{sec:sv_fuzzy_engine}
+\section{Fuzzy Logic Controller}\label{sec:sv_fuzzy_engine}
 To prepare the design for hardware implementation, the fuzzy logic controller, previously validated in MATLAB, was implemented as a digital module using SystemVerilog. SystemVerilog is a hardware description and verification language that allows for the creation of synthesizable logic, providing a direct path to a physical integrated circuit. This implementation follows a Sugeno-type fuzzy inference model, which is well-suited for hardware implementation due to its computational efficiency. The process is broken down into three fundamental stages: fuzzification, inference, and defuzzification.
 
-\subsection{Fuzzification}
-\label{sec:sv_fuzzification}
+\subsection{Fuzzification}\label{sec:sv_fuzzification}
 In the fuzzification stage, the crisp digital inputs from the ADCs, representing the PV panel's voltage ($V_{pv}$) and current ($I_{pv}$), are converted into fuzzy linguistic variables. This is achieved by evaluating their degree of membership in predefined sets (e.g., `Low`, `Optimal`, `High`).
 
 The core of this process is the calculation of the membership degree for a given input value. For this controller, triangular membership functions are used, which are defined by three points. A triangular function is composed of two linear segments, meaning the membership degree can be calculated using the simple equation of a line. If the slope and two points of a line are known, any other point is easily calculable.
@@ -543,8 +518,7 @@ With the slope and a known point, the membership degree ($y$) for any input ($x$
 This linear relationship makes the calculation straightforward to implement in hardware, as shown in the SystemVerilog code provided in Appendix \ref{app:systemverilog} (Code Snippet \ref{code:mf_triangle}).
 Other common membership functions, such as the linear S-shaped and Z-shaped functions, are similarly simple to implement in SystemVerilog as they are also based on linear equations.
 
-\subsection{Inference}
-\label{sec:sv_inference}
+\subsection{Inference}\label{sec:sv_inference}
 The inference engine serves as the decision-making core of the controller. It evaluates the fuzzy inputs generated in the fuzzification stage against the linguistic rules defined in the system's rule base. For this implementation, the logical 'AND' operator connecting the antecedents of a rule is realized using the minimum function, a standard method in fuzzy logic control.
 Mathematically, for a rule with multiple conditions, such as
 \begin{equation}
@@ -559,8 +533,7 @@ In the SystemVerilog implementation, this logic is synthesized using combination
 
 As can be seen in the \texttt{always\_comb} block, the logic directly maps to the rule tables. The safety rules (w[1] and w[2]) depend only on the PV voltage, while the fine-tuning rules (w[3] through w[8]) are active only in the optimal voltage range (\texttt{Vpv\_mu\_opt}) and correctly implement the logic described in Table \ref{tab:fuzzy_rules_optimal}.
 
-\subsection{Defuzzification}
-\label{sec:sv_defuzzification}
+\subsection{Defuzzification}\label{sec:sv_defuzzification}
 The final stage of the fuzzy logic controller is defuzzification, which converts the fuzzy conclusions from the inference engine into a crisp, numerical control signal. Since this system utilizes a Sugeno-type inference model, the output membership functions are singletons (constant values) rather than distributed fuzzy sets. This simplifies the defuzzification process to a weighted average calculation, which is computationally efficient for hardware implementation.
 
 The crisp output, representing the required change in duty cycle ($\Delta D$), is calculated using the Center of Gravity (CoG) method for singletons:
@@ -588,8 +561,7 @@ The SystemVerilog implementation, provided in Appendix \ref{app:systemverilog} (
 
 It is important to note that the SystemVerilog code snippets provided in this section primarily serve to demonstrate the functional behavior and the algorithmic logic of the controller within the Cadence simulation environment. Direct implementation of arithmetic operations such as division---used here for the center-of-gravity defuzzification---can consume excessive logic resources and timing budget during synthesis. In a practical hardware implementation, these operations are often optimized or approximated using shifts, look-up tables, or specific architectural constraints to minimize area and power. Further details on the optimized digital implementation and synthesis considerations are discussed in Chapter \ref{chapter:digital_impl}.
 
-\section{Simulation Results}
-\label{sec:sv_simulation_results}
+\section{Simulation Results}\label{sec:sv_simulation_results}
 The functional verification of the SystemVerilog implementation was performed within the Cadence Virtuoso environment. The simulation was run for 180 ms, with the MPPT enabled at 0.3 ms.
 
 As discussed in the duty cycle integrator section, the selection of the damping fraction is critical. A fraction of 6 was selected; a higher value (e.g., 15) would result in excessive settling time for transient ringing. To further stabilize the inputs, $V_{pv}$, $I_{pv}$, and $I_{out}$ are processed through a moving average block with a window width of 200 $\mu$s.
@@ -600,20 +572,17 @@ Figure \ref{fig:cadence_results} illustrates the system's response. The extracte
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/cadence_sim_result.png}
     \vspace{\baselineskip}
-    \caption{Cadence mixed-signal simulation results showing MPP tracking.}
-    \label{fig:cadence_results}
+    \caption{Cadence mixed-signal simulation results showing MPP tracking.}\label{fig:cadence_results}
 \end{figure}
 
-\section{System Block Diagram}
-\label{sec:arch_block_diagram}
+\section{System Block Diagram}\label{sec:arch_block_diagram}
 The complete system architecture integrates the digital control logic with the analog power and sensing components. Figure \ref{fig:system_block_diagram} illustrates the detailed block diagram, showing the signal flow from the PV panel sensors through the mixed-signal interface to the Fuzzy Logic Controller, and the resulting control signal driving the Buck Converter.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{{cadence_model/Cadence_model.drawio}.png}
     \vspace{\baselineskip}
-    \caption{System block diagram.}
-    \label{fig:system_block_diagram}
+    \caption{System block diagram.}\label{fig:system_block_diagram}
 \end{figure}
 
 To ensure precise tracking and stable operation, the system is decomposed into the following hierarchical requirements:
@@ -653,8 +622,7 @@ To ensure precise tracking and stable operation, the system is decomposed into t
     \end{itemize}
 \end{itemize}
 
-\chapter{ANALOG IMPLEMENTATION}
-\label{chapter:analog_impl}
+\chapter{ANALOG IMPLEMENTATION}\label{chapter:analog_impl}
 
 \section{ADC}
 The analog-to-digital converter (ADC) is a critical component in the mixed-signal feedback loop, responsible for digitizing the PV voltage and current for the digital controller. For this system, a fully differential 12-bit Successive Approximation Register (SAR) ADC was chosen due to its excellent power efficiency and suitability for medium-speed, high-resolution applications. The fully differential architecture offers superior noise immunity, rejecting common-mode noise which is prevalent in switching power converter environments.
@@ -667,8 +635,7 @@ Figure \ref{fig:adc_arch} illustrates the top-level architecture of the implemen
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/SARADC.drawio.png}
     \vspace{\baselineskip}
-    \caption{Fully differential 12-bit asynchronous SAR ADC architecture.}
-    \label{fig:adc_arch}
+    \caption{Fully differential 12-bit asynchronous SAR ADC architecture.}\label{fig:adc_arch}
 \end{figure}
 
 To achieve the required linearity and speed, the ADC is composed of several critical sub-blocks, which are analyzed in detail in the following sections:
@@ -682,8 +649,7 @@ To further enhance robustness, the bulk connections of the transistors are criti
     \centering
     \includegraphics[width=0.7\textwidth]{cadence_implement/ADC/sh/shswitch.png}
     \vspace{\baselineskip}
-    \caption{Bootstrapped sample and hold switch implementation.}
-    \label{fig:sh_switch}
+    \caption{Bootstrapped sample and hold switch implementation.}\label{fig:sh_switch}
 \end{figure}
 
 The parasitic capacitance on the switching node was calculated as 60 fF in the typical process corner. Consequently, a 500 fF bootstrap capacitor was selected. Although this results in a gate-source voltage ($V_{gs}$) drop of approximately 10\% due to charge sharing, the resulting on-resistance of the MOSFET is still sufficiently low to charge the $\sim$25 pF sampling capacitor within the 20 kHz sampling period.
@@ -694,13 +660,12 @@ Linearity is the main metric for this device, as any distortion introduced at th
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sh/shswitchsim.png}
     \vspace{\baselineskip}
-    \caption{DFT of the signal passed through the sample and hold switch.}
-    \label{fig:sh_dft}
+    \caption{DFT of the signal passed through the sample and hold switch.}\label{fig:sh_dft}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{Sample and hold switch performance metrics (input: 0-5 V FS).}
+    \caption{Sample and hold switch performance metrics (input: 0-5 V FS).}\label{tab:sh_performance}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -711,7 +676,6 @@ Linearity is the main metric for this device, as any distortion introduced at th
         SFDR & 82.2 dB \\
         \hline
     \end{tabular}
-    \label{tab:sh_performance}
 \end{table}
 
 \subsection{CapDAC}
@@ -723,16 +687,14 @@ The linearity of the CapDAC is paramount for the overall ADC performance. The tw
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/dnlsim.png}
     \vspace{\baselineskip}
-    \caption{CapDAC DNL simulation results.}
-    \label{fig:capdac_dnl}
+    \caption{CapDAC DNL simulation results.}\label{fig:capdac_dnl}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/inlandderivinl.png}
     \vspace{\baselineskip}
-    \caption{CapDAC INL and its derivative simulation results.}
-    \label{fig:capdac_inl}
+    \caption{CapDAC INL and its derivative simulation results.}\label{fig:capdac_inl}
 \end{figure}
 
 The results shown in Figure \ref{fig:capdac_dnl} and Figure \ref{fig:capdac_inl} are obtained from a Monte Carlo simulation of 200 runs using a low-discrepancy sequence. The Differential Non-Linearity (DNL) is observed to be up to $\pm 1$ LSB, which is a natural characteristic in split-capacitor arrays due to bridge capacitor sensitivity. However, since the target Effective Number of Bits (ENOB) for this application is 10 bits, this performance is considered acceptable. The Integral Non-Linearity (INL) is also within acceptable limits, exhibiting a nearly constant gain error. This is further illustrated by the derivative of the INL, plotted as $d(INL)/dt \times 1 \mu s$ (corresponding to the LSB step time). Finally, to further improve the ADC performance after fabrication, the bridge capacitor is implemented with trim capacitors. Given that the primary unit capacitance ($C_{unit}$) is 60 fF, these trim capacitors consist of 6 fF unit cells, corresponding to an added calibration capacitance of $0.1 \times C_{unit}$.
@@ -752,8 +714,7 @@ The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a f
     \centering
     \includegraphics[width=0.9\textwidth]{cadence_implement/ADC/preamp/preamp.png}
     \vspace{\baselineskip}
-    \caption{Fully differential preamplifier with CMFB circuit.}
-    \label{fig:preamp_schematic}
+    \caption{Fully differential preamplifier with CMFB circuit.}\label{fig:preamp_schematic}
 \end{figure}
 
 \subsubsection{Simulation Results}
@@ -766,8 +727,7 @@ Ensuring stability is crucial for the preamplifier. The primary concern is the s
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/cmfb_stb.png}
     \vspace{\baselineskip}
-    \caption{CMFB loop stability simulation.}
-    \label{fig:preamp_cmfb_stb}
+    \caption{CMFB loop stability simulation.}\label{fig:preamp_cmfb_stb}
 \end{figure}
 
 \paragraph{Common Mode Voltage}
@@ -777,8 +737,7 @@ The output common-mode voltage is maintained by the CMFB loop. Figure \ref{fig:p
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/cm_v_hist.png}
     \vspace{\baselineskip}
-    \caption{Output common mode voltage Monte Carlo simulation.}
-    \label{fig:preamp_cm_hist}
+    \caption{Output common mode voltage Monte Carlo simulation.}\label{fig:preamp_cm_hist}
 \end{figure}
 
 \paragraph{DIFF OPEN LOOP Analysis}
@@ -788,8 +747,7 @@ The open-loop differential path is also analyzed, mainly to observe its phase de
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/diff_open_loop.png}
     \vspace{\baselineskip}
-    \caption{Differential open loop AC response.}
-    \label{fig:preamp_diff_open}
+    \caption{Differential open loop AC response.}\label{fig:preamp_diff_open}
 \end{figure}
 
 \paragraph{Offset}
@@ -799,8 +757,7 @@ The input-referred offset directly impacts the effective resolution of the ADC.
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/offset_hist.png}
     \vspace{\baselineskip}
-    \caption{Input referred offset Monte Carlo simulation.}
-    \label{fig:preamp_offset}
+    \caption{Input referred offset Monte Carlo simulation.}\label{fig:preamp_offset}
 \end{figure}
 
 \paragraph{Noise}
@@ -810,13 +767,12 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/noise_sim.png}
     \vspace{\baselineskip}
-    \caption{Input referred noise simulation.}
-    \label{fig:preamp_noise}
+    \caption{Input referred noise simulation.}\label{fig:preamp_noise}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{Preamplifier performance summary.}
+    \caption{Preamplifier performance summary.}\label{tab:preamp_perf}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -839,7 +795,6 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
         Output Common Mode Voltage ($V_{ocm}$) & 2.45-2.55 V \\
         \hline
     \end{tabular}
-    \label{tab:preamp_perf}
 \end{table}
 
 \subsection{Comparator}
@@ -852,21 +807,19 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/comparator/offset_hist.png}
     \vspace{\baselineskip}
-    \caption{Comparator input referred offset Monte Carlo simulation.}
-    \label{fig:comp_offset}
+    \caption{Comparator input referred offset Monte Carlo simulation.}\label{fig:comp_offset}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/comparator/noise_sim.png}
     \vspace{\baselineskip}
-    \caption{Comparator input referred noise simulation.}
-    \label{fig:comp_noise}
+    \caption{Comparator input referred noise simulation.}\label{fig:comp_noise}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{Comparator performance summary.}
+    \caption{Comparator performance summary.}\label{tab:comp_perf}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -877,7 +830,6 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
         Input Referred Integrated Noise (RMS) & 216 $\mu$V \\
         \hline
     \end{tabular}
-    \label{tab:comp_perf}
 \end{table}
 
 It is important to note that these values are referred to the input of the comparator. Since they are divided by the gain of the preamplifier when referred to the ADC input, their impact on the overall system performance is significantly reduced and considered negligible.
@@ -891,8 +843,7 @@ The system operates across two voltage domains. The analog front-end, including 
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/sar_logic_overview.png}
     \vspace{\baselineskip}
-    \caption{Asynchronous SAR logic overview with level shifters.}
-    \label{fig:sar_logic_overview}
+    \caption{Asynchronous SAR logic overview with level shifters.}\label{fig:sar_logic_overview}
 \end{figure}
 
 \subsubsection{Window Generator}
@@ -902,8 +853,7 @@ The window generator is responsible for orchestrating the timing of the bit tria
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/window_gen.png}
     \vspace{\baselineskip}
-    \caption{Window generator logic implementation.}
-    \label{fig:window_gen}
+    \caption{Window generator logic implementation.}\label{fig:window_gen}
 \end{figure}
 
 \subsubsection{Comparator Clock Generator}
@@ -913,8 +863,7 @@ The comparator clock is generated asynchronously to maximize speed and eliminate
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/comp_clk_gen.png}
     \vspace{\baselineskip}
-    \caption{Asynchronous comparator clock generation logic.}
-    \label{fig:comp_clk_gen}
+    \caption{Asynchronous comparator clock generation logic.}\label{fig:comp_clk_gen}
 \end{figure}
 
 A potential enhancement for this architecture is the implementation of adaptive clock timing. Generally, the MSB capacitors in the DAC require a longer settling time compared to the LSB capacitors due to the larger voltage steps and stricter accuracy requirements. Conversely, the LSBs settle much faster. By leveraging the window bits, which track the current conversion step, the system can dynamically select different delay paths within the clock generation loop. This approach allocates more time for MSB decisions and speeds up LSB decisions, thereby optimizing the total conversion time. The bottom half of the circuit can be easily modified to implement this, but it is not necessary. To better illustrate the timing of the asynchronous operation, a simplified timing diagram is provided in Figure \ref{fig:sar_timing}.
@@ -923,8 +872,7 @@ A potential enhancement for this architecture is the implementation of adaptive 
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/timing_diagram.png}
     \vspace{\baselineskip}
-    \caption{Timing diagram of the asynchronous operation.}
-    \label{fig:sar_timing}
+    \caption{Timing diagram of the asynchronous operation.}\label{fig:sar_timing}
 \end{figure}
 
 \subsubsection{Bit Generator}
@@ -934,8 +882,7 @@ The bit generator controls the sequential switching of the capacitor array, movi
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/bit_gen.png}
     \vspace{\baselineskip}
-    \caption{Bit generator logic implementation.}
-    \label{fig:bit_gen}
+    \caption{Bit generator logic implementation.}\label{fig:bit_gen}
 \end{figure}
 
 \subsection{ADC Buffer}
@@ -950,8 +897,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     % Placeholder: Update 'opamp_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/opamp.png} 
     \vspace{\baselineskip}
-    \caption{Schematic of the single-ended two-stage operational amplifier used in the unity-gain stage.}
-    \label{fig:buffer_opamp}
+    \caption{Schematic of the single-ended two-stage operational amplifier used in the unity-gain stage.}\label{fig:buffer_opamp}
 \end{figure}
 
 \begin{figure}[H]
@@ -959,8 +905,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     % Placeholder: Update 'fda_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/fda.png} 
     \vspace{\baselineskip}
-    \caption{Schematic of the fully differential amplifier (FDA) stage.}
-    \label{fig:buffer_fda}
+    \caption{Schematic of the fully differential amplifier (FDA) stage.}\label{fig:buffer_fda}
 \end{figure}
 
 \begin{figure}[H]
@@ -968,8 +913,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     % Placeholder: Update 'inst_amp_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/inst_amp.png} 
     \vspace{\baselineskip}
-    \caption{Schematic of the overall instrumentation amplifier structure.}
-    \label{fig:buffer_inst_amp}
+    \caption{Schematic of the overall instrumentation amplifier structure.}\label{fig:buffer_inst_amp}
 \end{figure}
 
 To evaluate the dynamic performance of the ADC buffer, a testbench was created where the buffer is loaded by the Sample and Hold (S/H) switch described previously. The Signal-to-Noise and Distortion Ratio (SINAD) and Effective Number of Bits (ENOB) were measured. Due to the nature of the NMOS input stage used in the operational amplifiers, the input common-mode range is restricted, and the amplifiers do not operate linearly near the ground potential (typically under 1 V). As a result, the buffer maintains a SINAD corresponding to above 11.5 bits for approximately 70\% of the input range, centered around a 2.5 V common-mode voltage. Consequently, the effective dynamic range of the buffer is limited to 70\% of the Full Scale (FS) input.
@@ -988,16 +932,14 @@ To ensure that the LDO remains stable and does not oscillate under these conditi
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/ldo/ldo_schematic.png} 
     \vspace{\baselineskip}
-    \caption{Schematic design of the low-dropout (LDO) regulator.}
-    \label{fig:ldo_schematic}
+    \caption{Schematic design of the low-dropout (LDO) regulator.}\label{fig:ldo_schematic}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/ldo/ldo_stability.png} 
     \vspace{\baselineskip}
-    \caption{Stability plot of the LDO showing loop gain and phase margin.}
-    \label{fig:ldo_stability}
+    \caption{Stability plot of the LDO showing loop gain and phase margin.}\label{fig:ldo_stability}
 \end{figure}
 
 \subsection{ADC Top-Level Performance}
@@ -1017,13 +959,12 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/adc_fft.png}
     \vspace{\baselineskip}
-    \caption{4096-point FFT of the ADC output.}
-    \label{fig:adc_fft}
+    \caption{4096-point FFT of the ADC output.}\label{fig:adc_fft}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    \caption{ADC performance across process corners.}
+    \caption{ADC performance across process corners.}\label{tab:adc_corners}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
@@ -1036,7 +977,6 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
         Fast-Fast (ff) & 87.6 & 69.36 & 70.89 & 12.02 \\
         \hline
     \end{tabular}
-    \label{tab:adc_corners}
 \end{table}
 
 \section{Duty Cycle Generator}
@@ -1047,8 +987,7 @@ The duty cycle generator is responsible for converting the digital control signa
     % Placeholder: Update 'duty_gen_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/duty_gen_schematic.png} 
     \vspace{\baselineskip}
-    \caption{Schematic of the duty cycle generator circuit.}
-    \label{fig:duty_gen_schematic}
+    \caption{Schematic of the duty cycle generator circuit.}\label{fig:duty_gen_schematic}
 \end{figure}
 
 \subsection{DAC}
@@ -1061,8 +1000,7 @@ The primary performance limitations in an R-2R DAC are Integral Non-Linearity (I
     % Placeholder: Update 'dac_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac/dac_plot.png} 
     \vspace{\baselineskip}
-    \caption{Performance plot showing the integral non-linearity (INL) and differential non-linearity (DNL) of the 10-bit R-2R DAC.}
-    \label{fig:dac_inl_dnl}
+    \caption{Performance plot showing the integral non-linearity (INL) and differential non-linearity (DNL) of the 10-bit R-2R DAC.}\label{fig:dac_inl_dnl}
 \end{figure}
 
 \subsection{DAC Buffer}
@@ -1075,15 +1013,14 @@ Unlike the amplifiers in the ADC buffer, the operational amplifier used for the 
     % Placeholder: Update 'dac_buffer_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac_buffer/dac_buffer_schematic.png} 
     \vspace{\baselineskip}
-    \caption{Schematic of the unity-gain operational amplifier with a PMOS input stage used for the DAC buffer.}
-    \label{fig:dac_buffer_schematic}
+    \caption{Schematic of the unity-gain operational amplifier with a PMOS input stage used for the DAC buffer.}\label{fig:dac_buffer_schematic}
 \end{figure}
 
 Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the designed operational amplifier used in the DAC buffer.
 
 \begin{table}[H]
     \centering
-    \caption{DAC buffer amplifier performance summary.}
+    \caption{DAC buffer amplifier performance summary.}\label{tab:dac_buffer_perf}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -1100,7 +1037,6 @@ Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the de
         Input Referred Noise (RMS) & 850 $\mu$V \\
         \hline
     \end{tabular}
-    \label{tab:dac_buffer_perf}
 \end{table}
 
 \subsection{Ramp Generator}
@@ -1115,8 +1051,7 @@ To account for process variations and ensure the precise slope and amplitude of 
     % Placeholder: Update 'ramp_gen_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/ramp_gen/ramp_gen_schematic.png} 
     \vspace{\baselineskip}
-    \caption{Schematic of the ramp generator circuit.}
-    \label{fig:ramp_gen_schematic}
+    \caption{Schematic of the ramp generator circuit.}\label{fig:ramp_gen_schematic}
 \end{figure}
 
 \subsection{Continuous Comparator}
@@ -1125,8 +1060,7 @@ The continuous-time high-speed comparator is the final stage of the duty cycle g
 \section{Bias and Bandgap Reference}
 To ensure stable operation across varying temperatures and supply voltages, the analog components of the system (including the ADC, DAC, and LDO) require robust bias currents and a stable reference voltage. A Bandgap Reference (BGR) circuit is utilized to fulfill these requirements. The detailed design and layout of the bandgap reference block were carried out by an undergraduate researcher, Yasin Öztürk, as part of a parallel project. Since the internal design of this block is outside the direct scope of this thesis, its specific implementation details are not discussed here. The author gratefully acknowledges his contribution to the overall system integration.
 
-\chapter{DIGITAL IMPLEMENTATION}
-\label{chapter:digital_impl}
+\chapter{DIGITAL IMPLEMENTATION}\label{chapter:digital_impl}
 
 \section{Hardware-Friendly Fuzzy Logic Architecture}
 While the theoretical model of the Fuzzy Logic Controller (FLC) was successfully validated in MATLAB and SystemVerilog, a direct translation of these high-level algorithms into physical digital logic is highly inefficient. Standard fuzzy logic operations—specifically the linear interpolation required during fuzzification and the weighted average calculation used in Sugeno defuzzification—rely heavily on complex arithmetic operations such as division and multiplication. 
@@ -1157,8 +1091,7 @@ The fuzzification stage assigns membership values to fuzzify the crisp digital i
 \ENDIF
 \end{algorithmic}
     \vspace{\baselineskip}
-    \caption{Hardware-efficient linear interpolation for membership functions.}
-    \label{alg:mf_interpolation}
+    \caption{Hardware-efficient linear interpolation for membership functions.}\label{alg:mf_interpolation}
 \end{figure}
 
 The hardware implementation utilizes three primary types of membership functions: Z-shaped, S-shaped, and Triangular-shaped.
@@ -1170,8 +1103,7 @@ The Z-shaped membership function implements a falling linear ramp. It assigns a 
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/linz.png}
     \vspace{\baselineskip}
-    \caption{Z-shaped membership function implementation.}
-    \label{fig:mf_z_dig}
+    \caption{Z-shaped membership function implementation.}\label{fig:mf_z_dig}
 \end{figure}
 
 \subsubsection{S-Shaped Membership Function}
@@ -1181,8 +1113,7 @@ The S-shaped membership function corresponds to a rising linear ramp. It evaluat
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/lins.png}
     \vspace{\baselineskip}
-    \caption{S-shaped membership function implementation.}
-    \label{fig:mf_s_dig}
+    \caption{S-shaped membership function implementation.}\label{fig:mf_s_dig}
 \end{figure}
 
 \subsubsection{Triangular-Shaped Membership Function}
@@ -1192,8 +1123,7 @@ The triangular membership function specifies a peak response. It combines a risi
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/triang.png}
     \vspace{\baselineskip}
-    \caption{Triangular-shaped membership function implementation.}
-    \label{fig:mf_triang_dig}
+    \caption{Triangular-shaped membership function implementation.}\label{fig:mf_triang_dig}
 \end{figure}
 
 \subsubsection{Fuzzifier Module}
@@ -1224,8 +1154,7 @@ In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of
 \STATE $\Delta D \leftarrow Numerator \gg shift\_val$
 \end{algorithmic}
     \vspace{\baselineskip}
-    \caption{Hardware-efficient Sugeno defuzzification.}
-    \label{alg:defuzzification}
+    \caption{Hardware-efficient Sugeno defuzzification.}\label{alg:defuzzification}
 \end{figure}
 
 \subsection{Duty Cycle Integration}
@@ -1244,24 +1173,21 @@ In a fully integrated mixed-signal System-on-Chip (SoC), a digital communication
 However, the development of a complete SPI module and its associated register map falls outside the primary scope of this thesis, which focuses on the architectural optimization of the MPPT fuzzy logic controller. Therefore, a dedicated communication interface was not implemented. Instead, the fuzzy logic settings are hardcoded as structural \texttt{parameter} definitions at the top level of the \texttt{fuzzy\_top} module. Similarly, the necessary trim and calibration signals for the analog front-end are supplied using ideal static sources within the Cadence simulation environment. This approach simplifies the verification testbench and design complexity while fully preserving the functional validation of the core MPPT algorithm and hardware-efficient architecture.
 
 
-\chapter{RESULTS}
-\label{chapter:results}
+\chapter{RESULTS}\label{chapter:results}
 To validate the complete system architecture, an Analog Mixed-Signal (AMS) testbench was constructed. The fully integrated \texttt{IC\_core}, which houses both the custom analog blocks and the synthesizable SystemVerilog digital codes, is illustrated in Figure \ref{fig:ic_core}. This core was then instantiated within a comprehensive top-level testbench (Figure \ref{fig:ams_tb}), incorporating the Verilog-A photovoltaic panel model and the external buck converter power stage.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/top/ic_core.png} 
     \vspace{\baselineskip}
-    \caption{Top-level schematic of the fully integrated mixed-signal \texttt{IC\_core}.}
-    \label{fig:ic_core}
+    \caption{Top-level schematic of the fully integrated mixed-signal \texttt{IC\_core}.}\label{fig:ic_core}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/top/ams_tb.png} 
     \vspace{\baselineskip}
-    \caption{Complete AMS testbench including the \texttt{IC\_core}, Verilog-A PV model, and buck converter.}
-    \label{fig:ams_tb}
+    \caption{Complete AMS testbench including the \texttt{IC\_core}, Verilog-A PV model, and buck converter.}\label{fig:ams_tb}
 \end{figure}
 
 The final AMS simulation results, presented in Figure \ref{fig:final_sim}, confirm the successful integration and functionality of the designed components. Upon activation, the digital fuzzy controller seamlessly processes the digitized inputs from the SAR ADC and modulates the duty cycle via the DAC and ramp generator. As demonstrated by the results, the PV voltage ($V_{pv}$) successfully converges to approximately 30.4 V, closely aligning with the theoretical $V_{mpp}$ specified previously in the PV model parameters (Table \ref{tab:pv_model_comparison}).
@@ -1270,7 +1196,7 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
 
 \begin{table}[H]
     \centering
-    \caption{Summary of final AMS simulation performance.}
+    \caption{Summary of final AMS simulation performance.}\label{tab:final_sim_metrics}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -1289,19 +1215,16 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
         Buck Converter Efficiency & 96.2\% \\
         \hline
     \end{tabular}
-    \label{tab:final_sim_metrics}
 \end{table}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{cadence_implement/top/final_sim.png} 
     \vspace{\baselineskip}
-    \caption{Final AMS simulation results demonstrating successful MPPT tracking.}
-    \label{fig:final_sim}
+    \caption{Final AMS simulation results demonstrating successful MPPT tracking.}\label{fig:final_sim}
 \end{figure}
 
-\chapter{CONCLUSION}
-\label{chapter:conclusion}
+\chapter{CONCLUSION}\label{chapter:conclusion}
 This thesis has presented the comprehensive modeling, design, and implementation of a Fuzzy Logic-based Maximum Power Point Tracking (MPPT) controller for photovoltaic battery charging systems. The primary objective was to develop an intelligent, highly responsive, and hardware-efficient MPPT solution capable of overcoming the limitations of conventional algorithms under dynamic environmental conditions.
 
 The research began with high-level system modeling in MATLAB/Simulink, where a Sugeno-type fuzzy inference system was designed and validated. By evaluating three key parameters—change in PV voltage, change in output current, and absolute PV voltage—the controller demonstrated exceptional tracking accuracy and transient response. To transition this theoretical model towards a physical Integrated Circuit (IC), a mixed-signal architecture was developed within the Cadence Virtuoso environment. The analog front-end, encompassing a 12-bit asynchronous SAR ADC, an R-2R DAC, a high-speed continuous comparator, a ramp generator, and an LDO regulator, was designed to provide robust and precise interfacing between the continuous-time physical world and the discrete-time digital controller. Concurrently, the fuzzy logic algorithm was structurally optimized for digital synthesis. By replacing resource-intensive multipliers and dividers with bitwise shift operations and lookup tables, the digital footprint was drastically minimized without compromising the MPPT performance.
@@ -1315,8 +1238,7 @@ To promote reproducibility and encourage further research, the complete MATLAB/S
 \bibliography{references}
 
 \appendix
-\chapter{MATLAB SCRIPTS}
-\label{app:matlab}
+\chapter{MATLAB SCRIPTS}\label{app:matlab}
 
 \section{System Parameters Initialization Script}
 \lstinputlisting[language=MATLAB, caption={System parameters initialization script.}, label={code:sys_params}]{codes_models/matlab_code/parameters.m}
@@ -1327,14 +1249,12 @@ To promote reproducibility and encourage further research, the complete MATLAB/S
 \section{Split Capacitor Array Calculation Script}
 \lstinputlisting[language=MATLAB, caption={Split capacitor array calculation script.}, label={code:adc_split_cap}]{codes_models/matlab_code/adc_split_cap.m}
 
-\chapter{VERILOG-A MODELS}
-\label{app:veriloga}
+\chapter{VERILOG-A MODELS}\label{app:veriloga}
 
 \section{Verilog-A PV Model Implementation}
 \lstinputlisting[language=Verilog-A, caption={Verilog-A PV model implementation.}, label={code:pv_model_va}]{codes_models/pvmodel_veriloga/pv_model.va}
 
-\chapter{SYSTEMVERILOG IMPLEMENTATIONS}
-\label{app:systemverilog}
+\chapter{SYSTEMVERILOG IMPLEMENTATIONS}\label{app:systemverilog}
 \section{Cadence Simulation Models}
 \lstinputlisting[caption={MF triangle SystemVerilog implementation.}, label={code:mf_triangle}]{codes_models/systemverilogcode/mf_triangle.sv}
 \lstinputlisting[caption={Inference SystemVerilog implementation.}, label={code:inference}]{codes_models/systemverilogcode/inference.sv}
