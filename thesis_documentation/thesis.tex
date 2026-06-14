@@ -333,7 +333,7 @@ The design parameters for the buck converter, as defined in the system's MATLAB 
 
 \begin{table}[H]
     \centering
-    \caption{Buck converter specifications}
+    \caption{Buck converter specifications.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
@@ -397,7 +397,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy logic safety rules}
+    \caption{Fuzzy logic safety rules.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|}
         \hline
@@ -413,7 +413,7 @@ Additionally, the integrator and the scaling of the output provide a damping eff
 
 \begin{table}[H]
     \centering
-    \caption{Fuzzy logic rules for optimal range (updated to match FIS)}
+    \caption{Fuzzy logic rules for optimal range (updated to match FIS).}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|c|c|c|c|}
         \hline
@@ -496,7 +496,7 @@ While the MATLAB/Simulink model serves as the ideal reference, the Verilog-A beh
 
 \begin{table}[H]
     \centering
-    \caption{Comparison of PV model parameters}
+    \caption{Comparison of PV model parameters.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|}
         \hline
@@ -687,7 +687,7 @@ Linearity is the main metric for this device, as any distortion introduced at th
 
 \begin{table}[H]
     \centering
-    \caption{Sample and hold switch performance metrics (input: 0-5 V FS)}
+    \caption{Sample and hold switch performance metrics (input: 0-5 V FS).}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -795,7 +795,7 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
 
 \begin{table}[H]
     \centering
-    \caption{Preamplifier performance summary}
+    \caption{Preamplifier performance summary.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -843,7 +843,7 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
 
 \begin{table}[H]
     \centering
-    \caption{Comparator performance summary}
+    \caption{Comparator performance summary.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -989,7 +989,7 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
 
 \begin{table}[H]
     \centering
-    \caption{ADC performance across process corners}
+    \caption{ADC performance across process corners.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|c|c|c|}
         \hline
@@ -1046,7 +1046,7 @@ Table \ref{tab:dac_buffer_perf} summarizes the key performance metrics of the de
 
 \begin{table}[H]
     \centering
-    \caption{DAC buffer amplifier performance summary}
+    \caption{DAC buffer amplifier performance summary.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -1118,7 +1118,7 @@ The fuzzification stage assigns membership values to fuzzify the crisp digital i
     \STATE $\mu \leftarrow (\Delta x \times M) \gg shift\_val$
 \ENDIF
 \end{algorithmic}
-    \caption{Hardware-efficient linear interpolation for membership functions}
+    \caption{Hardware-efficient linear interpolation for membership functions.}
     \label{alg:mf_interpolation}
 \end{figure}
 
@@ -1181,7 +1181,7 @@ In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of
 \STATE $shift\_val \leftarrow \text{LUT\_Nearest\_Power\_Of\_2}(Denominator)$
 \STATE $\Delta D \leftarrow Numerator \gg shift\_val$
 \end{algorithmic}
-    \caption{Hardware-efficient Sugeno defuzzification}
+    \caption{Hardware-efficient Sugeno defuzzification.}
     \label{alg:defuzzification}
 \end{figure}
 
@@ -1225,7 +1225,7 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
 
 \begin{table}[H]
     \centering
-    \caption{Summary of final AMS simulation performance}
+    \caption{Summary of final AMS simulation performance.}
     \vspace{0.5\baselineskip}
     \begin{tabular}{|l|c|}
         \hline
@@ -1273,37 +1273,37 @@ To promote reproducibility and encourage further research, the complete MATLAB/S
 \label{app:matlab}
 
 \section{System Parameters Initialization Script}
-\lstinputlisting[language=MATLAB, caption={System parameters initialization script}, label={code:sys_params}]{codes_models/matlab_code/parameters.m}
+\lstinputlisting[language=MATLAB, caption={System parameters initialization script.}, label={code:sys_params}]{codes_models/matlab_code/parameters.m}
 
 \section{Fuzzy Inference System Creation Script}
-\lstinputlisting[language=MATLAB, caption={Fuzzy inference system creation script}, label={code:create_mppt_fis}]{codes_models/matlab_code/create_mppt_fis.m}
+\lstinputlisting[language=MATLAB, caption={Fuzzy inference system creation script.}, label={code:create_mppt_fis}]{codes_models/matlab_code/create_mppt_fis.m}
 
 \section{Split Capacitor Array Calculation Script}
-\lstinputlisting[language=MATLAB, caption={Split capacitor array calculation script}, label={code:adc_split_cap}]{codes_models/matlab_code/adc_split_cap.m}
+\lstinputlisting[language=MATLAB, caption={Split capacitor array calculation script.}, label={code:adc_split_cap}]{codes_models/matlab_code/adc_split_cap.m}
 
 \chapter{VERILOG-A MODELS}
 \label{app:veriloga}
 
 \section{Verilog-A PV Model Implementation}
-\lstinputlisting[language=Verilog-A, caption={Verilog-A PV model implementation}, label={code:pv_model_va}]{codes_models/pvmodel_veriloga/pv_model.va}
+\lstinputlisting[language=Verilog-A, caption={Verilog-A PV model implementation.}, label={code:pv_model_va}]{codes_models/pvmodel_veriloga/pv_model.va}
 
 \chapter{SYSTEMVERILOG IMPLEMENTATIONS}
 \label{app:systemverilog}
 \section{Cadence Simulation Models}
-\lstinputlisting[caption={MF triangle SystemVerilog implementation}, label={code:mf_triangle}]{codes_models/systemverilogcode/mf_triangle.sv}
-\lstinputlisting[caption={Inference SystemVerilog implementation}, label={code:inference}]{codes_models/systemverilogcode/inference.sv}
-\lstinputlisting[caption={Defuzzification SystemVerilog implementation}, label={code:defuzz}]{codes_models/systemverilogcode/defuzzifier.sv}
-\lstinputlisting[caption={Duty cycle integrator SystemVerilog implementation}, label={code:duty_int}]{codes_models/systemverilogcode/duty_integrator.sv}
+\lstinputlisting[caption={MF triangle SystemVerilog implementation.}, label={code:mf_triangle}]{codes_models/systemverilogcode/mf_triangle.sv}
+\lstinputlisting[caption={Inference SystemVerilog implementation.}, label={code:inference}]{codes_models/systemverilogcode/inference.sv}
+\lstinputlisting[caption={Defuzzification SystemVerilog implementation.}, label={code:defuzz}]{codes_models/systemverilogcode/defuzzifier.sv}
+\lstinputlisting[caption={Duty cycle integrator SystemVerilog implementation.}, label={code:duty_int}]{codes_models/systemverilogcode/duty_integrator.sv}
 
 \section{Hardware-Friendly RTL Implementations}
-\lstinputlisting[caption={Difference generator SystemVerilog implementation}, label={code:diff_gen}]{codes_models/systemverilogcode/dig/rtl/diff_generator.sv}
-\lstinputlisting[caption={Z-shaped membership function SystemVerilog implementation}, label={code:mf_z_dig}]{codes_models/systemverilogcode/dig/rtl/mf_z.sv}
-\lstinputlisting[caption={S-shaped membership function SystemVerilog implementation}, label={code:mf_s_dig}]{codes_models/systemverilogcode/dig/rtl/mf_s.sv}
-\lstinputlisting[caption={Triangular-shaped membership function SystemVerilog implementation}, label={code:mf_triangle_dig}]{codes_models/systemverilogcode/dig/rtl/mf_triangle.sv}
-\lstinputlisting[caption={Fuzzifier SystemVerilog implementation}, label={code:fuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzifier.sv}
-\lstinputlisting[caption={Inference engine SystemVerilog implementation}, label={code:inference_dig}]{codes_models/systemverilogcode/dig/rtl/inference.sv}
-\lstinputlisting[caption={Defuzzifier SystemVerilog implementation}, label={code:defuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/defuzzifier.sv}
-\lstinputlisting[caption={Duty cycle integrator SystemVerilog implementation}, label={code:duty_int_dig}]{codes_models/systemverilogcode/dig/rtl/duty_integrator.sv}
-\lstinputlisting[caption={Fuzzy top module SystemVerilog implementation}, label={code:fuzzy_top_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzy_top.sv}
+\lstinputlisting[caption={Difference generator SystemVerilog implementation.}, label={code:diff_gen}]{codes_models/systemverilogcode/dig/rtl/diff_generator.sv}
+\lstinputlisting[caption={Z-shaped membership function SystemVerilog implementation.}, label={code:mf_z_dig}]{codes_models/systemverilogcode/dig/rtl/mf_z.sv}
+\lstinputlisting[caption={S-shaped membership function SystemVerilog implementation.}, label={code:mf_s_dig}]{codes_models/systemverilogcode/dig/rtl/mf_s.sv}
+\lstinputlisting[caption={Triangular-shaped membership function SystemVerilog implementation.}, label={code:mf_triangle_dig}]{codes_models/systemverilogcode/dig/rtl/mf_triangle.sv}
+\lstinputlisting[caption={Fuzzifier SystemVerilog implementation.}, label={code:fuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzifier.sv}
+\lstinputlisting[caption={Inference engine SystemVerilog implementation.}, label={code:inference_dig}]{codes_models/systemverilogcode/dig/rtl/inference.sv}
+\lstinputlisting[caption={Defuzzifier SystemVerilog implementation.}, label={code:defuzzifier_dig}]{codes_models/systemverilogcode/dig/rtl/defuzzifier.sv}
+\lstinputlisting[caption={Duty cycle integrator SystemVerilog implementation.}, label={code:duty_int_dig}]{codes_models/systemverilogcode/dig/rtl/duty_integrator.sv}
+\lstinputlisting[caption={Fuzzy top module SystemVerilog implementation.}, label={code:fuzzy_top_dig}]{codes_models/systemverilogcode/dig/rtl/fuzzy_top.sv}
 
 \end{document}
