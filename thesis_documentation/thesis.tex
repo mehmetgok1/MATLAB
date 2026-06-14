@@ -286,6 +286,7 @@ The global system parameters, including component values for the buck converter 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{introduction/system_overview.drawio.png}
+    \vspace{\baselineskip}
     \caption{Fuzzy logic PV charger overview.}
     \label{fig:intro_system_overview}
 \end{figure}
@@ -304,6 +305,7 @@ Furthermore, MATLAB's Fuzzy Logic Toolbox facilitates the design and visualizati
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{matlab/matlab_model_overview.png}
+    \vspace{\baselineskip}
     \caption{MATLAB model block diagram.}
     \label{fig:matlab_model_block_diagram}
 \end{figure}
@@ -319,6 +321,7 @@ Figure \ref{fig:pv_curves} illustrates the I-V and P-V characteristics of the mo
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{introduction/pv_IV&powercurves.jpg}
+    \vspace{\baselineskip}
     \caption{PV cell I-V and P-V characteristics.}
     \label{fig:pv_curves}
 \end{figure}
@@ -362,6 +365,7 @@ The control algorithm is based on a Sugeno-type fuzzy inference system, which is
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{matlab/fuzzy_controller_block_diagram.png}
+    \vspace{\baselineskip}
     \caption{Fuzzy logic controller block diagram.}
     \label{fig:fuzzy_controller_block_diagram}
 \end{figure}
@@ -448,6 +452,7 @@ These results confirm the robustness and high performance of the fuzzy logic con
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{matlab/matlabsimresult.jpg}
+    \vspace{\baselineskip}
     \caption{Overall MATLAB simulation results showing the three performance phases.}
     \label{fig:matlab_sim_result}
 \end{figure}
@@ -457,6 +462,7 @@ These results confirm the robustness and high performance of the fuzzy logic con
     \subfigure[Zoomed-in view of FLC activation at 0.2s.\label{fig:sim_zoom_02}]{\includegraphics[width=0.7\textwidth]{matlab/matlab_sim_result_around0_2.jpg}}
     \vfill
     \subfigure[Zoomed-in view of transient response at 0.4s.\label{fig:sim_zoom_04}]{\includegraphics[width=0.7\textwidth]{matlab/matlab_sim_result_around0_4.jpg}}
+    \vspace{\baselineskip}
     \caption{Zoomed-in views of transient events.}
     \label{fig:matlab_sim_zooms}
 \end{figure}
@@ -469,6 +475,7 @@ The initial design and verification of the fuzzy logic controller were conducted
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/cadence_system_model.png}
+    \vspace{\baselineskip}
     \caption{Top level system layout.}
     \label{fig:cadence_layout}
 \end{figure}
@@ -488,6 +495,7 @@ The Verilog-A code provides a behavioral model of the PV cell. Figure \ref{fig:p
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/pvmodel_ivandpower.png}
+    \vspace{\baselineskip}
     \caption{I-V and P-V characteristics of the Verilog-A PV model.}
     \label{fig:pvmodel_ivandpower}
 \end{figure}
@@ -591,6 +599,7 @@ Figure \ref{fig:cadence_results} illustrates the system's response. The extracte
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_model/cadence_sim_result.png}
+    \vspace{\baselineskip}
     \caption{Cadence mixed-signal simulation results showing MPP tracking.}
     \label{fig:cadence_results}
 \end{figure}
@@ -602,6 +611,7 @@ The complete system architecture integrates the digital control logic with the a
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{{cadence_model/Cadence_model.drawio}.png}
+    \vspace{\baselineskip}
     \caption{System block diagram.}
     \label{fig:system_block_diagram}
 \end{figure}
@@ -656,6 +666,7 @@ Figure \ref{fig:adc_arch} illustrates the top-level architecture of the implemen
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/SARADC.drawio.png}
+    \vspace{\baselineskip}
     \caption{Fully differential 12-bit asynchronous SAR ADC architecture.}
     \label{fig:adc_arch}
 \end{figure}
@@ -670,6 +681,7 @@ To further enhance robustness, the bulk connections of the transistors are criti
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{cadence_implement/ADC/sh/shswitch.png}
+    \vspace{\baselineskip}
     \caption{Bootstrapped sample and hold switch implementation.}
     \label{fig:sh_switch}
 \end{figure}
@@ -681,6 +693,7 @@ Linearity is the main metric for this device, as any distortion introduced at th
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sh/shswitchsim.png}
+    \vspace{\baselineskip}
     \caption{DFT of the signal passed through the sample and hold switch.}
     \label{fig:sh_dft}
 \end{figure}
@@ -709,6 +722,7 @@ The linearity of the CapDAC is paramount for the overall ADC performance. The tw
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/dnlsim.png}
+    \vspace{\baselineskip}
     \caption{CapDAC DNL simulation results.}
     \label{fig:capdac_dnl}
 \end{figure}
@@ -716,6 +730,7 @@ The linearity of the CapDAC is paramount for the overall ADC performance. The tw
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/capdac/inlandderivinl.png}
+    \vspace{\baselineskip}
     \caption{CapDAC INL and its derivative simulation results.}
     \label{fig:capdac_inl}
 \end{figure}
@@ -736,6 +751,7 @@ The implemented preamplifier, shown in Figure \ref{fig:preamp_schematic}, is a f
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{cadence_implement/ADC/preamp/preamp.png}
+    \vspace{\baselineskip}
     \caption{Fully differential preamplifier with CMFB circuit.}
     \label{fig:preamp_schematic}
 \end{figure}
@@ -749,6 +765,7 @@ Ensuring stability is crucial for the preamplifier. The primary concern is the s
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/cmfb_stb.png}
+    \vspace{\baselineskip}
     \caption{CMFB loop stability simulation.}
     \label{fig:preamp_cmfb_stb}
 \end{figure}
@@ -759,6 +776,7 @@ The output common-mode voltage is maintained by the CMFB loop. Figure \ref{fig:p
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/cm_v_hist.png}
+    \vspace{\baselineskip}
     \caption{Output common mode voltage Monte Carlo simulation.}
     \label{fig:preamp_cm_hist}
 \end{figure}
@@ -769,6 +787,7 @@ The open-loop differential path is also analyzed, mainly to observe its phase de
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/diff_open_loop.png}
+    \vspace{\baselineskip}
     \caption{Differential open loop AC response.}
     \label{fig:preamp_diff_open}
 \end{figure}
@@ -779,6 +798,7 @@ The input-referred offset directly impacts the effective resolution of the ADC.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/offset_hist.png}
+    \vspace{\baselineskip}
     \caption{Input referred offset Monte Carlo simulation.}
     \label{fig:preamp_offset}
 \end{figure}
@@ -789,6 +809,7 @@ The input-referred noise is another critical factor limiting the ADC's lsb resol
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/preamp/noise_sim.png}
+    \vspace{\baselineskip}
     \caption{Input referred noise simulation.}
     \label{fig:preamp_noise}
 \end{figure}
@@ -830,6 +851,7 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/comparator/offset_hist.png}
+    \vspace{\baselineskip}
     \caption{Comparator input referred offset Monte Carlo simulation.}
     \label{fig:comp_offset}
 \end{figure}
@@ -837,6 +859,7 @@ Measuring the input-referred offset is straightforward using Monte Carlo simulat
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/comparator/noise_sim.png}
+    \vspace{\baselineskip}
     \caption{Comparator input referred noise simulation.}
     \label{fig:comp_noise}
 \end{figure}
@@ -867,6 +890,7 @@ The system operates across two voltage domains. The analog front-end, including 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/sar_logic_overview.png}
+    \vspace{\baselineskip}
     \caption{Asynchronous SAR logic overview with level shifters.}
     \label{fig:sar_logic_overview}
 \end{figure}
@@ -877,6 +901,7 @@ The window generator is responsible for orchestrating the timing of the bit tria
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/window_gen.png}
+    \vspace{\baselineskip}
     \caption{Window generator logic implementation.}
     \label{fig:window_gen}
 \end{figure}
@@ -887,6 +912,7 @@ The comparator clock is generated asynchronously to maximize speed and eliminate
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/comp_clk_gen.png}
+    \vspace{\baselineskip}
     \caption{Asynchronous comparator clock generation logic.}
     \label{fig:comp_clk_gen}
 \end{figure}
@@ -896,6 +922,7 @@ A potential enhancement for this architecture is the implementation of adaptive 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/timing_diagram.png}
+    \vspace{\baselineskip}
     \caption{Timing diagram of the asynchronous operation.}
     \label{fig:sar_timing}
 \end{figure}
@@ -906,6 +933,7 @@ The bit generator controls the sequential switching of the capacitor array, movi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/sar_logic/bit_gen.png}
+    \vspace{\baselineskip}
     \caption{Bit generator logic implementation.}
     \label{fig:bit_gen}
 \end{figure}
@@ -921,6 +949,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     \centering
     % Placeholder: Update 'opamp_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/opamp.png} 
+    \vspace{\baselineskip}
     \caption{Schematic of the single-ended two-stage operational amplifier used in the unity-gain stage.}
     \label{fig:buffer_opamp}
 \end{figure}
@@ -929,6 +958,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     \centering
     % Placeholder: Update 'fda_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/fda.png} 
+    \vspace{\baselineskip}
     \caption{Schematic of the fully differential amplifier (FDA) stage.}
     \label{fig:buffer_fda}
 \end{figure}
@@ -937,6 +967,7 @@ Figure \ref{fig:buffer_opamp} illustrates the schematic of the single-ended two-
     \centering
     % Placeholder: Update 'inst_amp_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/ADC/buffer/inst_amp.png} 
+    \vspace{\baselineskip}
     \caption{Schematic of the overall instrumentation amplifier structure.}
     \label{fig:buffer_inst_amp}
 \end{figure}
@@ -956,6 +987,7 @@ To ensure that the LDO remains stable and does not oscillate under these conditi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/ldo/ldo_schematic.png} 
+    \vspace{\baselineskip}
     \caption{Schematic design of the low-dropout (LDO) regulator.}
     \label{fig:ldo_schematic}
 \end{figure}
@@ -963,6 +995,7 @@ To ensure that the LDO remains stable and does not oscillate under these conditi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/ldo/ldo_stability.png} 
+    \vspace{\baselineskip}
     \caption{Stability plot of the LDO showing loop gain and phase margin.}
     \label{fig:ldo_stability}
 \end{figure}
@@ -983,6 +1016,7 @@ For the Slow-Slow (ss) and Fast-Fast (ff) process corners, a 256-point FFT was u
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/ADC/adc_fft.png}
+    \vspace{\baselineskip}
     \caption{4096-point FFT of the ADC output.}
     \label{fig:adc_fft}
 \end{figure}
@@ -1012,6 +1046,7 @@ The duty cycle generator is responsible for converting the digital control signa
     \centering
     % Placeholder: Update 'duty_gen_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/duty_gen_schematic.png} 
+    \vspace{\baselineskip}
     \caption{Schematic of the duty cycle generator circuit.}
     \label{fig:duty_gen_schematic}
 \end{figure}
@@ -1025,6 +1060,7 @@ The primary performance limitations in an R-2R DAC are Integral Non-Linearity (I
     \centering
     % Placeholder: Update 'dac_plot.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac/dac_plot.png} 
+    \vspace{\baselineskip}
     \caption{Performance plot showing the integral non-linearity (INL) and differential non-linearity (DNL) of the 10-bit R-2R DAC.}
     \label{fig:dac_inl_dnl}
 \end{figure}
@@ -1038,6 +1074,7 @@ Unlike the amplifiers in the ADC buffer, the operational amplifier used for the 
     \centering
     % Placeholder: Update 'dac_buffer_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/dac_buffer/dac_buffer_schematic.png} 
+    \vspace{\baselineskip}
     \caption{Schematic of the unity-gain operational amplifier with a PMOS input stage used for the DAC buffer.}
     \label{fig:dac_buffer_schematic}
 \end{figure}
@@ -1077,6 +1114,7 @@ To account for process variations and ensure the precise slope and amplitude of 
     \centering
     % Placeholder: Update 'ramp_gen_schematic.png' with your actual filename
     \includegraphics[width=0.8\textwidth]{figures/cadence_implement/duty_gen/ramp_gen/ramp_gen_schematic.png} 
+    \vspace{\baselineskip}
     \caption{Schematic of the ramp generator circuit.}
     \label{fig:ramp_gen_schematic}
 \end{figure}
@@ -1118,6 +1156,7 @@ The fuzzification stage assigns membership values to fuzzify the crisp digital i
     \STATE $\mu \leftarrow (\Delta x \times M) \gg shift\_val$
 \ENDIF
 \end{algorithmic}
+    \vspace{\baselineskip}
     \caption{Hardware-efficient linear interpolation for membership functions.}
     \label{alg:mf_interpolation}
 \end{figure}
@@ -1130,6 +1169,7 @@ The Z-shaped membership function implements a falling linear ramp. It assigns a 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/linz.png}
+    \vspace{\baselineskip}
     \caption{Z-shaped membership function implementation.}
     \label{fig:mf_z_dig}
 \end{figure}
@@ -1140,6 +1180,7 @@ The S-shaped membership function corresponds to a rising linear ramp. It evaluat
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/lins.png}
+    \vspace{\baselineskip}
     \caption{S-shaped membership function implementation.}
     \label{fig:mf_s_dig}
 \end{figure}
@@ -1150,6 +1191,7 @@ The triangular membership function specifies a peak response. It combines a risi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/dig/triang.png}
+    \vspace{\baselineskip}
     \caption{Triangular-shaped membership function implementation.}
     \label{fig:mf_triang_dig}
 \end{figure}
@@ -1181,6 +1223,7 @@ In hardware, the multiplication ($w_i \cdot c_i$) and the division by the sum of
 \STATE $shift\_val \leftarrow \text{LUT\_Nearest\_Power\_Of\_2}(Denominator)$
 \STATE $\Delta D \leftarrow Numerator \gg shift\_val$
 \end{algorithmic}
+    \vspace{\baselineskip}
     \caption{Hardware-efficient Sugeno defuzzification.}
     \label{alg:defuzzification}
 \end{figure}
@@ -1208,6 +1251,7 @@ To validate the complete system architecture, an Analog Mixed-Signal (AMS) testb
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/top/ic_core.png} 
+    \vspace{\baselineskip}
     \caption{Top-level schematic of the fully integrated mixed-signal \texttt{IC\_core}.}
     \label{fig:ic_core}
 \end{figure}
@@ -1215,6 +1259,7 @@ To validate the complete system architecture, an Analog Mixed-Signal (AMS) testb
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{cadence_implement/top/ams_tb.png} 
+    \vspace{\baselineskip}
     \caption{Complete AMS testbench including the \texttt{IC\_core}, Verilog-A PV model, and buck converter.}
     \label{fig:ams_tb}
 \end{figure}
@@ -1250,6 +1295,7 @@ Despite the complex mixed-signal interactions, the system maintains stable opera
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{cadence_implement/top/final_sim.png} 
+    \vspace{\baselineskip}
     \caption{Final AMS simulation results demonstrating successful MPPT tracking.}
     \label{fig:final_sim}
 \end{figure}
